@@ -1192,17 +1192,10 @@ $(document).on('click', '#show_add_address', function(e) {
                 _token:_token
             },
             success:function (result){
-                  // เปิด modal
                 $('#modal-add-address').modal('show');
-                
-                // ล้างค่าเก่าในฟิลด์ถ้าจำเป็น
                 $('#existing_branch').empty();
-            //    console.log(result)
-                // loop ผ่าน result และสร้างรายการ
                 $('#existing_branch').append(`<option value="null">-เลือกสาขา-</option>`);
                 result.forEach(function(branch) {
-                    // console.log(branch)
-                    // เพิ่ม branch.name เป็นตัวเลือกใน input
                     $('#existing_branch').append(`<option value="${branch.id}">${branch.name}</option>`);
                 });
             }

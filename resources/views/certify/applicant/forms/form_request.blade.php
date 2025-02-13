@@ -1353,6 +1353,7 @@
                     dataType: 'json',
                     delay: 250,
                     data: function (params) {
+                        console.log("Requesting URL:", "{{ url('/funtions/search-addreess') }}"); // ตรวจ)
                         return {
                             searchTerm: params // search term
                         };
