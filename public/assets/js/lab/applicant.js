@@ -947,7 +947,7 @@ $("#authorized_address_seach_add_modal").select2({
 });
 
 $("#authorized_address_seach_add_modal").on('change', function () {
-
+//  url:"/certify/applicant/api/calibrate",
     $.ajax({
         url: baseUrl + "funtions/get-addreess/" + $(this).val()
     }).done(function( jsondata ) {
@@ -996,7 +996,7 @@ $("#authorized_address_seach_add_modal").on('change', function () {
 
 $("#existing_branch").on('change', function () {
     console.log($(this).val())
-
+//  url:"/certify/applicant/api/calibrate",
     $.ajax({
         url: baseUrl + "funtions/get-branch-addreess/" + $(this).val()
     }).done(function( jsondata ) {
@@ -1188,7 +1188,7 @@ $(document).on('click', '#show_add_address', function(e) {
         const _token = $('input[name="_token"]').val();
         $.ajax({
             // url:"/certify/applicant/api/get-existing-branch",
-            url: "{{ url('/certify/applicant/api/get-existing-branch') }}",
+            url: baseUrl + "certify/applicant/api/get-existing-branch",
             method:"POST",
             data:{
                 _token:_token
@@ -1896,8 +1896,8 @@ function showAddCalScopeModal()
             $('#test_parameter_wrapper').hide();
             $('#test_infomation_scope').hide();
             $.ajax({
-                    // url:"/certify/applicant/api/test",
-                    url: "{{ url('/certify/applicant/api/test') }}",
+                    // url:"{{route('api.test')}}",
+                    url:"/certify/applicant/api/test",
                     method:"POST",
                     data:{
                         _token:_token
@@ -1922,8 +1922,8 @@ function showAddCalScopeModal()
             $('#cal_parameter_two_wrapper').hide();
             $('#cal_infomation_scope').hide();
             $.ajax({
-                    // url:"/certify/applicant/api/calibrate",
-                    url: "{{ url('/certify/applicant/api/calibrate') }}",
+                    // url:"{{route('api.calibrate')}}",
+                    url:"/certify/applicant/api/calibrate",
                     method:"POST",
                     data:{
                         _token:_token
