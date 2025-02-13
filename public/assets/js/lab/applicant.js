@@ -1958,8 +1958,8 @@ $(document).on('change', '#cal_main_branch', function() {
     
 
     $.ajax({
-        // url: "{{route('api.instrumentgroup')}}",
-        url: "/certify/applicant/api/instrumentgroup",
+        url: baseUrl + "certify/applicant/api/instrumentgroup",
+        // url: "/certify/applicant/api/instrumentgroup",
         method: "POST",
         data: {
             bcertify_calibration_branche_id: bcertify_calibration_branche_id,
@@ -1995,7 +1995,8 @@ $(document).on('change', '#test_main_branch', function() {
 
     $.ajax({
         // url: "{{route('api.instrumentgroup')}}",
-        url: "/certify/applicant/api/test_category",
+        url: baseUrl + "certify/applicant/api/test_category",
+        // url: "/certify/applicant/api/test_category",
         method: "POST",
         data: {
             bcertify_test_branche_id: bcertify_test_branche_id,
@@ -2026,7 +2027,8 @@ $(document).on('change', '#test_category', function() {
 
     $.ajax({
         // url: "{{route('api.instrumentgroup')}}",
-        url: "/certify/applicant/api/test_parameter",
+        url: baseUrl + "certify/applicant/api/test_parameter",
+        // url: "/certify/applicant/api/test_parameter",
         method: "POST",
         data: {
             test_branch_category_id: test_branch_category_id,
@@ -2603,7 +2605,8 @@ $(document).on('change', '#select_certified', function() {
     }
     
     $.ajax({
-        url: "/certify/applicant/api/get_certificated",
+        url: baseUrl + "certify/applicant/api/get_certificated",
+        // url: "/certify/applicant/api/get_certificated",
         method: "POST",
         data: {
             certified_id: certified_id,
@@ -3151,7 +3154,8 @@ $(document).on('change', '#cal_instrumentgroup', function() {
     $('#cal_infomation_scope').hide();
 
     $.ajax({
-        url: "/certify/applicant/api/instrument",
+        url: baseUrl + "certify/applicant/api/instrument",
+        // url: "/certify/applicant/api/instrument",
         method: "POST",
         data: {
             calibration_branch_instrument_group_id: calibration_branch_instrument_group_id,
@@ -5248,7 +5252,8 @@ $('#cal_cmc_file').change(function () {
 
                 // ส่งข้อมูลด้วย AJAX
                 $.ajax({
-                    url: '/certify/applicant/upload-cal-lab-cmc', // URL ของ Route
+                    url: baseUrl + "certify/applicant/upload-cal-lab-cmc",
+                    // url: '/certify/applicant/upload-cal-lab-cmc', // URL ของ Route
                     type: 'POST',
                     data: formData,
                     contentType: false, // ปิดการตั้งค่า default content type
