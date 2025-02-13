@@ -1896,8 +1896,8 @@ function showAddCalScopeModal()
             $('#test_parameter_wrapper').hide();
             $('#test_infomation_scope').hide();
             $.ajax({
-                    // url:"{{route('api.test')}}",
-                    url:"/certify/applicant/api/test",
+                    url: baseUrl + "/certify/applicant/api/test",
+                    // url:"/certify/applicant/api/test",
                     method:"POST",
                     data:{
                         _token:_token
@@ -1922,7 +1922,7 @@ function showAddCalScopeModal()
             $('#cal_parameter_two_wrapper').hide();
             $('#cal_infomation_scope').hide();
             $.ajax({
-                    url:"{{route('api.calibrate')}}",
+                    url: baseUrl + "certify/applicant/api/calibrate",
                     // url:"/certify/applicant/api/calibrate",
                     method:"POST",
                     data:{
