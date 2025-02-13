@@ -39,6 +39,20 @@
     <link href="{{asset('plugins/components/parsleyjs/parsley.css?20200630')}}" rel="stylesheet" />
 
     <!--====== Dynamic theme changing =====-->
+
+    <script>
+        var baseUrl = $('meta[name="base-url"]').attr('content') + '/';
+    
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                // ป้องกัน baseUrl ซ้ำซ้อน
+                if (!settings.url.startsWith('http') && !settings.url.startsWith(baseUrl)) {
+                    settings.url = baseUrl + settings.url;
+                }
+            }
+        });
+    </script>
+
     <?php
     $theme_name = 'default';
     $fix_header = false;
