@@ -1922,8 +1922,8 @@ function showAddCalScopeModal()
             $('#cal_parameter_two_wrapper').hide();
             $('#cal_infomation_scope').hide();
             $.ajax({
-                    // url:"{{route('api.calibrate')}}",
-                    url:"/certify/applicant/api/calibrate",
+                    url:"{{route('api.calibrate')}}",
+                    // url:"/certify/applicant/api/calibrate",
                     method:"POST",
                     data:{
                         _token:_token
