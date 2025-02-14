@@ -6066,7 +6066,8 @@ private function FormatAddressEn($request){
   
           // $mpdf->SetWatermarkImage(public_path(...), opacity, [size], [position]); 
   
-          $mpdf->SetWatermarkImage(public_path('images/nc_logo.jpg'), 1, [23, 23], [170, 4]);
+        //   $mpdf->SetWatermarkImage(public_path('images/nc_logo.jpg'), 1, [23, 23], [170, 4]);
+          $mpdf->SetWatermarkImage(public_path('images/nc_hq.png'), 1, [23, 23], [170, 4]);
   
           $mpdf->showWatermarkImage = true; // เปิดใช้งาน watermark
   
@@ -6294,7 +6295,8 @@ private function FormatAddressEn($request){
   
           // $mpdf->SetWatermarkImage(public_path(...), opacity, [size], [position]); 
   
-          $mpdf->SetWatermarkImage(public_path('images/nc_logo.jpg'), 1, [23, 23], [170, 4]);
+        //   $mpdf->SetWatermarkImage(public_path('images/nc_logo.jpg'), 1, [23, 23], [170, 4]);
+          $mpdf->SetWatermarkImage(public_path('images/nc_hq.png'), 1, [23, 23], [170, 4]);
   
           $mpdf->showWatermarkImage = true; // เปิดใช้งาน watermark
   

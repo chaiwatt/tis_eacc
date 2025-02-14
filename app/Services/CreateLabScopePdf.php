@@ -322,7 +322,7 @@ class CreateLabScopePdf
 
         // $mpdf->SetWatermarkImage('https://upload.wikimedia.org/wikipedia/commons/2/25/Siam_lilacpoint.jpg', 1, '', [170, 4]);
 
-        // $mpdf->showWatermarkImage = true; // เปิดใช้งาน watermark
+        $mpdf->showWatermarkImage = true; // เปิดใช้งาน watermark
 
         $footer = view('certify.scope_pdf.calibration.cal-scope-footer', [
             'qrImage' => null,
@@ -618,7 +618,8 @@ class CreateLabScopePdf
   
           // $mpdf->SetWatermarkImage(public_path(...), opacity, [size], [position]); 
   
-          $mpdf->SetWatermarkImage(public_path('images/nc_logo.jpg'), 1, [23, 23], [170, 4]);
+        //   $mpdf->SetWatermarkImage(public_path('images/nc_logo.jpg'), 1, [23, 23], [170, 4]);
+          $mpdf->SetWatermarkImage(public_path('images/nc_hq.png'), 1, [23, 23], [170, 4]);
   
           $mpdf->showWatermarkImage = true; // เปิดใช้งาน watermark
   
