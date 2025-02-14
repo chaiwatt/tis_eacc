@@ -317,12 +317,12 @@ class CreateLabScopePdf
         $stylesheet = file_get_contents(public_path('css/report/lab-scope.css'));
         $mpdf->WriteHTML($stylesheet, 1);
         
-        // $mpdf->SetWatermarkImage(public_path('images/nc_hq.png'), 1, '', [170, 4]); // กำหนด opacity, , ตำแหน่ง
+        $mpdf->SetWatermarkImage(public_path('images/nc_hq.png'), 1, '', [170, 4]); // กำหนด opacity, , ตำแหน่ง
         // https://upload.wikimedia.org/wikipedia/commons/2/25/Siam_lilacpoint.jpg
 
-        $mpdf->SetWatermarkImage('https://upload.wikimedia.org/wikipedia/commons/2/25/Siam_lilacpoint.jpg', 1, '', [170, 4]);
+        // $mpdf->SetWatermarkImage('https://upload.wikimedia.org/wikipedia/commons/2/25/Siam_lilacpoint.jpg', 1, '', [170, 4]);
 
-        $mpdf->showWatermarkImage = true; // เปิดใช้งาน watermark
+        // $mpdf->showWatermarkImage = true; // เปิดใช้งาน watermark
 
         $footer = view('certify.scope_pdf.calibration.cal-scope-footer', [
             'qrImage' => null,
