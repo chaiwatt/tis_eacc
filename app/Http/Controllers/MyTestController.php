@@ -9166,9 +9166,6 @@ class MyTestController extends Controller
     // $pdfContent = $pdfService->generatePdf();
   }
 
-  public function doSOme()
-  {
-    
-  }
+
 
 }
