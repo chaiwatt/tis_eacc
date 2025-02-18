@@ -112,36 +112,62 @@ class FuntionsController extends Controller
         $searchTerm = !empty($request->searchTerm)?$request->searchTerm:null;
         $searchTerm = str_replace(' ', '', $searchTerm);
 
-        $address_data  =  DB::table((new District)->getTable().' AS sub') // อำเภอ
-                            ->leftJoin((new Amphur)->getTable().' AS dis', 'dis.AMPHUR_ID', '=', 'sub.AMPHUR_ID') // ตำบล
-                            ->leftJoin((new Province)->getTable().' AS pro', 'pro.PROVINCE_ID', '=', 'sub.PROVINCE_ID')  // จังหวัด
-                            ->leftJoin((new Zipcode)->getTable().' AS code', 'code.district_code', '=', 'sub.DISTRICT_CODE')  // รหัสไปรษณีย์
-                            ->where(function($query) use($searchTerm){
+        
 
-                                // $query->Where(DB::raw("CONCAT( REPLACE(sub.DISTRICT_NAME,' ',''),'_', REPLACE(dis.AMPHUR_NAME,' ',''),'_', REPLACE(pro.PROVINCE_NAME,' ',''),'_', REPLACE(code.zipcode,' ','') )"), 'LIKE', "%".$searchTerm."%");
-                                $query->where(DB::raw("REPLACE(sub.DISTRICT_NAME,' ','')"),  'LIKE', "%$searchTerm%")
-                                        ->orWhere(DB::raw("REPLACE(dis.AMPHUR_NAME,' ','')"),  'LIKE', "%$searchTerm%")
-                                        ->orWhere(DB::raw("REPLACE(pro.PROVINCE_NAME,' ','')"),  'LIKE', "%$searchTerm%")
-                                        ->orWhere(DB::raw("REPLACE(code.zipcode,' ','')"),  'LIKE', "%$searchTerm%");
-                            })
-                            ->where(function($query){
-                                $query->where(DB::raw("REPLACE(sub.DISTRICT_NAME,' ','')"),  'NOT LIKE', "%*%");
-                            })
-                            ->select(
+        // $address_data  =  DB::table((new District)->getTable().' AS sub') // อำเภอ
+        //                     ->leftJoin((new Amphur)->getTable().' AS dis', 'dis.AMPHUR_ID', '=', 'sub.AMPHUR_ID') // ตำบล
+        //                     ->leftJoin((new Province)->getTable().' AS pro', 'pro.PROVINCE_ID', '=', 'sub.PROVINCE_ID')  // จังหวัด
+        //                     ->leftJoin((new Zipcode)->getTable().' AS code', 'code.district_code', '=', 'sub.DISTRICT_CODE')  // รหัสไปรษณีย์
+        //                     ->where(function($query) use($searchTerm){
 
-                                DB::raw("sub.DISTRICT_ID AS sub_ids"),
-                                DB::raw("TRIM(sub.DISTRICT_NAME) AS sub_title"),
+        //                         // $query->Where(DB::raw("CONCAT( REPLACE(sub.DISTRICT_NAME,' ',''),'_', REPLACE(dis.AMPHUR_NAME,' ',''),'_', REPLACE(pro.PROVINCE_NAME,' ',''),'_', REPLACE(code.zipcode,' ','') )"), 'LIKE', "%".$searchTerm."%");
+        //                         $query->where(DB::raw("REPLACE(sub.DISTRICT_NAME,' ','')"),  'LIKE', "%$searchTerm%")
+        //                                 ->orWhere(DB::raw("REPLACE(dis.AMPHUR_NAME,' ','')"),  'LIKE', "%$searchTerm%")
+        //                                 ->orWhere(DB::raw("REPLACE(pro.PROVINCE_NAME,' ','')"),  'LIKE', "%$searchTerm%")
+        //                                 ->orWhere(DB::raw("REPLACE(code.zipcode,' ','')"),  'LIKE', "%$searchTerm%");
+        //                     })
+        //                     ->where(function($query){
+        //                         $query->where(DB::raw("REPLACE(sub.DISTRICT_NAME,' ','')"),  'NOT LIKE', "%*%");
+        //                     })
+        //                     ->select(
 
-                                DB::raw("dis.AMPHUR_ID AS dis_id"),
-                                DB::raw("TRIM(dis.AMPHUR_NAME) AS dis_title"),
+        //                         DB::raw("sub.DISTRICT_ID AS sub_ids"),
+        //                         DB::raw("TRIM(sub.DISTRICT_NAME) AS sub_title"),
 
-                                DB::raw("pro.PROVINCE_ID AS pro_id"),
-                                DB::raw("TRIM(pro.PROVINCE_NAME) AS pro_title"),
+        //                         DB::raw("dis.AMPHUR_ID AS dis_id"),
+        //                         DB::raw("TRIM(dis.AMPHUR_NAME) AS dis_title"),
 
-                                DB::raw("code.zipcode AS sub_zip_code")
+        //                         DB::raw("pro.PROVINCE_ID AS pro_id"),
+        //                         DB::raw("TRIM(pro.PROVINCE_NAME) AS pro_title"),
 
-                            )
-                            ->get();
+        //                         DB::raw("code.zipcode AS sub_zip_code")
+
+        //                     )
+        //                     ->get();
+
+        $address_data = DB::table((new District)->getTable().' AS sub')
+                        ->leftJoin((new Amphur)->getTable().' AS dis', 'dis.AMPHUR_ID', '=', 'sub.AMPHUR_ID')
+                        ->leftJoin((new Province)->getTable().' AS pro', 'pro.PROVINCE_ID', '=', 'sub.PROVINCE_ID')
+                        ->leftJoin((new Zipcode)->getTable().' AS code', 'code.district_code', '=', 'sub.DISTRICT_CODE')
+                        ->where(function($query) use ($searchTerm) {
+                            $searchTerm = trim(strtolower($searchTerm)); // แปลงเป็นตัวพิมพ์เล็กและตัดช่องว่างออก
+                            $query->whereRaw("LOWER(TRIM(sub.DISTRICT_NAME)) LIKE ?", ["%$searchTerm%"])
+                                ->orWhereRaw("LOWER(TRIM(dis.AMPHUR_NAME)) LIKE ?", ["%$searchTerm%"])
+                                ->orWhereRaw("LOWER(TRIM(pro.PROVINCE_NAME)) LIKE ?", ["%$searchTerm%"])
+                                ->orWhereRaw("TRIM(code.zipcode) LIKE ?", ["%$searchTerm%"]); // zip code ไม่ต้องใช้ LOWER() เพราะเป็นตัวเลข
+                        })
+                        ->whereRaw("TRIM(sub.DISTRICT_NAME) NOT LIKE '%*%'") // กรองข้อมูลที่มี * ออกไป
+                        ->select(
+                            'sub.DISTRICT_ID AS sub_ids',
+                            DB::raw("TRIM(sub.DISTRICT_NAME) AS sub_title"),
+                            'dis.AMPHUR_ID AS dis_id',
+                            DB::raw("TRIM(dis.AMPHUR_NAME) AS dis_title"),
+                            'pro.PROVINCE_ID AS pro_id',
+                            DB::raw("TRIM(pro.PROVINCE_NAME) AS pro_title"),
+                            'code.zipcode AS sub_zip_code'
+                        )
+                        ->get();
+
         $data_list = [];
 
         foreach($address_data as $datas){

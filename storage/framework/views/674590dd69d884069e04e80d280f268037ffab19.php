@@ -2,15 +2,15 @@
 
 
 
-{{-- work on Certify\ApplicantController --}}
+
 
 <fieldset class="white-box">
     <div class="clearfix"></div>
     <legend><h4>1. ข้อมูลขอรับบริการ</h4></legend>
 
-    <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
+    <input type="hidden" name="_token" value="<?php echo e(csrf_token()); ?>"/>
 
-    @php
+    <?php
         $Formula_Arr = App\Models\Bcertify\Formula::where('applicant_type',3)->orderbyRaw('CONVERT(title USING tis620)')->pluck('title','id');
 
         $province = DB::table('province')->select('PROVINCE_ID','PROVINCE_NAME', 'PROVINCE_NAME_EN')->orderbyRaw('CONVERT(PROVINCE_NAME USING tis620)')->get();
@@ -42,7 +42,7 @@
         }
 
    
-    @endphp
+    ?>
 
 <style>
     .custom-select {
@@ -124,7 +124,7 @@
     }
 </style>
 
-@php
+<?php
     $htmlArray = [
         '<div><p>ปริมาณ</p></div>',
         '<div>
@@ -144,19 +144,12 @@
             </p>
         </div>'
     ];
-@endphp
+?>
 
 
 
 
- {{-- <div class="custom-select" data-selection="multiple">
-    <div class="select-selected">เลือกรายการ</div>
-    <div class="select-items">
-        @foreach ($htmlArray as $htmlItem)
-            {!! $htmlItem !!}
-        @endforeach
-    </div>
-</div>  --}}
+ 
 
 <div class="clearfix"></div>
 
@@ -252,46 +245,35 @@
 
 </script>
 
-{{-- {{$urlType}} --}}
 
-    @if (count($formulas)==1)
-        {{-- <div class="form-group {{ $errors->has('according_formula') ? 'has-error' : ''}}">
-            {!! HTML::decode(Form::label('according_formula', '<span class="text-danger">*</span> ตามมาตรฐานเลข'.':'.'<br/><span class="  font_size">(According to TIS)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
-            <div class="col-md-4" >
-                {!! Form::select('according_formula',$Formula_Arr, !empty( $certi_lab->standard_id )?$certi_lab->standard_id:$formulas[0]->id, ['class' => 'form-control', 'id'=>'according_formula','readonly' => 'readonly','required' => true]) !!}
-                {!! $errors->first('according_formula', '<p class="help-block">:message</p>') !!}
-            </div>
-        </div> --}}
 
-        <div class="form-group {{ $errors->has('according_formula') ? 'has-error' : '' }}">
+    <?php if(count($formulas)==1): ?>
+        
+
+        <div class="form-group <?php echo e($errors->has('according_formula') ? 'has-error' : ''); ?>">
             <label for="according_formula" class="col-md-3 control-label label-height">
                 <span class="text-danger">*</span> ตามมาตรฐานเลข:<br/>
                 <span class="font_size">(According to TIS)</span>
             </label>
             <div class="col-md-4">
                 <select name="according_formula" id="according_formula" class="form-control" readonly required>
-                    @foreach($Formula_Arr as $key => $value)
-                        <option value="{{ $key }}" 
-                            {{ (!empty($certi_lab->standard_id) && $certi_lab->standard_id == $key) || (empty($certi_lab->standard_id) && $formulas[0]->id == $key) ? 'selected' : '' }}>
-                            {{ $value }}
+                    <?php $__currentLoopData = $Formula_Arr; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($key); ?>" 
+                            <?php echo e((!empty($certi_lab->standard_id) && $certi_lab->standard_id == $key) || (empty($certi_lab->standard_id) && $formulas[0]->id == $key) ? 'selected' : ''); ?>>
+                            <?php echo e($value); ?>
+
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
-                @if($errors->has('according_formula'))
-                    <p class="help-block">{{ $errors->first('according_formula') }}</p>
-                @endif
+                <?php if($errors->has('according_formula')): ?>
+                    <p class="help-block"><?php echo e($errors->first('according_formula')); ?></p>
+                <?php endif; ?>
             </div>
         </div>
         
-    @else
-        {{-- <div class="form-group {{ $errors->has('according_formula') ? 'has-error' : ''}}">
-            {!! HTML::decode(Form::label('according_formula', '<span class="text-danger">*</span> ตามมาตรฐานเลข'.':'.'<br/><span class="  font_size">(According to TIS)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
-            <div class="col-md-4" >
-                {!! Form::select('according_formula',$Formula_Arr, !empty( $certi_lab->standard_id )?$certi_lab->standard_id:null, ['class' => 'form-control', 'id'=>'according_formula','required' => true, 'placeholder' =>'- เลือกตามมาตรฐานเลข -']) !!}
-                {!! $errors->first('according_formula', '<p class="help-block">:message</p>') !!}
-            </div>
-        </div> --}}
-        <div class="form-group {{ $errors->has('according_formula') ? 'has-error' : '' }}">
+    <?php else: ?>
+        
+        <div class="form-group <?php echo e($errors->has('according_formula') ? 'has-error' : ''); ?>">
             <label for="according_formula" class="col-md-3 control-label label-height">
                 <span class="text-danger">*</span> ตามมาตรฐานเลข:<br/>
                 <span class="font_size">(According to TIS)</span>
@@ -299,77 +281,88 @@
             <div class="col-md-4">
                 <select name="according_formula" id="according_formula" class="form-control" required>
                     <option value="" disabled selected>- เลือกตามมาตรฐานเลข -</option>
-                    @foreach($Formula_Arr as $key => $value)
-                        <option value="{{ $key }}" 
-                            {{ (!empty($certi_lab->standard_id) && $certi_lab->standard_id == $key) ? 'selected' : '' }}>
-                            {{ $value }}
+                    <?php $__currentLoopData = $Formula_Arr; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $value): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($key); ?>" 
+                            <?php echo e((!empty($certi_lab->standard_id) && $certi_lab->standard_id == $key) ? 'selected' : ''); ?>>
+                            <?php echo e($value); ?>
+
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
-                @if($errors->has('according_formula'))
-                    <p class="help-block">{{ $errors->first('according_formula') }}</p>
-                @endif
+                <?php if($errors->has('according_formula')): ?>
+                    <p class="help-block"><?php echo e($errors->first('according_formula')); ?></p>
+                <?php endif; ?>
             </div>
         </div>
         
-    @endif
+    <?php endif; ?>
 
     
-    <div class="form-group {{ $errors->has('lab_ability') ? 'has-error' : ''}}">
-        {!! HTML::decode(Form::label('lab_ability', 'ความสามารถห้องปฏิบัติการ'.':'.'<br/><span class="  font_size">(Laboratory)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
+    <div class="form-group <?php echo e($errors->has('lab_ability') ? 'has-error' : ''); ?>">
+        <?php echo HTML::decode(Form::label('lab_ability', 'ความสามารถห้องปฏิบัติการ'.':'.'<br/><span class="  font_size">(Laboratory)</span>', ['class' => 'col-md-3 control-label label-height'])); ?>
+
         <label class="col-md-2  label-height" >
-            {!! Form::radio('lab_ability', 'calibrate', !empty( $certi_lab->lab_type ) && $certi_lab->lab_type == '4' ?true:true, ['class'=>'check checkLab', 'data-radio'=>'iradio_square-green','id'=>'lab_ability_calibrate']) !!}
+            <?php echo Form::radio('lab_ability', 'calibrate', !empty( $certi_lab->lab_type ) && $certi_lab->lab_type == '4' ?true:true, ['class'=>'check checkLab', 'data-radio'=>'iradio_square-green','id'=>'lab_ability_calibrate']); ?>
+
             &nbsp;สอบเทียบ <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <span class=" font_size">(Calibration)</span>
         </label>
         <label class="col-md-2  label-height" >
-            {!! Form::radio('lab_ability', 'test', !empty( $certi_lab->lab_type ) && $certi_lab->lab_type == '3' ?true:false, ['class'=>'check checkLab', 'data-radio'=>'iradio_square-green','id'=>'lab_ability_test']) !!}
+            <?php echo Form::radio('lab_ability', 'test', !empty( $certi_lab->lab_type ) && $certi_lab->lab_type == '3' ?true:false, ['class'=>'check checkLab', 'data-radio'=>'iradio_square-green','id'=>'lab_ability_test']); ?>
+
             &nbsp;ทดสอบ  <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <span class=" font_size">(Testing)</span>
         </label>
 
-        {!! $errors->first('lab_ability', '<p class="help-block">:message</p>') !!}
+        <?php echo $errors->first('lab_ability', '<p class="help-block">:message</p>'); ?>
+
     </div>
 
-    @if( isset($certi_lab->id) && !empty($certi_lab->purpose_type) )
+    <?php if( isset($certi_lab->id) && !empty($certi_lab->purpose_type) ): ?>
 
-        <div class="form-group {{ $errors->has('purpose') ? 'has-error' : ''}}">
-            {!! HTML::decode(Form::label('lab_name', 'วัตถุประสงค์ในการยื่นคำขอ'.':'.'<br/><span class=" font_size">(Apply to NSC for)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
+        <div class="form-group <?php echo e($errors->has('purpose') ? 'has-error' : ''); ?>">
+            <?php echo HTML::decode(Form::label('lab_name', 'วัตถุประสงค์ในการยื่นคำขอ'.':'.'<br/><span class=" font_size">(Apply to NSC for)</span>', ['class' => 'col-md-3 control-label label-height'])); ?>
+
             <label  class="col-md-2 label-height">
-                {!! Form::radio('purpose', '1', $certi_lab->purpose_type == 1 ?true:false, ['class'=>'check', 'data-radio'=>'iradio_square-green','id'=>'purpose1']) !!}
+                <?php echo Form::radio('purpose', '1', $certi_lab->purpose_type == 1 ?true:false, ['class'=>'check', 'data-radio'=>'iradio_square-green','id'=>'purpose1']); ?>
+
                 &nbsp;ยื่นขอครั้งแรก <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <span class="font_size">(initial assessment)</span>
             </label>
-            @if ($certifieds->count() > 0)
+            <?php if($certifieds->count() > 0): ?>
                 <label  class="col-md-2 label-height">
-                    {!! Form::radio('purpose', '2', $certi_lab->purpose_type == 2 ?true:false, ['class'=>'check', 'data-radio'=>'iradio_square-green','id'=>'purpose2']) !!}
+                    <?php echo Form::radio('purpose', '2', $certi_lab->purpose_type == 2 ?true:false, ['class'=>'check', 'data-radio'=>'iradio_square-green','id'=>'purpose2']); ?>
+
                     &nbsp;ต่ออายุใบรับรอง <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <span class="font_size">(renewal)</span>
                 </label>
                 <label  class="col-md-2 label-height">
-                    {!! Form::radio('purpose', '3', $certi_lab->purpose_type == 3 ?true:false, ['class'=>'check', 'data-radio'=>'iradio_square-green','id'=>'purpose3']) !!}
+                    <?php echo Form::radio('purpose', '3', $certi_lab->purpose_type == 3 ?true:false, ['class'=>'check', 'data-radio'=>'iradio_square-green','id'=>'purpose3']); ?>
+
                     &nbsp;ขยายขอบข่าย<br> &nbsp;&nbsp;&nbsp;
                     <span class="font_size">(extending accreditation)</span>
                 </label>
                 <label  class="col-md-3 label-height">
-                    {!! Form::radio('purpose', '4', $certi_lab->purpose_type == 4 ?true:false, ['class'=>'check', 'data-radio'=>'iradio_square-green','id'=>'purpose4']) !!}
+                    <?php echo Form::radio('purpose', '4', $certi_lab->purpose_type == 4 ?true:false, ['class'=>'check', 'data-radio'=>'iradio_square-green','id'=>'purpose4']); ?>
+
                     &nbsp;การเปลี่ยนแปลงมาตรฐาน <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <span class="font_size">(standard change)</span>
                 </label>
-                {!! $errors->first('purpose', '<p class="help-block">:message</p>') !!}
-            @endif
+                <?php echo $errors->first('purpose', '<p class="help-block">:message</p>'); ?>
+
+            <?php endif; ?>
           
         </div>
         
-    @else
+    <?php else: ?>
 
 
-        <div class="form-group {{ $errors->has('purpose') ? 'has-error' : '' }}">
+        <div class="form-group <?php echo e($errors->has('purpose') ? 'has-error' : ''); ?>">
             <label for="lab_name" class="col-md-3 control-label label-height">
                 วัตถุประสงค์ในการยื่นคำขอ:<br/>
                 <span class="font_size">(Apply to NSC for)</span>
             </label>
-            @if ($certifieds->count() == 0)
+            <?php if($certifieds->count() == 0): ?>
             <label class="col-md-2 label-height">
                 <input type="radio" name="purpose" value="1" class="check" data-radio="iradio_square-green" id="purpose1" >
                 &nbsp;ยื่นขอครั้งแรก<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -380,9 +373,9 @@
                 &nbsp;โอนใบรับรอง <br> &nbsp;&nbsp;&nbsp;
                 <span class="font_size">(transfer accreditation)</span>
             </label>
-            @endif
+            <?php endif; ?>
         
-            @if ($certifieds->count() > 0)
+            <?php if($certifieds->count() > 0): ?>
             <label class="col-md-2 label-height">
                 <input type="radio" name="purpose" value="1" class="check" data-radio="iradio_square-green" id="purpose1" >
                 &nbsp;ยื่นขอครั้งแรก<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -403,19 +396,19 @@
                     &nbsp;การเปลี่ยนแปลงมาตรฐาน <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <span class="font_size">(standard change)</span>
                 </label>
-            @endif
+            <?php endif; ?>
         
-            @if ($errors->has('purpose'))
-                <p class="help-block">{{ $errors->first('purpose') }}</p>
-            @endif
+            <?php if($errors->has('purpose')): ?>
+                <p class="help-block"><?php echo e($errors->first('purpose')); ?></p>
+            <?php endif; ?>
         </div>
         
-        <div class="form-group {{ $errors->has('purpose') ? 'has-error' : '' }}">
+        <div class="form-group <?php echo e($errors->has('purpose') ? 'has-error' : ''); ?>">
             <label for="lab_name_blank" class="col-md-3 control-label label-height">
               
             </label>
             
-            @if ($certifieds->count() > 0)
+            <?php if($certifieds->count() > 0): ?>
                 <label class="col-md-2 label-height">
                     <input type="radio" name="purpose" value="5" class="check" data-radio="iradio_square-green" id="purpose5">
                     &nbsp;ย้ายสถานที่<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -426,95 +419,34 @@
                     &nbsp;โอนใบรับรอง <br> &nbsp;&nbsp;&nbsp;
                     <span class="font_size">(transfer accreditation)</span>
                 </label>
-            @endif
+            <?php endif; ?>
 
         
-            @if ($errors->has('purpose'))
-                <p class="help-block">{{ $errors->first('purpose') }}</p>
-            @endif
+            <?php if($errors->has('purpose')): ?>
+                <p class="help-block"><?php echo e($errors->first('purpose')); ?></p>
+            <?php endif; ?>
         </div>
         
         
 
-    @endif
+    <?php endif; ?>
     
     <div id="box_ref_application_no" style="display: none;">
 
-            {{-- @if ($certifieds->count() > 0)
-            <div class="form-group {{ $errors->has('according_formula') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('according_formula', '<span class="text-danger">*</span> ตามมาตรฐานเลข'.':'.'<br/><span class="  font_size">(According to TIS)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
-                <div class="col-md-4" >
-                    {!! Form::select('according_formula',$Formula_Arr, !empty( $certi_lab->standard_id )?$certi_lab->standard_id:$formulas[0]->id, ['class' => 'form-control', 'id'=>'certified','readonly' => 'readonly']) !!}
-                    {!! $errors->first('according_formula', '<p class="help-block">:message</p>') !!}
-                </div>
-            </div>
-            @endif --}}
-{{-- 
-            @if ($certifieds->count() > 0)
-            <div class="form-group {{ $errors->has('certified') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('certified', '<span class="text-danger">*</span> ตามมาตรฐานเลข'.':'.'<br/><span class="font_size">(According to TIS)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
-                <div class="col-md-4">
-                    {!! Form::select('certified', $certifieds->pluck('certificate_no', 'id')->toArray(), null, ['class' => 'form-control', 'id' => 'certified', 'readonly' => 'readonly']) !!}
-                    {!! $errors->first('certified', '<p class="help-block">:message</p>') !!}
-                </div>
-            </div>
-        @endif --}}
+            
 
-        {{-- @if ($certifieds->count() > 0)
-        <div class="form-group {{ $errors->has('certified') ? 'has-error' : ''}}">
-            <label class="col-md-3 control-label label-height">
-                <span class="text-danger">*</span> ใบรับรองเลขที่:<br />
-                <span class="font_size">(According to TIS)</span>
-            </label>
-            <div class="col-md-4">
-                <select name="select_certified" id="select_certified" class="form-control" readonly="readonly">
-                    <option value="{{null}}">- เลือกใบรับรอง -</option>
-                    @foreach($certifieds as $certified)
-                        <option value="{{$certified->id}}" 
 
-                            
-                            >{{ $certified->certificate_no }}</option>
-                    @endforeach
-                </select>
-                @if($errors->has('certified'))
-                    <p class="help-block">{{ $errors->first('certified') }}</p>
-                @endif
-            </div>
-        </div>
-        @endif --}}
+        
 
-        {{-- @if ($certifieds->count() > 0)
-            <div class="form-group {{ $errors->has('select_certified') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('select_certified', '<span class="text-danger">*</span> ใบรับรองเลขที่:'.'<br/><span class="font_size">(According to TIS)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
-                <div class="col-md-4">
-                    {!! Form::select('select_certified', $certifieds->pluck('certificate_no', 'id'), 'aaa', ['class' => 'form-control', 'id' => 'select_certified', 'readonly' => 'readonly', 'required' => true]) !!}
-                    {!! $errors->first('select_certified', '<p class="help-block">:message</p>') !!}
-                </div>
-            </div>
-        @endif --}}
-{{-- 
-        <div class="form-group{{ $errors->has('select_certified_temp') ? 'has-error' : ''}}">
-            {!! HTML::decode(Form::label('select_certified_temp', '<span class="text-danger">*</span> select_certified_temp'.':'.'<br/><span class=" font_size">(Name laboratory)</span>', ['class' => 'col-md-3 control-label  label-height'])) !!}
-            <div class="col-md-7">
-                {!! Form::text('select_certified_temp', null, ['class' => 'form-control']) !!}
-                {!! $errors->first('select_certified_temp', '<p class="help-block">:message</p>') !!}
-            </div>
-        </div> --}}
+        
 
-        <input type="text" id="select_certified_temp" name="select_certified_temp" value="{{ isset($labRequestType) ? $labRequestType->certificate_id : '' }}" hidden >
 
-         {{-- @if ($certifieds->count() > 0)
-            <div class="form-group {{ $errors->has('select_certified') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('select_certified', '<span class="text-danger">*</span> ใบรับรองเลขที่:'.'<br/><span class="font_size">(According to TIS)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
-                <div class="col-md-4">
-                    {!! Form::select('select_certified', $certifieds->pluck('certificate_no', 'id'), '111', ['class' => 'form-control', 'id' => 'select_certified', 'readonly' => 'readonly']) !!}
-                    {!! $errors->first('select_certified', '<p class="help-block">:message</p>') !!}
-                </div>
-            </div>
-        @endif  --}}
+        <input type="text" id="select_certified_temp" name="select_certified_temp" value="<?php echo e(isset($labRequestType) ? $labRequestType->certificate_id : ''); ?>" hidden >
 
-        @if ($certifieds->count() > 0)
-            <div class="form-group {{ $errors->has('select_certified') ? 'has-error' : '' }}">
+         
+
+        <?php if($certifieds->count() > 0): ?>
+            <div class="form-group <?php echo e($errors->has('select_certified') ? 'has-error' : ''); ?>">
                 <label for="select_certified" class="col-md-3 control-label label-height">
                     <span class="text-danger">*</span> ใบรับรองเลขที่:
                     <br>
@@ -522,79 +454,96 @@
                 </label>
                 <div class="col-md-4">
                     <select name="select_certified" id="select_certified" class="form-control" readonly>
-                        {{-- @foreach ($certifieds as $certified)
-                            <option value="{{ $certified->id }}" {{ $certified->id == 111 ? 'selected' : '' }}>
-                                {{ $certified->certificate_no }}
-                            </option>
-                        @endforeach --}}
+                        
                     </select>
-                    @if ($errors->has('select_certified'))
-                        <p class="help-block">{{ $errors->first('select_certified') }}</p>
-                    @endif
+                    <?php if($errors->has('select_certified')): ?>
+                        <p class="help-block"><?php echo e($errors->first('select_certified')); ?></p>
+                    <?php endif; ?>
                 </div>
             </div>
-        @endif
+        <?php endif; ?>
 
 
 
-        <div class="form-group {{ $errors->has('ref_application_no') ? 'has-error' : ''}}">
-            {!! HTML::decode(Form::label('ref_application_no', 'อ้างอิงเลขที่คำขอ'.':'.'<br/><span class=" font_size">(Application No.)</span>', ['class' => 'col-md-3 control-label  label-height'])) !!}
+        <div class="form-group <?php echo e($errors->has('ref_application_no') ? 'has-error' : ''); ?>">
+            <?php echo HTML::decode(Form::label('ref_application_no', 'อ้างอิงเลขที่คำขอ'.':'.'<br/><span class=" font_size">(Application No.)</span>', ['class' => 'col-md-3 control-label  label-height'])); ?>
+
             <div class="col-md-4">
-                {!! Form::text('ref_application_no', !empty($certi_lab->app_no)?$certi_lab->app_no:null, ['class' => 'form-control', 'id' => 'ref_application_no']) !!}
-                {!! $errors->first('ref_application_no', '<p class="help-block">:message</p>') !!}
+                <?php echo Form::text('ref_application_no', !empty($certi_lab->app_no)?$certi_lab->app_no:null, ['class' => 'form-control', 'id' => 'ref_application_no']); ?>
+
+                <?php echo $errors->first('ref_application_no', '<p class="help-block">:message</p>'); ?>
+
             </div>
         </div>
-        <div class="form-group {{ $errors->has('certificate_exports_id') ? 'has-error' : ''}}" hidden>
-            {!! HTML::decode(Form::label('certificate_exports_id', 'ใบรับรองเลขที่'.':'.'<br/><span class="  font_size">(Certificate No)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
+        <div class="form-group <?php echo e($errors->has('certificate_exports_id') ? 'has-error' : ''); ?>" hidden>
+            <?php echo HTML::decode(Form::label('certificate_exports_id', 'ใบรับรองเลขที่'.':'.'<br/><span class="  font_size">(Certificate No)</span>', ['class' => 'col-md-3 control-label label-height'])); ?>
+
             <div class="col-md-4">
-                {!! Form::text('certificate_exports_id', !empty($certi_lab->certificate_exports_id)?$certi_lab->certificate_exports_id:null, ['class' => 'form-control', 'id' => 'certificate_exports_id']) !!}
-                {!! $errors->first('certificate_exports_id', '<p class="help-block">:message</p>') !!}
+                <?php echo Form::text('certificate_exports_id', !empty($certi_lab->certificate_exports_id)?$certi_lab->certificate_exports_id:null, ['class' => 'form-control', 'id' => 'certificate_exports_id']); ?>
+
+                <?php echo $errors->first('certificate_exports_id', '<p class="help-block">:message</p>'); ?>
+
             </div>
         </div>
-        <div class="form-group {{ $errors->has('accereditation_no') ? 'has-error' : ''}}">
-            {!! HTML::decode(Form::label('accereditation_no', '<span class="text-danger">*</span> หมายเลขการรับรองที่'.':'.'<br/><span class="  font_size">(Accreditation No. Calibration)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
+        <div class="form-group <?php echo e($errors->has('accereditation_no') ? 'has-error' : ''); ?>">
+            <?php echo HTML::decode(Form::label('accereditation_no', '<span class="text-danger">*</span> หมายเลขการรับรองที่'.':'.'<br/><span class="  font_size">(Accreditation No. Calibration)</span>', ['class' => 'col-md-3 control-label label-height'])); ?>
+
             <div class="col-md-4">
-                {!! Form::text('accereditation_no', !empty($certi_lab->accereditation_no)?$certi_lab->accereditation_no:null, ['class' => 'form-control', 'id' => 'accereditation_no']) !!}
-                {!! $errors->first('accereditation_no', '<p class="help-block">:message</p>') !!}
+                <?php echo Form::text('accereditation_no', !empty($certi_lab->accereditation_no)?$certi_lab->accereditation_no:null, ['class' => 'form-control', 'id' => 'accereditation_no']); ?>
+
+                <?php echo $errors->first('accereditation_no', '<p class="help-block">:message</p>'); ?>
+
             </div>
         </div>
     </div>
 
-    <div hidden class="form-group {{ $errors->has('branch_type') ? 'has-error' : ''}}" >
-        {!! HTML::decode(Form::label('branch_type', '<span class="text-danger">*</span> ประเภทสาขา'.':'.'<br/><span class=" font_size">(Branch Type)</span>', ['class' => 'col-md-3 control-label  label-height'])) !!}
+    <div hidden class="form-group <?php echo e($errors->has('branch_type') ? 'has-error' : ''); ?>" >
+        <?php echo HTML::decode(Form::label('branch_type', '<span class="text-danger">*</span> ประเภทสาขา'.':'.'<br/><span class=" font_size">(Branch Type)</span>', ['class' => 'col-md-3 control-label  label-height'])); ?>
+
         <div class="col-md-4" >
              <div class="row">
             
-                    {!! Form::radio('branch_type', '1',  !empty( $certi_lab->branch_type ) && $certi_lab->branch_type == '1' ?true:(!empty($tis_data->branch_type ) && $tis_data->branch_type == '1' ?true:false), ['class'=>'check check-readonly', 'data-radio'=>'iradio_square-blue','id'=>'branch_type1']) !!}
+                    <?php echo Form::radio('branch_type', '1',  !empty( $certi_lab->branch_type ) && $certi_lab->branch_type == '1' ?true:(!empty($tis_data->branch_type ) && $tis_data->branch_type == '1' ?true:false), ['class'=>'check check-readonly', 'data-radio'=>'iradio_square-blue','id'=>'branch_type1']); ?>
+
                     <label   for="branch_type1">   &nbsp;สำนักงานใหญ่&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    </label>
              
-                    {!! Form::radio('branch_type', '2',  !empty( $certi_lab->branch_type ) && $certi_lab->branch_type != '1' ?true:(!empty($tis_data->branch_type ) && $tis_data->branch_type != '1' ?true:false), ['class'=>'check check-readonly', 'data-radio'=>'iradio_square-blue','id'=>'branch_type2']) !!}
+                    <?php echo Form::radio('branch_type', '2',  !empty( $certi_lab->branch_type ) && $certi_lab->branch_type != '1' ?true:(!empty($tis_data->branch_type ) && $tis_data->branch_type != '1' ?true:false), ['class'=>'check check-readonly', 'data-radio'=>'iradio_square-blue','id'=>'branch_type2']); ?>
+
                     <label for="branch_type2">  &nbsp;สาขา     </label>
             </div>
         </div>
     </div>
 
-    <div class="form-group{{ $errors->has('lab_name') ? 'has-error' : ''}}">
-        {!! HTML::decode(Form::label('lab_name', '<span class="text-danger">*</span> ชื่อห้องปฏิบัติการ (TH)'.':'.'<br/><span class=" font_size">(Name laboratory)</span>', ['class' => 'col-md-3 control-label  label-height'])) !!}
+    <div class="form-group<?php echo e($errors->has('lab_name') ? 'has-error' : ''); ?>">
+        <?php echo HTML::decode(Form::label('lab_name', '<span class="text-danger">*</span> ชื่อห้องปฏิบัติการ (TH)'.':'.'<br/><span class=" font_size">(Name laboratory)</span>', ['class' => 'col-md-3 control-label  label-height'])); ?>
+
         <div class="col-md-7">
-            {!! Form::text('lab_name', !empty($certi_lab->lab_name)?$certi_lab->lab_name:null, ['class' => 'form-control','required' => true]) !!}
-            {!! $errors->first('lab_name', '<p class="help-block">:message</p>') !!}
+            <?php echo Form::text('lab_name', !empty($certi_lab->lab_name)?$certi_lab->lab_name:null, ['class' => 'form-control','required' => true]); ?>
+
+            <?php echo $errors->first('lab_name', '<p class="help-block">:message</p>'); ?>
+
         </div>
     </div>
 
-    <div class="form-group {{ $errors->has('lab_name_en') ? 'has-error' : ''}}">
-        {!! HTML::decode(Form::label('lab_name_en', '<span class="text-danger">*</span> ชื่อห้องปฏิบัติการ (EN)'.':'.'<br/><span class=" font_size">(Name laboratory)</span>', ['class' => 'col-md-3 control-label  label-height'])) !!}
+    <div class="form-group <?php echo e($errors->has('lab_name_en') ? 'has-error' : ''); ?>">
+        <?php echo HTML::decode(Form::label('lab_name_en', '<span class="text-danger">*</span> ชื่อห้องปฏิบัติการ (EN)'.':'.'<br/><span class=" font_size">(Name laboratory)</span>', ['class' => 'col-md-3 control-label  label-height'])); ?>
+
         <div class="col-md-7">
-            {!! Form::text('lab_name_en', !empty($certi_lab->lab_name_en)?$certi_lab->lab_name_en:null, ['class' => 'form-control input_address_eng','required' => true]) !!}
-            {!! $errors->first('lab_name_en', '<p class="help-block">:message</p>') !!}
+            <?php echo Form::text('lab_name_en', !empty($certi_lab->lab_name_en)?$certi_lab->lab_name_en:null, ['class' => 'form-control input_address_eng','required' => true]); ?>
+
+            <?php echo $errors->first('lab_name_en', '<p class="help-block">:message</p>'); ?>
+
         </div>
     </div>
 
-    <div class="form-group {{ $errors->has('lab_name_short') ? 'has-error' : ''}}">
-        {!! HTML::decode(Form::label('lab_name_short', 'ชื่อย่อห้องปฏิบัติการ'.':'.'<br/><span class=" font_size">(Name laboratory)</span>', ['class' => 'col-md-3 control-label  label-height'])) !!}
+    <div class="form-group <?php echo e($errors->has('lab_name_short') ? 'has-error' : ''); ?>">
+        <?php echo HTML::decode(Form::label('lab_name_short', 'ชื่อย่อห้องปฏิบัติการ'.':'.'<br/><span class=" font_size">(Name laboratory)</span>', ['class' => 'col-md-3 control-label  label-height'])); ?>
+
         <div class="col-md-7">
-            {!! Form::text('lab_name_short', !empty($certi_lab->lab_name_short)?$certi_lab->lab_name_short:null, ['class' => 'form-control']) !!}
-            {!! $errors->first('lab_name_short', '<p class="help-block">:message</p>') !!}
+            <?php echo Form::text('lab_name_short', !empty($certi_lab->lab_name_short)?$certi_lab->lab_name_short:null, ['class' => 'form-control']); ?>
+
+            <?php echo $errors->first('lab_name_short', '<p class="help-block">:message</p>'); ?>
+
         </div>
     </div>
 
@@ -649,20 +598,27 @@
 
 
 
-    <div class="form-group {{ $errors->has('use_address_office') ? 'has-error' : ''}}">
-        {!! HTML::decode(Form::label('use_address_office', 'ที่อยู่ห้องปฏิบัติการ'.':'.'<br/><span class=" font_size">(Address laboratory)</span>', ['class' => 'col-md-3 control-label  label-height'])) !!}
+    <div class="form-group <?php echo e($errors->has('use_address_office') ? 'has-error' : ''); ?>">
+        <?php echo HTML::decode(Form::label('use_address_office', 'ที่อยู่ห้องปฏิบัติการ'.':'.'<br/><span class=" font_size">(Address laboratory)</span>', ['class' => 'col-md-3 control-label  label-height'])); ?>
+
         <div class="col-md-9">
             <div class="col-md-5">
-                {!! Form::radio('use_address_office', '1',!empty( $certi_lab->branch_type ) && $certi_lab->branch_type == '1' ?true:(!empty($tis_data->branch_type ) && $tis_data->branch_type == '1' ?true:false), ['class' => 'form-control check', 'data-radio' => 'iradio_square-blue', 'id'=>'use_address_office-1']) !!}
-                {!! Form::label('use_address_office-1', 'ที่อยู่เดียวกับที่อยู่สำนักงานใหญ่', ['class' => 'control-label font-medium-1 text-capitalize']) !!}
+                <?php echo Form::radio('use_address_office', '1',!empty( $certi_lab->branch_type ) && $certi_lab->branch_type == '1' ?true:(!empty($tis_data->branch_type ) && $tis_data->branch_type == '1' ?true:false), ['class' => 'form-control check', 'data-radio' => 'iradio_square-blue', 'id'=>'use_address_office-1']); ?>
+
+                <?php echo Form::label('use_address_office-1', 'ที่อยู่เดียวกับที่อยู่สำนักงานใหญ่', ['class' => 'control-label font-medium-1 text-capitalize']); ?>
+
             </div>
             <div class="col-md-4">
-                {!! Form::radio('use_address_office', '2',!empty( $certi_lab->branch_type ) && $certi_lab->branch_type != '1' ?true:(!empty($tis_data->branch_type ) && $tis_data->branch_type != '1' ?true:false), ['class' => 'form-control check', 'data-radio' => 'iradio_square-blue', 'id'=>'use_address_office-2']) !!}
-                {!! Form::label('use_address_office-2', 'ที่อยู่เดียวกับที่อยู่ติดต่อได้', ['class' => 'control-label font-medium-1 text-capitalize']) !!}
+                <?php echo Form::radio('use_address_office', '2',!empty( $certi_lab->branch_type ) && $certi_lab->branch_type != '1' ?true:(!empty($tis_data->branch_type ) && $tis_data->branch_type != '1' ?true:false), ['class' => 'form-control check', 'data-radio' => 'iradio_square-blue', 'id'=>'use_address_office-2']); ?>
+
+                <?php echo Form::label('use_address_office-2', 'ที่อยู่เดียวกับที่อยู่ติดต่อได้', ['class' => 'control-label font-medium-1 text-capitalize']); ?>
+
             </div>
             <div class="col-md-3">
-                {!! Form::radio('use_address_office', '3',null, ['class' => 'form-control check', 'data-radio' => 'iradio_square-blue', 'id'=>'use_address_office-3']) !!}
-                {!! Form::label('use_address_office-3', 'ระบุที่ตั้งใหม่', ['class' => 'control-label font-medium-1 text-capitalize']) !!}
+                <?php echo Form::radio('use_address_office', '3',null, ['class' => 'form-control check', 'data-radio' => 'iradio_square-blue', 'id'=>'use_address_office-3']); ?>
+
+                <?php echo Form::label('use_address_office-3', 'ระบุที่ตั้งใหม่', ['class' => 'control-label font-medium-1 text-capitalize']); ?>
+
             </div>
         </div>
     </div>
@@ -670,10 +626,13 @@
     <div class="row">
         <div class="col-md-6">
             <div class="form-group ">
-                {!! Form::label('authorized_address_seach', 'ค้นหาที่อยู่'.' :', ['class' => 'col-md-5 control-label']) !!}
+                <?php echo Form::label('authorized_address_seach', 'ค้นหาที่อยู่'.' :', ['class' => 'col-md-5 control-label']); ?>
+
                 <div class="col-md-7">
-                    {!! Form::text('authorized_address_seach', null,  ['id' => 'authorized_address_seach', 'class' => 'form-control', 'autocomplete' => 'off', 'data-provide' => 'typeahead', 'placeholder' => 'ค้นหาที่อยู่' ]) !!}
-                    {!! $errors->first('authorized_address_seach', '<p class="help-block">:message</p>') !!}
+                    <?php echo Form::text('authorized_address_seach', null,  ['id' => 'authorized_address_seach', 'class' => 'form-control', 'autocomplete' => 'off', 'data-provide' => 'typeahead', 'placeholder' => 'ค้นหาที่อยู่' ]); ?>
+
+                    <?php echo $errors->first('authorized_address_seach', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -682,20 +641,26 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('address_number') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('address_number', '<span class="text-danger">*</span> เลขที่'.':'.'<br/><span class=" font_size">(Address)</span>', ['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('address_number') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('address_number', '<span class="text-danger">*</span> เลขที่'.':'.'<br/><span class=" font_size">(Address)</span>', ['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    {!! Form::text('address_number', !empty($certi_lab->address_no)?$certi_lab->address_no:null, ['class' => 'form-control input_address', 'required' => 'required']) !!}
-                    {!! $errors->first('address_number', '<p class="help-block">:message</p>') !!}
+                    <?php echo Form::text('address_number', !empty($certi_lab->address_no)?$certi_lab->address_no:null, ['class' => 'form-control input_address', 'required' => 'required']); ?>
+
+                    <?php echo $errors->first('address_number', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('village_no') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('village_no', 'หมู่ที่'.':'.'<br/><span class=" font_size">(Mool)</span>', ['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('village_no') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('village_no', 'หมู่ที่'.':'.'<br/><span class=" font_size">(Mool)</span>', ['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    {!! Form::text('village_no', !empty($certi_lab->allay)?$certi_lab->allay:null, ['class' => 'form-control input_address']) !!}
-                    {!! $errors->first('village_no', '<p class="help-block">:message</p>') !!}
+                    <?php echo Form::text('village_no', !empty($certi_lab->allay)?$certi_lab->allay:null, ['class' => 'form-control input_address']); ?>
+
+                    <?php echo $errors->first('village_no', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -703,20 +668,26 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('address_soi') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('address_soi', 'ตรอก/ซอย'.':'.'<br/><span class=" font_size">(Trok/Sol)</span>', ['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('address_soi') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('address_soi', 'ตรอก/ซอย'.':'.'<br/><span class=" font_size">(Trok/Sol)</span>', ['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    {!! Form::text('address_soi', !empty($certi_lab->village_no)?$certi_lab->village_no:null, ['class' => 'form-control input_address']) !!}
-                    {!! $errors->first('address_soi', '<p class="help-block">:message</p>') !!}
+                    <?php echo Form::text('address_soi', !empty($certi_lab->village_no)?$certi_lab->village_no:null, ['class' => 'form-control input_address']); ?>
+
+                    <?php echo $errors->first('address_soi', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('address_street') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('address_street', 'ถนน'.':'.'<br/><span class=" font_size">(Street/Road)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('address_street') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('address_street', 'ถนน'.':'.'<br/><span class=" font_size">(Street/Road)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    {!! Form::text('address_street', !empty($certi_lab->road)?$certi_lab->road:null, ['class' => 'form-control input_address']) !!}
-                    {!! $errors->first('address_street', '<p class="help-block">:message</p>') !!}
+                    <?php echo Form::text('address_street', !empty($certi_lab->road)?$certi_lab->road:null, ['class' => 'form-control input_address']); ?>
+
+                    <?php echo $errors->first('address_street', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -729,20 +700,25 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('address_city') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('address_city', '<span class="text-danger">*</span> จังหวัด'.':'.'<br/><span class=" font_size">(Province)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('address_city') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('address_city', '<span class="text-danger">*</span> จังหวัด'.':'.'<br/><span class=" font_size">(Province)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    {!! Form::select('address_city', $province->pluck('PROVINCE_NAME', 'PROVINCE_ID' ), !empty($certi_lab->province)?$certi_lab->province: null , ['class' => 'form-control select_address', 'id'=>'address_city', 'required' => true, 'placeholder' =>'- จังหวัด -']) !!}
-                    {!! $errors->first('address_city', '<p class="help-block">:message</p>') !!}
+                    <?php echo Form::select('address_city', $province->pluck('PROVINCE_NAME', 'PROVINCE_ID' ), !empty($certi_lab->province)?$certi_lab->province: null , ['class' => 'form-control select_address', 'id'=>'address_city', 'required' => true, 'placeholder' =>'- จังหวัด -']); ?>
+
+                    <?php echo $errors->first('address_city', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('address_district') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('address_district', 'เขต/อำเภอ'.':'.'<br/><span class=" font_size">(Arnphoe/Khet)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('address_district') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('address_district', 'เขต/อำเภอ'.':'.'<br/><span class=" font_size">(Arnphoe/Khet)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    <input type="text" name="address_district" id="address_district" class="form-control input_address" readonly value="{!! !empty($certi_lab->amphur)?$certi_lab->amphur: null !!}">
-                    {!! $errors->first('according_district', '<p class="help-block">:message</p>') !!}
+                    <input type="text" name="address_district" id="address_district" class="form-control input_address" readonly value="<?php echo !empty($certi_lab->amphur)?$certi_lab->amphur: null; ?>">
+                    <?php echo $errors->first('according_district', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -750,20 +726,24 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('sub_district') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('sub_district', '<span class="text-danger">*</span> แขวง/ตำบล'.':'.'<br/><span class=" font_size">(Tambon/Khwaeng)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('sub_district') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('sub_district', '<span class="text-danger">*</span> แขวง/ตำบล'.':'.'<br/><span class=" font_size">(Tambon/Khwaeng)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    <input type="text" name="sub_district" id="sub_district" class="form-control input_address" readonly value="{!! !empty($certi_lab->district)?$certi_lab->district: null !!}">
-                    {!! $errors->first('sub_district', '<p class="help-block">:message</p>') !!}
+                    <input type="text" name="sub_district" id="sub_district" class="form-control input_address" readonly value="<?php echo !empty($certi_lab->district)?$certi_lab->district: null; ?>">
+                    <?php echo $errors->first('sub_district', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('postcode') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('postcode', '<span class="text-danger">*</span> รหัสไปรษณีย์'.':'.'<br/><span class=" font_size">(Zip code)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('postcode') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('postcode', '<span class="text-danger">*</span> รหัสไปรษณีย์'.':'.'<br/><span class=" font_size">(Zip code)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    <input type="text" name="postcode" id="postcode" class="form-control input_address" readonly required value="{!! !empty($certi_lab->postcode)?$certi_lab->postcode: null !!}">
-                    {!! $errors->first('postcode', '<p class="help-block">:message</p>') !!}
+                    <input type="text" name="postcode" id="postcode" class="form-control input_address" readonly required value="<?php echo !empty($certi_lab->postcode)?$certi_lab->postcode: null; ?>">
+                    <?php echo $errors->first('postcode', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -772,7 +752,8 @@
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                {!! HTML::decode(Form::label('', 'ที่อยู่ห้องปฏิบัติการ (EN)',['class' => 'col-md-5 control-label label-height'])) !!}
+                <?php echo HTML::decode(Form::label('', 'ที่อยู่ห้องปฏิบัติการ (EN)',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7"></div>
             </div>
         </div>
@@ -780,20 +761,26 @@
     
     <div class="row">
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('lab_address_no_eng') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_address_no_eng', '<span class="text-danger">*</span> เลขที่'.':'.'<br/><span class=" font_size">(Address)</span>', ['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('lab_address_no_eng') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('lab_address_no_eng', '<span class="text-danger">*</span> เลขที่'.':'.'<br/><span class=" font_size">(Address)</span>', ['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    {!! Form::text('lab_address_no_eng', !empty($certi_lab->lab_address_no_eng)?$certi_lab->lab_address_no_eng: null , ['class' => 'form-control input_address_eng', 'required' => 'required']) !!}
-                    {!! $errors->first('lab_address_no_eng', '<p class="help-block">:message</p>') !!}
+                    <?php echo Form::text('lab_address_no_eng', !empty($certi_lab->lab_address_no_eng)?$certi_lab->lab_address_no_eng: null , ['class' => 'form-control input_address_eng', 'required' => 'required']); ?>
+
+                    <?php echo $errors->first('lab_address_no_eng', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('lab_moo_eng') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_moo_eng', 'หมู่ที่'.':'.'<br/><span class=" font_size">(Moo)</span>', ['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('lab_moo_eng') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('lab_moo_eng', 'หมู่ที่'.':'.'<br/><span class=" font_size">(Moo)</span>', ['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    {!! Form::text('lab_moo_eng', !empty($certi_lab->lab_moo_eng)?$certi_lab->lab_moo_eng: null , ['class' => 'form-control input_address_eng']) !!}
-                    {!! $errors->first('lab_moo_eng', '<p class="help-block">:message</p>') !!}
+                    <?php echo Form::text('lab_moo_eng', !empty($certi_lab->lab_moo_eng)?$certi_lab->lab_moo_eng: null , ['class' => 'form-control input_address_eng']); ?>
+
+                    <?php echo $errors->first('lab_moo_eng', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -801,20 +788,26 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('lab_soi_eng') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_soi_eng', 'ตรอก/ซอย'.':'.'<br/><span class=" font_size">(Trok/Sol)</span>', ['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('lab_soi_eng') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('lab_soi_eng', 'ตรอก/ซอย'.':'.'<br/><span class=" font_size">(Trok/Sol)</span>', ['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    {!! Form::text('lab_soi_eng', !empty($certi_lab->lab_soi_eng)?$certi_lab->lab_soi_eng: null , ['class' => 'form-control input_address_eng']) !!}
-                    {!! $errors->first('lab_soi_eng', '<p class="help-block">:message</p>') !!}
+                    <?php echo Form::text('lab_soi_eng', !empty($certi_lab->lab_soi_eng)?$certi_lab->lab_soi_eng: null , ['class' => 'form-control input_address_eng']); ?>
+
+                    <?php echo $errors->first('lab_soi_eng', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('lab_street_eng') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_street_eng', 'ถนน'.':'.'<br/><span class=" font_size">(Street/Road)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('lab_street_eng') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('lab_street_eng', 'ถนน'.':'.'<br/><span class=" font_size">(Street/Road)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    {!! Form::text('lab_street_eng', !empty($certi_lab->lab_street_eng)?$certi_lab->lab_street_eng: null , ['class' => 'form-control input_address_eng']) !!}
-                    {!! $errors->first('lab_street_eng', '<p class="help-block">:message</p>') !!}
+                    <?php echo Form::text('lab_street_eng', !empty($certi_lab->lab_street_eng)?$certi_lab->lab_street_eng: null , ['class' => 'form-control input_address_eng']); ?>
+
+                    <?php echo $errors->first('lab_street_eng', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -822,20 +815,25 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="form-group  {{ $errors->has('address_city') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_province_eng', '<span class="text-danger">*</span> จังหวัด'.':'.'<br/><span class=" font_size">(Province)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group  <?php echo e($errors->has('address_city') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('lab_province_eng', '<span class="text-danger">*</span> จังหวัด'.':'.'<br/><span class=" font_size">(Province)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    {!! Form::select('lab_province_eng', $province->where('PROVINCE_NAME_EN', '!=', null)->pluck('PROVINCE_NAME_EN', 'PROVINCE_ID' ), !empty($certi_lab->lab_province_eng)?$certi_lab->lab_province_eng: null , ['class' => 'form-control', 'id'=>'lab_province_eng', 'required' => true, 'placeholder' =>'- PROVINCE -']) !!}
-                    {!! $errors->first('lab_province_eng', '<p class="help-block">:message</p>') !!}
+                    <?php echo Form::select('lab_province_eng', $province->where('PROVINCE_NAME_EN', '!=', null)->pluck('PROVINCE_NAME_EN', 'PROVINCE_ID' ), !empty($certi_lab->lab_province_eng)?$certi_lab->lab_province_eng: null , ['class' => 'form-control', 'id'=>'lab_province_eng', 'required' => true, 'placeholder' =>'- PROVINCE -']); ?>
+
+                    <?php echo $errors->first('lab_province_eng', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('lab_amphur_eng') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_amphur_eng', 'เขต/อำเภอ'.':'.'<br/><span class=" font_size">(Arnphoe/Khet)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('lab_amphur_eng') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('lab_amphur_eng', 'เขต/อำเภอ'.':'.'<br/><span class=" font_size">(Arnphoe/Khet)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    <input type="text" name="lab_amphur_eng" id="lab_amphur_eng" class="form-control input_address_eng" readonly value="{!! !empty($certi_lab->lab_amphur_eng)?$certi_lab->lab_amphur_eng: null !!}">
-                    {!! $errors->first('lab_amphur_eng', '<p class="help-block">:message</p>') !!}
+                    <input type="text" name="lab_amphur_eng" id="lab_amphur_eng" class="form-control input_address_eng" readonly value="<?php echo !empty($certi_lab->lab_amphur_eng)?$certi_lab->lab_amphur_eng: null; ?>">
+                    <?php echo $errors->first('lab_amphur_eng', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -843,29 +841,24 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('lab_district_eng') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_district_eng', '<span class="text-danger">*</span> แขวง/ตำบล'.':'.'<br/><span class=" font_size">(Tambon/Khwaeng)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('lab_district_eng') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('lab_district_eng', '<span class="text-danger">*</span> แขวง/ตำบล'.':'.'<br/><span class=" font_size">(Tambon/Khwaeng)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    <input type="text" name="lab_district_eng" id="lab_district_eng" class="form-control input_address_eng" readonly value="{!! !empty($certi_lab->lab_district_eng)?$certi_lab->lab_district_eng: null !!}">
-                    {!! $errors->first('lab_district_eng', '<p class="help-block">:message</p>') !!}
+                    <input type="text" name="lab_district_eng" id="lab_district_eng" class="form-control input_address_eng" readonly value="<?php echo !empty($certi_lab->lab_district_eng)?$certi_lab->lab_district_eng: null; ?>">
+                    <?php echo $errors->first('lab_district_eng', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
-        {{-- <div class="col-md-6">
-            <div class="form-group  {{ $errors->has('lab_postcode_eng') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_postcode_eng', '<span class="text-danger">*</span> รหัสไปรษณีย์'.':'.'<br/><span class=" font_size">(Zip code)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
-                <div class="col-md-7">
-                    <input type="text" name="lab_postcode_eng" id="lab_postcode_eng" class="form-control input_address_eng" required value="{!! !empty($certi_lab->lab_postcode_eng)?$certi_lab->lab_postcode_eng: null !!}">
-                    {!! $errors->first('lab_postcode_eng', '<p class="help-block">:message</p>') !!}
-                </div>
-            </div>
-        </div> --}}
+        
     </div>
 
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                {!! HTML::decode(Form::label('', '',['class' => 'col-md-5 control-label label-height'])) !!}
+                <?php echo HTML::decode(Form::label('', '',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
                     <a class="btn btn-default pull-left" id="show_map" onclick="return false">
                         ค้นหาจากแผนที่
@@ -877,20 +870,24 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('lab_latitude') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_latitude', '<span class="text-danger">*</span> พิกัดที่ตั้ง (ละติจูด)'.':'.'<br/><span class=" font_size">(latitude)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('lab_latitude') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('lab_latitude', '<span class="text-danger">*</span> พิกัดที่ตั้ง (ละติจูด)'.':'.'<br/><span class=" font_size">(latitude)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    <input type="text" name="lab_latitude" id="lab_latitude" class="form-control input_address" value="{!! !empty($certi_lab->lab_latitude)?$certi_lab->lab_latitude: null !!}" required>
-                    {!! $errors->first('lab_latitude', '<p class="help-block">:message</p>') !!}
+                    <input type="text" name="lab_latitude" id="lab_latitude" class="form-control input_address" value="<?php echo !empty($certi_lab->lab_latitude)?$certi_lab->lab_latitude: null; ?>" required>
+                    <?php echo $errors->first('lab_latitude', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('lab_longitude') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_longitude', '<span class="text-danger">*</span> พิกัดที่ตั้ง (ลองจิจูด)'.':'.'<br/><span class=" font_size">(longitude)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('lab_longitude') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('lab_longitude', '<span class="text-danger">*</span> พิกัดที่ตั้ง (ลองจิจูด)'.':'.'<br/><span class=" font_size">(longitude)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    <input type="text" name="lab_longitude" id="lab_longitude" class="form-control input_address" value="{!! !empty($certi_lab->lab_longitude)?$certi_lab->lab_longitude: null !!}" required>
-                    {!! $errors->first('lab_longitude', '<p class="help-block">:message</p>') !!}
+                    <input type="text" name="lab_longitude" id="lab_longitude" class="form-control input_address" value="<?php echo !empty($certi_lab->lab_longitude)?$certi_lab->lab_longitude: null; ?>" required>
+                    <?php echo $errors->first('lab_longitude', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -899,7 +896,8 @@
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                {!! HTML::decode(Form::label('lab_district_eng', 'ข้อมูลสำหรับการติดต่อ'.'<br/><span class=" font_size">(Contact information)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+                <?php echo HTML::decode(Form::label('lab_district_eng', 'ข้อมูลสำหรับการติดต่อ'.'<br/><span class=" font_size">(Contact information)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-6"></div>
             </div>
         </div>
@@ -907,52 +905,52 @@
 
     <div class="row">
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('contact') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('contact', '<span class="text-danger">*</span> ชื่อบุคคลที่ติดต่อ'.':'.'<br/><span class=" font_size">(Contact Person)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('contact') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('contact', '<span class="text-danger">*</span> ชื่อบุคคลที่ติดต่อ'.':'.'<br/><span class=" font_size">(Contact Person)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    <input type="text" name="contact"   value="{!! !empty($certi_lab->contactor_name)?$certi_lab->contactor_name: null !!}"  id="contactor_name" class="form-control"  >
-                    {!! $errors->first('contact', '<p class="help-block">:message</p>') !!}
+                    <input type="text" name="contact"   value="<?php echo !empty($certi_lab->contactor_name)?$certi_lab->contactor_name: null; ?>"  id="contactor_name" class="form-control"  >
+                    <?php echo $errors->first('contact', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
      
     
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('contact_tel') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('contact_tel', '<span class="text-danger">*</span> โทรศัพท์ผู้ติดต่อ'.':'.'<br/><span class=" font_size">(Telephone)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('contact_tel') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('contact_tel', '<span class="text-danger">*</span> โทรศัพท์ผู้ติดต่อ'.':'.'<br/><span class=" font_size">(Telephone)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    <input type="text" name="contact_tel"  value="{!! !empty($certi_lab->contact_tel)?$certi_lab->contact_tel: null !!}"   id="contact_tel" class="form-control"   >
-                    {!! $errors->first('contact_tel', '<p class="help-block">:message</p>') !!}
+                    <input type="text" name="contact_tel"  value="<?php echo !empty($certi_lab->contact_tel)?$certi_lab->contact_tel: null; ?>"   id="contact_tel" class="form-control"   >
+                    <?php echo $errors->first('contact_tel', '<p class="help-block">:message</p>'); ?>
+
                 </div>
 
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('contact_mobile') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('contact_mobile', '<span class="text-danger">*</span> โทรศัพท์มือถือ'.':'.'<br/><span class=" font_size">(Mobile)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('contact_mobile') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('contact_mobile', '<span class="text-danger">*</span> โทรศัพท์มือถือ'.':'.'<br/><span class=" font_size">(Mobile)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    <input type="text" name="contact_mobile" id="contact_mobile" class="form-control" value="{!! !empty($certi_lab->telephone)?$certi_lab->telephone: null !!}" >
-                    {!! $errors->first('contact_mobile', '<p class="help-block">:message</p>') !!}
+                    <input type="text" name="contact_mobile" id="contact_mobile" class="form-control" value="<?php echo !empty($certi_lab->telephone)?$certi_lab->telephone: null; ?>" >
+                    <?php echo $errors->first('contact_mobile', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div> 
 
-        {{-- <div class="col-md-6">
-            <div class="form-group {{ $errors->has('address_tel') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('address_tel', '<span class="text-danger">*</span> Email'.':'.'<br/><span class=" font_size text-danger">*หากต้องการเปลี่ยน e-mail กรุณาติดต่อเจ้าหน้าที่</span>',['class' => 'col-md-5 control-label label-height'])) !!}
-                <div class="col-md-7">
-                    <input type="email"  value="{!! !empty($certi_lab->email)?$certi_lab->email: null !!}"  name="address_email" id="address_email" class="form-control" required placeholder="Email@gmail.com" readonly>
-                    {!! $errors->first('address_email', '<p class="help-block">:message</p>') !!}
-                </div>
-            </div>
-        </div> --}}
+        
 
         <div class="col-md-6">
-            <div class="form-group {{ $errors->has('address_tel') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('address_tel', '<span class="text-danger">*</span> Email'.':'.'<br/><span class=" font_size">(E-mail)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+            <div class="form-group <?php echo e($errors->has('address_tel') ? 'has-error' : ''); ?>">
+                <?php echo HTML::decode(Form::label('address_tel', '<span class="text-danger">*</span> Email'.':'.'<br/><span class=" font_size">(E-mail)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+
                 <div class="col-md-7">
-                    <input type="email"  value="{!! !empty($certi_lab->email)?$certi_lab->email: null !!}"  name="address_email" id="address_email" class="form-control" required placeholder="Email@gmail.com" readonly>
-                    {!! $errors->first('address_email', '<p class="help-block">:message</p>') !!}
+                    <input type="email"  value="<?php echo !empty($certi_lab->email)?$certi_lab->email: null; ?>"  name="address_email" id="address_email" class="form-control" required placeholder="Email@gmail.com" readonly>
+                    <?php echo $errors->first('address_email', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -961,53 +959,63 @@
     <div class="col-md-12 col-md-offset-2">
         <legend><h4>ประเภทสถานปฏิบัติการของห้องปฏิบัติการ (Types of laboratory’s facilities) สำหรับสำนักงานใหญ่</h4></legend>
     
-        @php
+        <?php
             $certi_lab_place = null;
             if( isset($certi_lab->id) ){
                 $certi_lab_place = App\Models\Certify\Applicant\CertiLabPlace::Where('app_certi_lab_id',$certi_lab->id)->first();
             }
-        @endphp
+        ?>
         <div class="row" id="facility_type_wrapper">
-            <div class="m-l-15 form-group {{ $errors->has('pl_2_1') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('pl_2_1') ? 'has-error' : ''); ?>">
                 <div class="col-md-12 m-l-15">
-                    {!! Form::checkbox('pl_2_1', '0', isset( $certi_lab_place->permanent_operating_site ) && $certi_lab_place->permanent_operating_site == '0' ?true:false, ['id'=>'pl_2_1','class'=>'check pl_2_1 check_main','data-checkbox'=>"icheckbox_flat-red checked" ,'data-id'=>"1" ]) !!}
+                    <?php echo Form::checkbox('pl_2_1', '0', isset( $certi_lab_place->permanent_operating_site ) && $certi_lab_place->permanent_operating_site == '0' ?true:false, ['id'=>'pl_2_1','class'=>'check pl_2_1 check_main','data-checkbox'=>"icheckbox_flat-red checked" ,'data-id'=>"1" ]); ?>
+
                     <label for="pl_2_1"> &nbsp;ประเภท1 สถานปฏิบัติการถาวร (Permanent facilities) &nbsp; </label>
-                    {!! $errors->first('pl_2_1', '<p class="help-block">:message</p>') !!}
+                    <?php echo $errors->first('pl_2_1', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
-            <div class="m-l-15 form-group {{ $errors->has('pl_2_2') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('pl_2_2') ? 'has-error' : ''); ?>">
                 <div class="col-md-12 m-l-15">
-                    {!! Form::checkbox('pl_2_2', '0', isset( $certi_lab_place->off_site_operations ) && $certi_lab_place->off_site_operations == '0' ?true:false, ['id'=>'pl_2_2','class'=>'check pl_2_2 check_main','data-checkbox'=>"icheckbox_flat-red",'data-id'=>"2"]) !!}
+                    <?php echo Form::checkbox('pl_2_2', '0', isset( $certi_lab_place->off_site_operations ) && $certi_lab_place->off_site_operations == '0' ?true:false, ['id'=>'pl_2_2','class'=>'check pl_2_2 check_main','data-checkbox'=>"icheckbox_flat-red",'data-id'=>"2"]); ?>
+
                     <label for="pl_2_2"> &nbsp;ประเภท2 สถานปฏิบัติการนอกสถานที่ (Sites away from its permanent facilities) &nbsp; </label>
-                    {!! $errors->first('pl_2_2', '<p class="help-block">:message</p>') !!}
+                    <?php echo $errors->first('pl_2_2', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
-            <div class="m-l-15 form-group {{ $errors->has('pl_2_3') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('pl_2_3') ? 'has-error' : ''); ?>">
                 <div class="col-md-12 m-l-15">
-                    {!! Form::checkbox('pl_2_3', '0', isset( $certi_lab_place->mobile_operating_facility ) && $certi_lab_place->mobile_operating_facility == '0' ?true:false, ['id'=>'pl_2_3','class'=>'check pl_2_3 check_main','data-checkbox'=>"icheckbox_flat-red",'data-id'=>"3"]) !!}
+                    <?php echo Form::checkbox('pl_2_3', '0', isset( $certi_lab_place->mobile_operating_facility ) && $certi_lab_place->mobile_operating_facility == '0' ?true:false, ['id'=>'pl_2_3','class'=>'check pl_2_3 check_main','data-checkbox'=>"icheckbox_flat-red",'data-id'=>"3"]); ?>
+
                     <label for="pl_2_3"> &nbsp;ประเภท3 สถานปฏิบัติการเคลื่อนที่ (Mobile facilities) &nbsp; </label>
-                    {!! $errors->first('pl_2_3', '<p class="help-block">:message</p>') !!}
+                    <?php echo $errors->first('pl_2_3', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
-            <div class="m-l-15 form-group {{ $errors->has('pl_2_4') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('pl_2_4') ? 'has-error' : ''); ?>">
                 <div class="col-md-12 m-l-15">
-                    {!! Form::checkbox('pl_2_4', '0', isset( $certi_lab_place->temporary_operating_site ) && $certi_lab_place->temporary_operating_site == '0' ?true:false, ['id'=>'pl_2_4','class'=>'check pl_2_4 check_main','data-checkbox'=>"icheckbox_flat-red",'data-id'=>"4"]) !!}
+                    <?php echo Form::checkbox('pl_2_4', '0', isset( $certi_lab_place->temporary_operating_site ) && $certi_lab_place->temporary_operating_site == '0' ?true:false, ['id'=>'pl_2_4','class'=>'check pl_2_4 check_main','data-checkbox'=>"icheckbox_flat-red",'data-id'=>"4"]); ?>
+
                     <label for="pl_2_4"> &nbsp;ประเภท4 สถานปฏิบัติการชั่วคราว (Temporary facilities) &nbsp; </label>
-                    {!! $errors->first('pl_2_4', '<p class="help-block">:message</p>') !!}
+                    <?php echo $errors->first('pl_2_4', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
 
-            <div hidden class="m-l-15 form-group {{ $errors->has('pl_2_5') ? 'has-error' : ''}}">
+            <div hidden class="m-l-15 form-group <?php echo e($errors->has('pl_2_5') ? 'has-error' : ''); ?>">
                 <div class="col-md-12 m-l-15">
-                    {!! Form::checkbox('pl_2_5', '0', isset( $certi_lab_place->multi_site_facility ) && $certi_lab_place->multi_site_facility == '0' ?true:false, ['id'=>'pl_2_5','class'=>'check pl_2_5 check_main','data-checkbox'=>"icheckbox_flat-red",'data-id'=>"5"]) !!}
+                    <?php echo Form::checkbox('pl_2_5', '0', isset( $certi_lab_place->multi_site_facility ) && $certi_lab_place->multi_site_facility == '0' ?true:false, ['id'=>'pl_2_5','class'=>'check pl_2_5 check_main','data-checkbox'=>"icheckbox_flat-red",'data-id'=>"5"]); ?>
+
                     <label for="pl_2_5"> &nbsp;ประเภท5 สถานปฏิบัติการหลายสถานะที่ (Multi-site facilities) &nbsp; </label>
-                    {!! $errors->first('pl_2_5', '<p class="help-block">:message</p>') !!}
+                    <?php echo $errors->first('pl_2_5', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
     </div>
     <hr>
-    @include ('certify.applicant.forms.extend-form.form_request_extend')
+    <?php echo $__env->make('certify.applicant.forms.extend-form.form_request_extend', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
 
 </fieldset>
 
@@ -1019,7 +1027,7 @@
 <fieldset class="white-box">
     <legend><h4>2. ข้อมูลทั่วไป (General information)</h4></legend>
 
-    @php
+    <?php
         $man_applicant_arr[ 1 ] = 'เป็นนิติบุคคล (A legal Entity)';
         $man_applicant_arr[ 2 ] = 'เป็นนิติบุคคลที่มีกิจกรรมอื่นนอกเหนือจากกิจกรรม ทดสอบ/สอบเทียบ (A legal entity having other types of business apart from testing / calibration)';
         $man_applicant_arr[ 3 ] = 'เป็นหน่วยงานของรัฐ (A Government Agency)';
@@ -1027,50 +1035,53 @@
         $man_applicant_arr[ 5 ] = 'เป็นสถาบันการศึกษา (An Academic Institution)';
         $man_applicant_arr[ 6 ] = 'เป็นสถาบันวิชาชีพ (A Professional Institution)';
         $man_applicant_arr[ 7 ] = 'อื่นๆ (Others)';
-    @endphp
+    ?>
 
-    @php
+    <?php
 
         $certi_lab_info = null;
         if( isset($certi_lab->id) ){
             $certi_lab_info = App\Models\Certify\Applicant\CertiLabInfo::Where('app_certi_lab_id',$certi_lab->id)->first();
         }
-    @endphp
+    ?>
 
 
     <div class="row">
-        <div class="m-l-10 form-group {{ $errors->has('man_applicant') ? 'has-error' : ''}}">
+        <div class="m-l-10 form-group <?php echo e($errors->has('man_applicant') ? 'has-error' : ''); ?>">
             <label for="man_applicant" class="col-md-12" style="padding-top: 7px;margin-bottom: 5px;font-size: 16px"><span class="text-danger">*</span> ผู้ยื่นคำขอ (Qualifications of Applicant)</label>
             <div class="col-md-10 ">
-                {!! Form::select('man_applicant', $man_applicant_arr,  !empty($certi_lab_info->petitioner)?$certi_lab_info->petitioner: null , ['class' => 'form-control', 'id'=>'man_applicant', 'placeholder' =>'- ผู้ยื่นคำขอ -', 'required' => true]) !!}
-                {!! $errors->first('man_applicant', '<p class="help-block">:message</p>') !!}
+                <?php echo Form::select('man_applicant', $man_applicant_arr,  !empty($certi_lab_info->petitioner)?$certi_lab_info->petitioner: null , ['class' => 'form-control', 'id'=>'man_applicant', 'placeholder' =>'- ผู้ยื่นคำขอ -', 'required' => true]); ?>
+
+                <?php echo $errors->first('man_applicant', '<p class="help-block">:message</p>'); ?>
+
             </div>
         </div>
     </div>
 
     <div class="row">
         <div id="extra_value_two" style="display: none;">
-            <div class="m-l-15 form-group {{ $errors->has('at_1_1_1') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('at_1_1_1') ? 'has-error' : ''); ?>">
                 <label for="at_1_1_1" class="col-md-12" style="padding-top: 7px;margin-bottom: 5px">(1) มีกิจกรรมที่นอกเหนือจากกิจกรรมทดสอบ/สอบเทียบ เป็นกิจกรรมหลัก (major type of business apart from testing / calibration)</label>
                 <div class="col-md-12 m-t-5 m-l-15">
-                    <label>{!! Form::radio('at_1_1_1', '0', isset( $certi_lab_info->lab_type_other ) && $certi_lab_info->lab_type_other == '0' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-green']) !!} &nbsp;มี &nbsp;</label>
-                    <label>{!! Form::radio('at_1_1_1', '1', isset( $certi_lab_info->lab_type_other ) && $certi_lab_info->lab_type_other == '1' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-red']) !!} &nbsp;ไม่มี &nbsp;</label>
-                    {!! $errors->first('at_1_1_1', '<p class="help-block">:message</p>') !!}
+                    <label><?php echo Form::radio('at_1_1_1', '0', isset( $certi_lab_info->lab_type_other ) && $certi_lab_info->lab_type_other == '0' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-green']); ?> &nbsp;มี &nbsp;</label>
+                    <label><?php echo Form::radio('at_1_1_1', '1', isset( $certi_lab_info->lab_type_other ) && $certi_lab_info->lab_type_other == '1' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-red']); ?> &nbsp;ไม่มี &nbsp;</label>
+                    <?php echo $errors->first('at_1_1_1', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
-            <div class="m-l-15 form-group {{ $errors->has('activity_file') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('activity_file') ? 'has-error' : ''); ?>">
                 <label for="    " class="col-md-12" style="padding-top: 7px;margin-bottom: 13px">(2) อธิบายรายละเอียดกิจกรรมหลัก  (please specify major type of business)</label>
                 <div class="col-md-6">
 
-                    @if( !empty($certi_lab_info->desc_main_file) && HP::checkFileStorage($attach_path.$certi_lab_info->desc_main_file)  )
+                    <?php if( !empty($certi_lab_info->desc_main_file) && HP::checkFileStorage($attach_path.$certi_lab_info->desc_main_file)  ): ?>
                         
-                        <a href="{!! HP::getFileStorage($attach_path.$certi_lab_info->desc_main_file) !!}" target="_blank" class="view-attach btn btn-info btn-sm"> {!! HP::FileExtension($certi_lab_info->activity_client_name)  ?? '' !!}</a>
+                        <a href="<?php echo HP::getFileStorage($attach_path.$certi_lab_info->desc_main_file); ?>" target="_blank" class="view-attach btn btn-info btn-sm"> <?php echo HP::FileExtension($certi_lab_info->activity_client_name)  ?? ''; ?></a>
 
-                        <a href="{{url('certify/applicant/delete/file_app_certi_lab_info').'/'.$certi_lab_info->id.'/'.'desc_main_file'.'/'.$certi_lab->token}}" class="btn btn-danger btn-xs" onclick="return confirm('ต้องการลบไฟล์นี้ใช่หรือไม่ ?')">
+                        <a href="<?php echo e(url('certify/applicant/delete/file_app_certi_lab_info').'/'.$certi_lab_info->id.'/'.'desc_main_file'.'/'.$certi_lab->token); ?>" class="btn btn-danger btn-xs" onclick="return confirm('ต้องการลบไฟล์นี้ใช่หรือไม่ ?')">
                             <i class="fa fa-remove"></i>
                         </a>
 
-                    @else
+                    <?php else: ?>
                         <div class="fileinput fileinput-new input-group" data-provides="fileinput">
                             <div class="form-control" data-trigger="fileinput">
                                 <i class="glyphicon glyphicon-file fileinput-exists"></i>
@@ -1083,28 +1094,31 @@
                             </span>
                             <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">ลบ</a>
                         </div>
-                        {!! $errors->first('activity_file', '<p class="help-block">:message</p>') !!}
+                        <?php echo $errors->first('activity_file', '<p class="help-block">:message</p>'); ?>
 
-                    @endif
+
+                    <?php endif; ?>
 
                 </div>
             </div>
         
-            <div class="m-l-15 form-group {{ $errors->has('at_1_1_3') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('at_1_1_3') ? 'has-error' : ''); ?>">
                 <label for="at_1_1_3" class="col-md-12" style="padding-top: 7px;margin-bottom: 5px">(3) ทดสอบ/สอบเทียบให้หน่วยงานของตนเองเท่านั้น (Testing / Calibration services are restricted to own use )</label>
                 <div class="col-md-12 m-t-5 m-l-15">
-                    <label>{!! Form::radio('at_1_1_3', '0', isset( $certi_lab_info->only_own_depart ) && $certi_lab_info->only_own_depart == '0' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-green']) !!} &nbsp;ใช่ &nbsp;</label>
-                    <label>{!! Form::radio('at_1_1_3', '1', isset( $certi_lab_info->only_own_depart ) && $certi_lab_info->only_own_depart == '1' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-red']) !!} &nbsp;ไม่ใช่ &nbsp;</label>
-                    {!! $errors->first('at_1_1_3', '<p class="help-block">:message</p>') !!}
+                    <label><?php echo Form::radio('at_1_1_3', '0', isset( $certi_lab_info->only_own_depart ) && $certi_lab_info->only_own_depart == '0' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-green']); ?> &nbsp;ใช่ &nbsp;</label>
+                    <label><?php echo Form::radio('at_1_1_3', '1', isset( $certi_lab_info->only_own_depart ) && $certi_lab_info->only_own_depart == '1' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-red']); ?> &nbsp;ไม่ใช่ &nbsp;</label>
+                    <?php echo $errors->first('at_1_1_3', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         
-            <div class="m-l-15 form-group {{ $errors->has('at_1_1_4') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('at_1_1_4') ? 'has-error' : ''); ?>">
                 <label for="at_1_1_4" class="col-md-12" style="padding-top: 7px;margin-bottom: 5px">(4) ทดสอบ/สอบเทียบให้หน่วยงานอื่นด้วย (Testing / Calibration services are open for public)</label>
                 <div class="col-md-12 m-t-5 m-l-15">
-                    <label>{!! Form::radio('at_1_1_4', '0', isset( $certi_lab_info->depart_other ) && $certi_lab_info->depart_other == '0' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-green']) !!} &nbsp;ใช่ &nbsp;</label>
-                    <label>{!! Form::radio('at_1_1_4', '1', isset( $certi_lab_info->depart_other ) && $certi_lab_info->depart_other == '1' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-red']) !!} &nbsp;ไม่ใช่ &nbsp;</label>
-                    {!! $errors->first('at_1_1_4', '<p class="help-block">:message</p>') !!}
+                    <label><?php echo Form::radio('at_1_1_4', '0', isset( $certi_lab_info->depart_other ) && $certi_lab_info->depart_other == '0' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-green']); ?> &nbsp;ใช่ &nbsp;</label>
+                    <label><?php echo Form::radio('at_1_1_4', '1', isset( $certi_lab_info->depart_other ) && $certi_lab_info->depart_other == '1' ?true:false, ['class'=>'check input_extra_value_two', 'data-radio'=>'iradio_square-red']); ?> &nbsp;ไม่ใช่ &nbsp;</label>
+                    <?php echo $errors->first('at_1_1_4', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -1112,16 +1126,16 @@
 
     <div class="row">
         <div id="extra_value_three" style="display: none;">
-            <div class="m-l-15 form-group {{ $errors->has('file_section') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('file_section') ? 'has-error' : ''); ?>">
                 <div class="col-md-6">
 
-                    @if( !empty($certi_lab_info->file_section) && HP::checkFileStorage($attach_path.$certi_lab_info->file_section)  )
-                        <a href="{!! HP::getFileStorage($attach_path.$certi_lab_info->file_section) !!}" target="_blank" class="view-attach btn btn-info btn-sm"> {!! HP::FileExtension($certi_lab_info->file_client_name)  ?? '' !!}</a>
+                    <?php if( !empty($certi_lab_info->file_section) && HP::checkFileStorage($attach_path.$certi_lab_info->file_section)  ): ?>
+                        <a href="<?php echo HP::getFileStorage($attach_path.$certi_lab_info->file_section); ?>" target="_blank" class="view-attach btn btn-info btn-sm"> <?php echo HP::FileExtension($certi_lab_info->file_client_name)  ?? ''; ?></a>
 
-                        <a href="{{url('certify/applicant/delete/file_app_certi_lab_info').'/'.$certi_lab_info->id.'/'.'file_section'.'/'.$certi_lab->token}}" class="btn btn-danger btn-xs" onclick="return confirm('ต้องการลบไฟล์นี้ใช่หรือไม่ ?')">
+                        <a href="<?php echo e(url('certify/applicant/delete/file_app_certi_lab_info').'/'.$certi_lab_info->id.'/'.'file_section'.'/'.$certi_lab->token); ?>" class="btn btn-danger btn-xs" onclick="return confirm('ต้องการลบไฟล์นี้ใช่หรือไม่ ?')">
                             <i class="fa fa-remove"></i>
                         </a>
-                    @else
+                    <?php else: ?>
                         <div class="fileinput fileinput-new input-group" data-provides="fileinput">
                             <div class="form-control" data-trigger="fileinput">
                                 <i class="glyphicon glyphicon-file fileinput-exists"></i>
@@ -1134,8 +1148,9 @@
                                 </span>
                             <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">ลบ</a>
                         </div>
-                        {!! $errors->first('file_section', '<p class="help-block">:message</p>') !!}
-                    @endif
+                        <?php echo $errors->first('file_section', '<p class="help-block">:message</p>'); ?>
+
+                    <?php endif; ?>
 
                 </div>
             </div>
@@ -1144,34 +1159,39 @@
 
     <div class="row">
         <div id="extra_value_other" style="display: none;">
-            <div class="m-l-15 form-group {{ $errors->has('at_1_1_5') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('at_1_1_5') ? 'has-error' : ''); ?>">
                 <div class="col-md-12 m-l-15">
-                    <label>{!! Form::checkbox('at_1_1_5', '0', isset( $certi_lab_info->over_twenty ) && $certi_lab_info->over_twenty == '0' ?true:false, ['class'=>'check input_extra_value_other','data-checkbox'=>"icheckbox_flat-red"]) !!} &nbsp;มีอายุไม่ต่ำกว่ายี่สิบปีบริบูรณ์ (being not less than twenty years of age) &nbsp;</label>
-                    {!! $errors->first('at_1_1_5', '<p class="help-block">:message</p>') !!}
+                    <label><?php echo Form::checkbox('at_1_1_5', '0', isset( $certi_lab_info->over_twenty ) && $certi_lab_info->over_twenty == '0' ?true:false, ['class'=>'check input_extra_value_other','data-checkbox'=>"icheckbox_flat-red"]); ?> &nbsp;มีอายุไม่ต่ำกว่ายี่สิบปีบริบูรณ์ (being not less than twenty years of age) &nbsp;</label>
+                    <?php echo $errors->first('at_1_1_5', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
-            <div class="m-l-15 form-group {{ $errors->has('at_1_1_6') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('at_1_1_6') ? 'has-error' : ''); ?>">
                 <div class="col-md-12 m-l-15">
-                    <label>{!! Form::checkbox('at_1_1_6', '0', isset( $certi_lab_info->not_bankrupt ) && $certi_lab_info->not_bankrupt == '0' ?true:false, ['class'=>'check input_extra_value_other', 'data-checkbox'=>"icheckbox_flat-red"]) !!} &nbsp;ไม่เป็นบุคคลล้มละลาย (not being bankrupt) &nbsp;</label>
-                    {!! $errors->first('at_1_1_6', '<p class="help-block">:message</p>') !!}
+                    <label><?php echo Form::checkbox('at_1_1_6', '0', isset( $certi_lab_info->not_bankrupt ) && $certi_lab_info->not_bankrupt == '0' ?true:false, ['class'=>'check input_extra_value_other', 'data-checkbox'=>"icheckbox_flat-red"]); ?> &nbsp;ไม่เป็นบุคคลล้มละลาย (not being bankrupt) &nbsp;</label>
+                    <?php echo $errors->first('at_1_1_6', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
-            <div class="m-l-15 form-group {{ $errors->has('at_1_1_7') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('at_1_1_7') ? 'has-error' : ''); ?>">
                 <div class="col-md-12 m-l-15">
-                    <label>{!! Form::checkbox('at_1_1_7', '0', isset( $certi_lab_info->not_being_incompetent ) && $certi_lab_info->not_being_incompetent == '0' ?true:false, ['class'=>'check input_extra_value_other','data-checkbox'=>"icheckbox_flat-red"]) !!} &nbsp;ไม่เป็นคนไร้ความสามารถหรือคนเสมือนไร้ความสามารถ (not being an incompetent or quasi-incompetent person) &nbsp;</label>
-                    {!! $errors->first('at_1_1_7', '<p class="help-block">:message</p>') !!}
+                    <label><?php echo Form::checkbox('at_1_1_7', '0', isset( $certi_lab_info->not_being_incompetent ) && $certi_lab_info->not_being_incompetent == '0' ?true:false, ['class'=>'check input_extra_value_other','data-checkbox'=>"icheckbox_flat-red"]); ?> &nbsp;ไม่เป็นคนไร้ความสามารถหรือคนเสมือนไร้ความสามารถ (not being an incompetent or quasi-incompetent person) &nbsp;</label>
+                    <?php echo $errors->first('at_1_1_7', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
-            <div class="m-l-15 form-group {{ $errors->has('at_1_1_8') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('at_1_1_8') ? 'has-error' : ''); ?>">
                 <div class="col-md-12 m-l-15">
-                    <label>{!! Form::checkbox('at_1_1_8', '0', isset( $certi_lab_info->suspended_using_a_certificate ) && $certi_lab_info->suspended_using_a_certificate == '0' ?true:false, ['class'=>'check input_extra_value_other','data-checkbox'=>"icheckbox_flat-red"]) !!}&nbsp;ไม่เป็นผู้อยู่ในระหว่างถูกสั่งพักใช้ใบรับรอง (not being a person whose Certificate is suspended) &nbsp;</label>
-                    {!! $errors->first('at_1_1_8', '<p class="help-block">:message</p>') !!}
+                    <label><?php echo Form::checkbox('at_1_1_8', '0', isset( $certi_lab_info->suspended_using_a_certificate ) && $certi_lab_info->suspended_using_a_certificate == '0' ?true:false, ['class'=>'check input_extra_value_other','data-checkbox'=>"icheckbox_flat-red"]); ?>&nbsp;ไม่เป็นผู้อยู่ในระหว่างถูกสั่งพักใช้ใบรับรอง (not being a person whose Certificate is suspended) &nbsp;</label>
+                    <?php echo $errors->first('at_1_1_8', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
-            <div class="m-l-15 form-group {{ $errors->has('at_1_1_9') ? 'has-error' : ''}}">
+            <div class="m-l-15 form-group <?php echo e($errors->has('at_1_1_9') ? 'has-error' : ''); ?>">
                 <div class="col-md-12 m-l-15">
-                    <label>{!! Form::checkbox('at_1_1_9', '0', isset( $certi_lab_info->never_revoke_a_certificate ) && $certi_lab_info->never_revoke_a_certificate == '0' ?true:false, ['class'=>'check input_extra_value_other','data-checkbox'=>"icheckbox_flat-red"]) !!}&nbsp;ไม่เคยถูกเพิกถอนใบรับรองหรือเคยถูกเพิกถอนใบรับรอง แต่เวลาได้ล่วงพ้นมาแล้วไม่น้อยกว่า 6 เดือน (not being subjected to Certificate withdrawal or in case of having been subjected to Certificate withdrawal, not less than six month shall have elapsed since the date of Certificate withdrawal)&nbsp;</label>
-                    {!! $errors->first('at_1_1_9', '<p class="help-block">:message</p>') !!}
+                    <label><?php echo Form::checkbox('at_1_1_9', '0', isset( $certi_lab_info->never_revoke_a_certificate ) && $certi_lab_info->never_revoke_a_certificate == '0' ?true:false, ['class'=>'check input_extra_value_other','data-checkbox'=>"icheckbox_flat-red"]); ?>&nbsp;ไม่เคยถูกเพิกถอนใบรับรองหรือเคยถูกเพิกถอนใบรับรอง แต่เวลาได้ล่วงพ้นมาแล้วไม่น้อยกว่า 6 เดือน (not being subjected to Certificate withdrawal or in case of having been subjected to Certificate withdrawal, not less than six month shall have elapsed since the date of Certificate withdrawal)&nbsp;</label>
+                    <?php echo $errors->first('at_1_1_9', '<p class="help-block">:message</p>'); ?>
+
                 </div>
             </div>
         </div>
@@ -1188,12 +1208,14 @@
     <div class="row">
         <div class="m-l-15 form-group">
             <div class="col-md-12 m-l-15">
-                <label>{!! Form::radio('mn_3_1', '0', isset($certi_lab->management_lab) && $certi_lab->management_lab== '0'?true: false, ['class'=>'check', 'data-radio'=>'iradio_square-green']) !!} &nbsp;ทางเลือก ก -- ระบบบริหารงานตามข้อกำหนดมาตรฐานเลขที่ มอก. 17025 - 2561 (ISO/IEC 17025 : 2017)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Option A – a management system in accordance with requirements of TIS 17025 – 2561(2018) (ISO/IEC 17025 : 2017))  &nbsp;</label>
-                {!! $errors->first('mn_3_1', '<p class="help-block">:message</p>') !!}
+                <label><?php echo Form::radio('mn_3_1', '0', isset($certi_lab->management_lab) && $certi_lab->management_lab== '0'?true: false, ['class'=>'check', 'data-radio'=>'iradio_square-green']); ?> &nbsp;ทางเลือก ก -- ระบบบริหารงานตามข้อกำหนดมาตรฐานเลขที่ มอก. 17025 - 2561 (ISO/IEC 17025 : 2017)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Option A – a management system in accordance with requirements of TIS 17025 – 2561(2018) (ISO/IEC 17025 : 2017))  &nbsp;</label>
+                <?php echo $errors->first('mn_3_1', '<p class="help-block">:message</p>'); ?>
+
             </div>
             <div class="col-md-12 m-l-15">
-                <label>{!! Form::radio('mn_3_1', '1', isset($certi_lab->management_lab) && $certi_lab->management_lab == '1'?true: false, ['class'=>'check', 'data-radio'=>'iradio_square-green']) !!} &nbsp;ทางเลือก ข – ระบบบริหารงานตามข้อกำหนดมาตรฐานเลขที่ มอก. 9001 – 2559 หรือ ISO 9001 : 2015 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Option B – a management system in accordance with requirements of TIS 9001 – 2559(2016) or ISO 9001 : 2015) &nbsp;</label>
-                {!! $errors->first('mn_3_1', '<p class="help-block">:message</p>') !!}
+                <label><?php echo Form::radio('mn_3_1', '1', isset($certi_lab->management_lab) && $certi_lab->management_lab == '1'?true: false, ['class'=>'check', 'data-radio'=>'iradio_square-green']); ?> &nbsp;ทางเลือก ข – ระบบบริหารงานตามข้อกำหนดมาตรฐานเลขที่ มอก. 9001 – 2559 หรือ ISO 9001 : 2015 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Option B – a management system in accordance with requirements of TIS 9001 – 2559(2016) or ISO 9001 : 2015) &nbsp;</label>
+                <?php echo $errors->first('mn_3_1', '<p class="help-block">:message</p>'); ?>
+
             </div>
        </div> 
     </div>
@@ -1201,14 +1223,14 @@
 
 
 
- @include ('certify.applicant.forms.extend-modal.form_request_modal')
+ <?php echo $__env->make('certify.applicant.forms.extend-modal.form_request_modal', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
 
 
 
-@push('js')
+<?php $__env->startPush('js'); ?>
 <script>
-    const app_lab_id = '{{ @$certi_lab->id }}';
-    // var baseUrl = "{{ url('/') }}/";
+    const app_lab_id = '<?php echo e(@$certi_lab->id); ?>';
+    // var baseUrl = "<?php echo e(url('/')); ?>/";
     var certifieds;
     var certilab;
     var labCalScopeTransactions;
@@ -1217,16 +1239,16 @@
     $(document).ready(function () {
         
         currentMethod = checkUrl();
-        certilab = @json($certi_lab ?? []);
-        labCalScopeTransactions = @json($labCalScopeTransactions ?? []);
-        branchLabAdresses = @json($branchLabAdresses ?? []);
+        certilab = <?php echo json_encode($certi_lab ?? [], 15, 512) ?>;
+        labCalScopeTransactions = <?php echo json_encode($labCalScopeTransactions ?? [], 15, 512) ?>;
+        branchLabAdresses = <?php echo json_encode($branchLabAdresses ?? [], 15, 512) ?>;
 
         console.log(branchLabAdresses);
         console.log(labCalScopeTransactions);
 
-        certifieds = @json($certifieds->mapWithKeys(function($certified) {
+        certifieds = <?php echo json_encode($certifieds->mapWithKeys(function($certified) {
             return [$certified->id => $certified->certificate_no];
-        }) ?? []);
+        }) ?? [], 15, 512) ?>;
 
    
         //เมื่อกรอกภาษาอังกฤษ
@@ -1348,12 +1370,12 @@
                 dropdownAutoWidth: true,
                 width: '100%',
                 ajax: {
-                    url: "{{ url('/funtions/search-addreess') }}",
+                    url: "<?php echo e(url('/funtions/search-addreess')); ?>",
                     type: "get",
                     dataType: 'json',
                     delay: 250,
                     data: function (params) {
-                        // console.log("Requesting URL:", "{{ url('/funtions/search-addreess') }}"); // ตรวจ)
+                        // console.log("Requesting URL:", "<?php echo e(url('/funtions/search-addreess')); ?>"); // ตรวจ)
                         return {
                             searchTerm: params // search term
                         };
@@ -1372,7 +1394,7 @@
             $("#authorized_address_seach").on('change', function () {
 
                 $.ajax({
-                    url: "{!! url('/funtions/get-addreess/') !!}" + "/" + $(this).val()
+                    url: "<?php echo url('/funtions/get-addreess/'); ?>" + "/" + $(this).val()
                 }).done(function( jsondata ) {
                     if(jsondata != ''){
 
@@ -1465,7 +1487,7 @@
 
         if (select === 'test') {
             console.log('TEST');
-            var    certi_lab        =   '{!!  !empty($certi_lab->id) ? $certi_lab->id  :'' !!}'; 
+            var    certi_lab        =   '<?php echo !empty($certi_lab->id) ? $certi_lab->id  :''; ?>'; 
             // ไฟล์แนบ
             if(certi_lab == ""){
                 $('.attachs_sec61').prop('required', true);
@@ -1487,7 +1509,7 @@
             $('#viewForm92').find('input, select, textarea').prop('disabled', true);
 
             $.ajax({
-                url:"{{route('api.test')}}",
+                url:"<?php echo e(route('api.test')); ?>",
                 method:"POST",
                 data:{select:select,_token:_token},
                 success:function (result){
@@ -1508,7 +1530,7 @@
         }else if (select === 'calibrate') {
             console.log('CAL');
  
-            var    certi_lab        =   '{!!  !empty($certi_lab->id) ? $certi_lab->id  :'' !!}'; 
+            var    certi_lab        =   '<?php echo !empty($certi_lab->id) ? $certi_lab->id  :''; ?>'; 
             // ไฟล์แนบ
             if(certi_lab == ""){
                 $('.attachs_sec61').prop('required', false);
@@ -1531,7 +1553,7 @@
             $('#viewForm93').find('input, select, textarea').prop('disabled', true);
 
             $.ajax({
-                url:"{{route('api.calibrate')}}",
+                url:"<?php echo e(route('api.calibrate')); ?>",
                 method:"POST",
                 data:{select:select,_token:_token},
                 success:function (result){
@@ -1560,11 +1582,11 @@
 
     function certificate_exports(){
  
-    var app_check           = '{!! count($app_check) !!}';
+    var app_check           = '<?php echo count($app_check); ?>';
     var select              = $("input[name=lab_ability]:checked").val();
     const _token            = $('input[name="_token"]').val();
-    var    exports_id       =   '{!!  !empty($certi_lab->certificate_exports_id) ?$certi_lab->certificate_exports_id:'' !!}'; 
-    var    certi_lab        =   '{!!  !empty($certi_lab->id) ? $certi_lab->id  :'' !!}'; 
+    var    exports_id       =   '<?php echo !empty($certi_lab->certificate_exports_id) ?$certi_lab->certificate_exports_id:''; ?>'; 
+    var    certi_lab        =   '<?php echo !empty($certi_lab->id) ? $certi_lab->id  :''; ?>'; 
     // console.log(certi_lab);
        if(app_check  == 0 && certi_lab == ""){
  
@@ -1572,7 +1594,7 @@
             // $('#ref_application_no').val('');   
             $('.div_certificate_exports_id').hide();
             $.ajax({
-                url:"{{route('api.certificate_exports')}}",
+                url:"<?php echo e(route('api.certificate_exports')); ?>",
                 method:"get",
                 data:{select:select,_token:_token}
             }).done(function( result ) {
@@ -1622,22 +1644,22 @@
 
         if( $('#use_address_office-1').is(':checked',true) ){
 
-            var address =  `{!! isset($tis_data) && !empty($tis_data->address_no) ?$tis_data->address_no:'' !!}`;
-            var moo =  `{!! isset($tis_data) && !empty($tis_data->moo) ?$tis_data->moo:'' !!}`;
-            var soi =  `{!! isset($tis_data) && !empty($tis_data->soi) ?$tis_data->soi:'' !!}`;
-            var road =  `{!! isset($tis_data) && !empty($tis_data->street) ?$tis_data->street:'' !!}`;
-            var building =  `{!! isset($tis_data) && !empty($tis_data->building) ?$tis_data->building:'' !!}`;
+            var address =  `<?php echo isset($tis_data) && !empty($tis_data->address_no) ?$tis_data->address_no:''; ?>`;
+            var moo =  `<?php echo isset($tis_data) && !empty($tis_data->moo) ?$tis_data->moo:''; ?>`;
+            var soi =  `<?php echo isset($tis_data) && !empty($tis_data->soi) ?$tis_data->soi:''; ?>`;
+            var road =  `<?php echo isset($tis_data) && !empty($tis_data->street) ?$tis_data->street:''; ?>`;
+            var building =  `<?php echo isset($tis_data) && !empty($tis_data->building) ?$tis_data->building:''; ?>`;
 
-            var subdistrict_txt =  `{!! isset($tis_data) && !empty($tis_data->subdistrict) ?$tis_data->subdistrict:'' !!}`;
-            var district_txt = `{!! isset($tis_data) && !empty($tis_data->district) ?$tis_data->district:'' !!}`;
-            var province_txt = `{!! isset($tis_data) && !empty($tis_data->province_id) ?$tis_data->province_id:'' !!}`;
-            var postcode_txt = `{!! isset($tis_data) && !empty($tis_data->zipcode) ?$tis_data->zipcode:'' !!}`;
+            var subdistrict_txt =  `<?php echo isset($tis_data) && !empty($tis_data->subdistrict) ?$tis_data->subdistrict:''; ?>`;
+            var district_txt = `<?php echo isset($tis_data) && !empty($tis_data->district) ?$tis_data->district:''; ?>`;
+            var province_txt = `<?php echo isset($tis_data) && !empty($tis_data->province_id) ?$tis_data->province_id:''; ?>`;
+            var postcode_txt = `<?php echo isset($tis_data) && !empty($tis_data->zipcode) ?$tis_data->zipcode:''; ?>`;
 
-            var longitude =  `{!! isset($tis_data) && !empty($tis_data->longitude) ?$tis_data->longitude:'' !!}`;
-            var latitude =  `{!! isset($tis_data) && !empty($tis_data->latitude) ?$tis_data->latitude:'' !!}`;
+            var longitude =  `<?php echo isset($tis_data) && !empty($tis_data->longitude) ?$tis_data->longitude:''; ?>`;
+            var latitude =  `<?php echo isset($tis_data) && !empty($tis_data->latitude) ?$tis_data->latitude:''; ?>`;
 
-            var district_txt_eng =  `{!! isset($address_data) && !empty($address_data->dis_title_en) ?$address_data->dis_title_en:'' !!}`;
-            var subdistrict_txt_eng =  `{!! isset($address_data) && !empty($address_data->sub_title_en) ?$address_data->sub_title_en:'' !!}`;
+            var district_txt_eng =  `<?php echo isset($address_data) && !empty($address_data->dis_title_en) ?$address_data->dis_title_en:''; ?>`;
+            var subdistrict_txt_eng =  `<?php echo isset($address_data) && !empty($address_data->sub_title_en) ?$address_data->sub_title_en:''; ?>`;
 
             // console.log(subdistrict_txt_eng);
             $('#address_number').val(address);
@@ -1665,19 +1687,19 @@
 
         }else if( $('#use_address_office-2').is(':checked',true) ){
 
-            var address =  '{!! isset($tis_data) && !empty($tis_data->contact_address_no) ?$tis_data->contact_address_no:'' !!}';
-            var moo =  '{!! isset($tis_data) && !empty($tis_data->contact_moo) ?$tis_data->contact_moo:'' !!}';
-            var soi =  '{!! isset($tis_data) && !empty($tis_data->contact_soi) ?$tis_data->contact_soi:'' !!}';
-            var road =  '{!! isset($tis_data) && !empty($tis_data->contact_street) ?$tis_data->contact_street:'' !!}';
-            var building =  '{!! isset($tis_data) && !empty($tis_data->contact_building) ?$tis_data->contact_building:'' !!}';
+            var address =  '<?php echo isset($tis_data) && !empty($tis_data->contact_address_no) ?$tis_data->contact_address_no:''; ?>';
+            var moo =  '<?php echo isset($tis_data) && !empty($tis_data->contact_moo) ?$tis_data->contact_moo:''; ?>';
+            var soi =  '<?php echo isset($tis_data) && !empty($tis_data->contact_soi) ?$tis_data->contact_soi:''; ?>';
+            var road =  '<?php echo isset($tis_data) && !empty($tis_data->contact_street) ?$tis_data->contact_street:''; ?>';
+            var building =  '<?php echo isset($tis_data) && !empty($tis_data->contact_building) ?$tis_data->contact_building:''; ?>';
 
-            var subdistrict_txt =  '{!! isset($tis_data) && !empty($tis_data->contact_subdistrict) ?$tis_data->contact_subdistrict:'' !!}';
-            var district_txt = '{!! isset($tis_data) && !empty($tis_data->contact_district) ?$tis_data->contact_district:'' !!}';
-            var province_txt = '{!! isset($tis_data) && !empty($tis_data->contact_province_id) ?$tis_data->contact_province_id:'' !!}';
-            var postcode_txt = '{!! isset($tis_data) && !empty($tis_data->contact_zipcode) ?$tis_data->contact_zipcode:'' !!}';
+            var subdistrict_txt =  '<?php echo isset($tis_data) && !empty($tis_data->contact_subdistrict) ?$tis_data->contact_subdistrict:''; ?>';
+            var district_txt = '<?php echo isset($tis_data) && !empty($tis_data->contact_district) ?$tis_data->contact_district:''; ?>';
+            var province_txt = '<?php echo isset($tis_data) && !empty($tis_data->contact_province_id) ?$tis_data->contact_province_id:''; ?>';
+            var postcode_txt = '<?php echo isset($tis_data) && !empty($tis_data->contact_zipcode) ?$tis_data->contact_zipcode:''; ?>';
 
-            var district_txt_eng =  `{!! isset($address_data) && !empty($address_data->dis_title_en) ?$address_data->dis_title_en:'' !!}`;
-            var subdistrict_txt_eng =  `{!! isset($address_data) && !empty($address_data->sub_title_en) ?$address_data->sub_title_en:'' !!}`;
+            var district_txt_eng =  `<?php echo isset($address_data) && !empty($address_data->dis_title_en) ?$address_data->dis_title_en:''; ?>`;
+            var subdistrict_txt_eng =  `<?php echo isset($address_data) && !empty($address_data->sub_title_en) ?$address_data->sub_title_en:''; ?>`;
 
             
             $('#address_number').val(address);
@@ -1715,13 +1737,13 @@
 
     // function get_app_no(lab_type_val){
 
-    //     let tax_id           = '{!! isset($tis_data) && !empty($tis_data->tax_number) ?$tis_data->tax_number:'' !!}';
+    //     let tax_id           = '<?php echo isset($tis_data) && !empty($tis_data->tax_number) ?$tis_data->tax_number:''; ?>';
     //     let standard_id       =  $('#according_formula').val();
     //     let lab_type              = lab_type_val;
 
     //         $('#ref_application_no').val('');
             
-    //         $.get("{{ url('/certify/applicant/get_appno') }}", { 
+    //         $.get("<?php echo e(url('/certify/applicant/get_appno')); ?>", { 
     //             tax_id: tax_id,
     //             lab_type: lab_type,
     //             standard_id: standard_id
@@ -1758,7 +1780,7 @@
                 console.log(lab_type)
                 console.log(std_id)
                 
-                $.get("{{ url('/certify/applicant/get-certificate-belong') }}", { 
+                $.get("<?php echo e(url('/certify/applicant/get-certificate-belong')); ?>", { 
                         std_id: std_id,
                         lab_type: lab_type
                     }).done(function( data ) {
@@ -1851,7 +1873,7 @@
         console.log(lab_type)
         console.log(std_id)
 
-        $.get("{{ url('/certify/applicant/is-lab-type-and-standard-belong') }}", { 
+        $.get("<?php echo e(url('/certify/applicant/is-lab-type-and-standard-belong')); ?>", { 
                 std_id: std_id,
                 lab_type: lab_type
             }).done(function( data ) {
@@ -1880,7 +1902,7 @@
         $('#ref_application_no').val(null);
         $('#certificate_exports_id').val(null);
         if(app_lab_id == '' && !!std_id && !!lab_type && purpose >= 2){
-            $.get("{{ url('/certify/applicant/get_app_no_and_certificate_exports_no') }}", { 
+            $.get("<?php echo e(url('/certify/applicant/get_app_no_and_certificate_exports_no')); ?>", { 
                 std_id: std_id,
                 lab_type: lab_type
             }).done(function( data ) {
@@ -1925,7 +1947,7 @@
         }
 
         $.ajax({
-                url:"{{route('check_lab_transferee')}}",
+                url:"<?php echo e(route('check_lab_transferee')); ?>",
                 method:"POST",
                 data:{
                     transferer_id_number:transferer_id_number,
@@ -1953,4 +1975,4 @@
     });
 
 </script>
-@endpush
+<?php $__env->stopPush(); ?>

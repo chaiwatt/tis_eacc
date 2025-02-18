@@ -4143,7 +4143,8 @@ class ApplicantController extends Controller
         }
 
         return response()->json([
-            'user' => $user
+            'user' => $user,
+            // 'certiLab' => $certiLab,
        ]);
     }
 
