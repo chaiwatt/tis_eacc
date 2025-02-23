@@ -794,6 +794,7 @@ Route::group(['prefix'=>'certify'],function (){ // ระบบยื่นค�
     // แก้ไขข้อบกพร่อง/ข้อสังเกต    (CB)
     Route::get('/applicant-cb/assessment/{id?}/{token?}','Certify\ApplicantCBController@EditAssessment');
     Route::post('/applicant-cb/assessment/update/{id?}','Certify\ApplicantCBController@UpdateAssessment');
+    Route::post('/applicant-cb/assessment/confirm-bug','Certify\ApplicantCBController@ConfirmBug')->name('applicant-cb.assessment.confirm-bug');
     //คำขอใบรับรอง   (CB)
     Route::post('/applicant-cb/update_report/{id?}','Certify\ApplicantCBController@UpdateReport');
     //แจ้งรายละเอียดการชำระค่าใบรับรอง (CB)

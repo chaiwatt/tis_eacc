@@ -29,7 +29,7 @@
      <div class="row">
         <div class="col-md-12">
            <div class="white-box">
-           <h3 class="box-title pull-left">ยื่นคำขอรับใบรับรองระบบงาน</h3>
+           <h3 class="box-title pull-left">ยื่นคำขอรับใบรับรองระบบงาน landing</h3>
 
                 <a class="btn btn-danger text-white pull-right" href="<?php echo e(app('url')->previous()); ?>">
                         <i class="icon-arrow-left-circle"></i> กลับ
@@ -282,7 +282,7 @@
                         <thead>
                             <tr>
                                 <th class="text-center" width="2%">ลำดับ</th>
-                                <th class="text-center" width="30%">ผลการประเมินที่พบ</th>
+                                <th class="text-center" width="30%">ผลการประเมินที่พบggg</th>
                                 <th class="text-center" width="20%">ผลการประเมิน</th>
                                 <th class="text-center" width="46%" >แนวทางการแก้ไข/หลักฐาน</th>
                             </tr>

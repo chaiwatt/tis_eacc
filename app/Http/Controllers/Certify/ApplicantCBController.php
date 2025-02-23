@@ -2526,5 +2526,13 @@ class ApplicantCBController extends Controller
          }
     }
     
-
+    
+    public function ConfirmBug(Request $request)
+    {
+      // dd($request->all());
+      $notice = CertiCBSaveAssessment::find($request->assessment_id)->update([
+          'accept_fault' => 1
+      ]);
+      return response()->json($notice);
+    }
 }

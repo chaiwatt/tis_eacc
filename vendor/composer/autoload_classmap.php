@@ -13,6 +13,8 @@ return array(
     'App\\BlogCategory' => $baseDir . '/app/BlogCategory.php',
     'App\\BlogComment' => $baseDir . '/app/BlogComment.php',
     'App\\CertificateExport' => $baseDir . '/app/CertificateExport.php',
+    'App\\Certify\\CbAuditorTeam' => $baseDir . '/app/Certify/CbAuditorTeam.php',
+    'App\\Certify\\CbReportInfo' => $baseDir . '/app/Certify/CbReportInfo.php',
     'App\\Console\\Commands\\GeneratorCommand' => $baseDir . '/app/Console/Commands/GeneratorCommand.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',

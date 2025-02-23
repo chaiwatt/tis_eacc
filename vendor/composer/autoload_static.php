@@ -765,6 +765,8 @@ class ComposerStaticInit5a57f53094f9308acbcb93e3439f9a62
         'App\\BlogCategory' => __DIR__ . '/../..' . '/app/BlogCategory.php',
         'App\\BlogComment' => __DIR__ . '/../..' . '/app/BlogComment.php',
         'App\\CertificateExport' => __DIR__ . '/../..' . '/app/CertificateExport.php',
+        'App\\Certify\\CbAuditorTeam' => __DIR__ . '/../..' . '/app/Certify/CbAuditorTeam.php',
+        'App\\Certify\\CbReportInfo' => __DIR__ . '/../..' . '/app/Certify/CbReportInfo.php',
         'App\\Console\\Commands\\GeneratorCommand' => __DIR__ . '/../..' . '/app/Console/Commands/GeneratorCommand.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
