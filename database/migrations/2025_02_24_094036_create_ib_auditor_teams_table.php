@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCbAuditorTeamsTable extends Migration
+class CreateIbAuditorTeamsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateCbAuditorTeamsTable extends Migration
      */
     public function up()
     {
-        Schema::create('cb_auditor_teams', function (Blueprint $table) {
+        Schema::create('ib_auditor_teams', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->nullable();
             $table->text('auditor_team_json')->nullable();
@@ -29,6 +29,6 @@ class CreateCbAuditorTeamsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cb_auditor_teams');
+        Schema::dropIfExists('ib_auditor_teams');
     }
 }
