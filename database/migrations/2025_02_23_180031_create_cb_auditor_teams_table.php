@@ -17,7 +17,6 @@ class CreateCbAuditorTeamsTable extends Migration
             $table->increments('id');
             $table->string('name')->nullable();
             $table->text('auditor_team_json')->nullable();
-            $table->text('signer_team_json')->nullable();
             $table->timestamps();
         });
     }

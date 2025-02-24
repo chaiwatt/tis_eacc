@@ -10,7 +10,7 @@ class CbAuditorTeam extends Model
     use Sortable;
     protected $table = "cb_auditor_teams";
     protected $primaryKey = 'id';
-    protected $fillable = ['name','auditor_team_json', 'signer_team_json','state'  ];
+    protected $fillable = ['name','auditor_team_json','state'  ];
 
 }
 
