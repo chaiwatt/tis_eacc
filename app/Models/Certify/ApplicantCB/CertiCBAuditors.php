@@ -20,7 +20,8 @@ class CertiCBAuditors  extends Model
                             'step_id',
                             'created_by',
                             'updated_by',
-                            'is_review_state'
+                            'is_review_state',
+                              'message_record_status'
                           ];
    
  public function CertiCbCostTo()
