@@ -437,10 +437,26 @@ class ApplicantController extends Controller
 
         // ใช้ disk 'uploads' ในการจัดเก็บ
         $path = $file->storeAs($attachPath, $fullFileName, 'uploads'); 
+        // $storagePath = $this->storeFile($file);
+
+        // dd($path);
+        // $certi_lab_attach                   = new CertiLabAttachAll();
+        // $certi_lab_attach->app_certi_lab_id = 888888888;
+        // $certi_lab_attach->file_section     = 567;
+        // $certi_lab_attach->file             = $storagePath;
+        // $certi_lab_attach->file_client_name = basename($storagePath);
+        // $certi_lab_attach->token            = str_random(16);
+        // $certi_lab_attach->default_disk = config('filesystems.default');
+        // $certi_lab_attach->save();
+
+        // $url = '/certify/check/file_client/' . $storagePath . '/' . basename($storagePath); 
+
+        // dd( $path );
 
         // ส่ง URL กลับไป
-        // $url = asset('uploads/' . $attachPath . $fullFileName);
-        $url = url('uploads/' . $attachPath . $fullFileName);
+        $url = asset('uploads/' . $attachPath . $fullFileName);
+        // dd($url);
+        // $url = url('uploads/' . $attachPath . $fullFileName);
         return response()->json(['file_url' => $url]);
 
     }

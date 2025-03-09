@@ -1,6 +1,8 @@
 <?php $__env->startPush('css'); ?>
 
+    <link href="<?php echo e(asset('plugins/custom/line_extractor/line-extractor.css')); ?>" rel="stylesheet">
     <style>
+         
         .table>tbody>tr>td ,label{
             line-height: 1.7;
             color: #5f5f5f;
@@ -35,7 +37,7 @@
                     </a>
                     <div class="clearfix"></div>
                     <hr>
-                    
+     
 
                     <?php echo Form::open(['url' => 'certify/applicant/store', 'method' => 'post', 'class' => 'form-horizontal','id'=>'app_certi_form', 'files' => true]); ?>
 
@@ -73,6 +75,7 @@
 <?php $__env->stopSection(); ?>
 <?php $__env->startSection('js'); ?>
     <script src="<?php echo e(asset('plugins/components/toast-master/js/jquery.toast.js')); ?>"></script>
+    <script src="<?php echo e(asset('plugins/custom/line_extractor/line-extractor.js')); ?>"></script>
     <script src="<?php echo e(asset('js/jasny-bootstrap.js')); ?>"></script>
     <script>
         $(document).ready(function () {

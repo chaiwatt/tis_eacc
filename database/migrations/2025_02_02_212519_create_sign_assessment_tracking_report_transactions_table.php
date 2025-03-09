@@ -15,7 +15,7 @@ class CreateSignAssessmentTrackingReportTransactionsTable extends Migration
     {
         Schema::create('sign_assessment_tracking_report_transactions', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('tracking_lab_report_info_id');
+            $table->unsignedInteger('tracking_report_info_id');
             $table->unsignedInteger('signer_id');
             $table->string('app_id')->nullable();
             $table->string('certificate_type')->nullable();

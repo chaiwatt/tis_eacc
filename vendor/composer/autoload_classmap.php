@@ -209,6 +209,7 @@ return array(
     'App\\Models\\Bcertify\\Formula' => $baseDir . '/app/Models/Bcertify/Formula.php',
     'App\\Models\\Bcertify\\Ghg' => $baseDir . '/app/Models/Bcertify/Ghg.php',
     'App\\Models\\Bcertify\\GhgActivity' => $baseDir . '/app/Models/Bcertify/GhgActivity.php',
+    'App\\Models\\Bcertify\\HtmlCbMemorandumRequest' => $baseDir . '/app/Models/Bcertify/HtmlCbMemorandumRequest.php',
     'App\\Models\\Bcertify\\HtmlLabMemorandumPdfRequest' => $baseDir . '/app/Models/Bcertify/HtmlLabMemorandumPdfRequest.php',
     'App\\Models\\Bcertify\\HtmlLabMemorandumRequest' => $baseDir . '/app/Models/Bcertify/HtmlLabMemorandumRequest.php',
     'App\\Models\\Bcertify\\Iaf' => $baseDir . '/app/Models/Bcertify/Iaf.php',

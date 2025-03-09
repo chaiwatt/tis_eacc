@@ -123,7 +123,9 @@ Route::post('tisi/standard-offers/save_department','Tisi\\StandardOffersControll
      Route::get('certify/check/file_client/{app_no}/{filename}/{client_name}', function($app_no,$filename,$client_name)
      {
         $public = public_path();
+        
         $attach_path = 'files/applicants/check_files/';
+        // dd($attach_path. $app_no .'/'. $filename);
        if(HP::checkFileStorage($attach_path. $app_no .'/'. $filename)){
         //    if($client_name != 'null'){
                 // HP::getFileStorageClientName($attach_path. $app_no .'/'. $filename,$client_name);
@@ -145,6 +147,7 @@ Route::post('tisi/standard-offers/save_department','Tisi\\StandardOffersControll
      Route::get('certify/check/files/{app_no}/{filename}', function($app_no,$filename)
      {
         $public = public_path();
+        // dd($public);
         $attach_path = 'files/applicants/check_files/';
        if(HP::checkFileStorage($attach_path. $app_no .'/'. $filename)){
            HP::getFileStorage($attach_path. $app_no .'/'. $filename);

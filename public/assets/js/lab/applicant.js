@@ -17,6 +17,89 @@ let lab_cal_scope_data_transaction = []; // อาร์เรย์เก็บ
 let test_measurements = [];
 let lab_test_scope_data_transaction = []; // อาร์เรย์เก็บข้อมูลทั้งหมด
 
+class LineExtractor {
+    constructor(elementId) {
+        this.editableDiv = document.getElementById(elementId);
+        this.init();
+    }
+
+    init() {
+        if (!this.editableDiv) {
+            console.error('Element not found');
+            return;
+        }
+
+        // เพิ่ม event listener สำหรับ paste เพื่อแปลงเป็น plaintext
+        this.editableDiv.addEventListener('paste', (event) => {
+            // ป้องกันการ paste แบบปกติ (ที่มี style)
+            event.preventDefault();
+
+            // ดึงข้อความแบบ plaintext
+            const text = (event.clipboardData || window.clipboardData).getData('text/plain');
+
+            // ใช้ Selection และ Range เพื่อแทรกข้อความ
+            const selection = window.getSelection();
+            if (selection.rangeCount) {
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+
+                const textNode = document.createTextNode(text);
+                range.insertNode(textNode);
+
+                // ย้าย caret ไปหลังข้อความที่แทรก
+                range.setStartAfter(textNode);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        });
+    }
+
+    getLines() {
+        const tempDiv = document.createElement('div');
+        tempDiv.style.width = window.getComputedStyle(this.editableDiv).width;
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.visibility = 'hidden';
+        tempDiv.style.whiteSpace = 'pre-wrap';
+        tempDiv.style.overflowWrap = 'break-word';
+        tempDiv.style.fontFamily = window.getComputedStyle(this.editableDiv).fontFamily;
+        tempDiv.style.fontSize = window.getComputedStyle(this.editableDiv).fontSize;
+
+        let text = this.editableDiv.innerText.replace(/\n/g, '');
+        tempDiv.textContent = text;
+        document.body.appendChild(tempDiv);
+
+        const lines = [];
+        const range = document.createRange();
+        let currentLine = '';
+        let lastTop = null;
+
+        for (let i = 0; i < text.length; i++) {
+            range.setStart(tempDiv.firstChild, i);
+            range.setEnd(tempDiv.firstChild, i + 1);
+            const rect = range.getClientRects()[0];
+
+            if (rect) {
+                if (lastTop !== null && rect.top !== lastTop) {
+                    lines.push(currentLine.trim());
+                    currentLine = text[i];
+                } else {
+                    currentLine += text[i];
+                }
+                lastTop = rect.top;
+            }
+
+            if (i === text.length - 1) {
+                lines.push(currentLine.trim());
+            }
+        }
+
+        document.body.removeChild(tempDiv);
+
+        return lines;
+    }
+}
+
 const facilityTypes = {
     'pl_2_1': 'สถานปฏิบัติการถาวร (Permanent facilities)',
     'pl_2_2': 'สถานปฏิบัติการนอกสถานที่ (Sites away from its permanent facilities)',
@@ -40,9 +123,11 @@ var mainFacilityTypes = [
     { text: "ประเภท4 สถานปฏิบัติการชั่วคราว (Temporary facilities)", id: "pl_2_4_main" },
     { text: "ประเภท5 สถานปฏิบัติการหลายสถานที่ (Multi-site facilities)", id: "pl_2_5_main" }
 ];
-
+var editable_cal_standard_txtarea ;
+var editable_parameter_desc ;
 $(document).ready(function () {
-
+    editable_cal_standard_txtarea = new LineExtractor('cal_standard_txtarea');
+    editable_parameter_desc = new LineExtractor('parameter_desc');
 
     $('#parameter_one_textarea').summernote({
         height: 150, // กำหนดความสูงของ textarea
@@ -2093,18 +2178,9 @@ $(document).on('change', '#test_category', function() {
         });
       
 
-        console.log(test_measurements);
+        // console.log(test_measurements);
 
-        // // แสดงข้อมูลในตาราง
-        // renderParamCMCTable();
 
-        // // ล้างฟิลด์ในฟอร์ม
-        // $('#description').val('');
-        // $('#cal_param_range_textarea').val('');
-        // $('#cal_cmc_uncertainty_textarea').val('');
-        // $('#cal_param_file').val('');
-        // $('#cal_cmc_file').val('');
-        // $('#modal-add-cal-param-cmc').modal('hide');
     });
 
 });
@@ -3456,8 +3532,18 @@ $('#button_add_cal_scope').on('click', function () {
     let instrument_text = $('#cal_instrumentgroup option:selected').text();
     let instrument_two = $('#cal_instrument').val(); // ID: cal_instrument
     let instrument_two_text = $('#cal_instrument option:selected').text();
-    let description = $('#parameter_desc').val(); // ID: parameter_desc
-    let standard = $('#cal_standard_txtarea').val(); // ID: cal_standard_txtarea
+    // let description = $('#parameter_desc').val(); // ID: parameter_desc
+
+    const editable_parameter_desc_lines = editable_parameter_desc.getLines(); 
+    let description =  editable_parameter_desc_lines.map(line => line + '<br>').join('');
+
+    // const resultDiv1 = document.getElementById('cal_standard_txtarea');
+    // resultDiv1.innerHTML = lines1.map(line => line + '<br>').join('');
+    const editable_cal_standard_txtarea_lines = editable_cal_standard_txtarea.getLines(); 
+    // let standard = $('#cal_standard_txtarea').val(); // ID: cal_standard_txtarea
+  
+    let standard = editable_cal_standard_txtarea_lines.map(line => line + '<br>').join('');
+    console.log(standard)
     let code = "2"; // ค่าคงที่ตามที่ระบุ
 
     if (!category || category === "") {
@@ -3877,8 +3963,8 @@ function renderCalScopeWithParameterTable() {
                 tableContent += `
                     <tr>
                         ${isFirstOccurrence ? `<td rowspan="${categoryCounts[item.category]}" style="vertical-align: top;"><span style="font-weight:600"> สาขา${item.category_th}</span></td>` : ''}
-                        <td>
-                            <div>${item.instrument_text}</div>
+                        <td style="width:300px !important">
+                            <div>${item.instrument_text} </div>
                             <div style="margin-left: 15px;">
                                 ${formattedDescription ? `<div style="white-space: pre-wrap;">${formattedDescription}</div>` : ''}
                                 <div style="${formattedDescription ? 'margin-left: 15px;' : ''}">
@@ -3891,11 +3977,11 @@ function renderCalScopeWithParameterTable() {
                                                     .replace(/\t/g, '&emsp;')
                                                     .replace(/\n/g, '<br>');
                                                 return `
-                                                    <div>${formattedRangeDescription || ''}</div>
+                                                    <div style="width: 300px;word-break: break-word; overflow-wrap: break-word;">${formattedRangeDescription || ''}</div>
                                                     ${/\.(png|jpg|jpeg|gif)$/i.test(range.range) ? 
                                                         `<img src="${range.range}" alt="Image" style="width: 300px;" />` : 
                                                         `<div style="margin-left: 15px;">
-                                                            ${range.range ? range.range.split('\n').map(line => `<div>${line}</div>`).join('') : ''}
+                                                            ${range.range ? range.range.split('\n').map(line => `<div style="width: 300px;word-break: break-word; overflow-wrap: break-word;">${line}</div>`).join('') : ''}
                                                         </div>`
                                                     }
                                                 `;
@@ -3919,11 +4005,11 @@ function renderCalScopeWithParameterTable() {
                                                     .replace(/\t/g, '&emsp;')
                                                     .replace(/\n/g, '<br>');
                                                 return `
-                                                    <div style="visibility: hidden">${formattedRangeDescription || ''}</div>
+                                                    <div style="visibility: hidden;width: 300px;word-break: break-word; overflow-wrap: break-word;">${formattedRangeDescription || ''}</div>
                                                     ${/\.(png|jpg|jpeg|gif)$/i.test(range.uncertainty) ? 
                                                         `<img src="${range.uncertainty}" alt="Image" style="max-width: 160px;" />` : 
                                                         `<div style="margin-left: 15px;">
-                                                            ${range.uncertainty ? range.uncertainty.split('\n').map(line => `<div>${line}</div>`).join('') : ''}
+                                                            ${range.uncertainty ? range.uncertainty.split('\n').map(line => `<div style="width: 300px;word-break: break-word; overflow-wrap: break-word;">${line}</div>`).join('') : ''}
                                                         </div>`
                                                     }
                                                 `;
@@ -3942,7 +4028,6 @@ function renderCalScopeWithParameterTable() {
                             </div>
                         </td>
                         <td class="text-center">
-                            
                               ${
                                 purposeValue !== '2' 
                                 ? `<button class="btn btn-danger btn-sm" onclick="removeRow(${index}, '${key}')">ลบ</button>` 
@@ -4789,167 +4874,55 @@ function renderCalScopeTable(branchNumber, typeNumber) {
     // var tableContainer = $('#myTable_lab_cal_scope'); // ใช้ ID ของคอนเทนเนอร์ที่คุณใช้แสดงตาราง
     // tableContainer.scrollTop(tableContainer[0].scrollHeight);
 }
+function processText(textareaId) {
+    const textarea = document.getElementById(textareaId);
+    const resultDiv = document.getElementById('result');
+    const maxWidth = 250; // ตัดคำที่ 250px
+    const text = textarea.value;
 
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    
+    // ใช้ฟอนต์เดียวกับ textarea
+    const computedStyle = window.getComputedStyle(textarea);
+    context.font = `${computedStyle.fontSize} ${computedStyle.fontFamily}`;
+
+    // แยกข้อความเป็นคำ
+    const words = text.split(' ');
+    let currentLine = '';
+    let resultText = '';
+
+    words.forEach((word, index) => {
+        const testLine = currentLine + (currentLine ? ' ' : '') + word;
+        const textWidth = context.measureText(testLine).width;
+
+        if (textWidth > maxWidth && currentLine) {
+            resultText += currentLine + '<br>';
+            currentLine = word;
+        } else {
+            currentLine = testLine;
+        }
+
+        // คำสุดท้าย
+        if (index === words.length - 1) {
+            resultText += currentLine;
+        }
+    });
+  return resultText;
+    // แสดงผลใน div และ console
+    resultDiv.innerHTML = resultText;
+    console.log(resultText);
+}
 let cal_parameter_cmc_ranges = [];
-// เมื่อคลิกปุ่มเพิ่ม
-// $('#btn_add_cal_param_cmc').on('click', function () {
-//     // ดึงค่าจากฟอร์ม
-//     let description = $('#description').val();
-//     let range = $('#cal_param_range_textarea').val();
-//     let uncertainty = $('#cal_cmc_uncertainty_textarea').val();
 
-//     // ตรวจสอบค่าก่อนเพิ่ม
-//     if (!description || !range || !uncertainty) {
-//         alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
-//         return;
-//     }
-
-//     // เพิ่มข้อมูลลงใน array
-//     cal_parameter_cmc_ranges.push({
-//         description: description,
-//         range: range,
-//         uncertainty: uncertainty,
-//     });
-
-//     // แสดงข้อมูลในตาราง
-//     renderParamCMCTable();
-
-//     // ล้างฟิลด์ในฟอร์ม
-//     $('#description').val('');
-//     $('#cal_param_range_textarea').val('');
-//     $('#cal_cmc_uncertainty_textarea').val('');
-//     $('#modal-add-cal-param-cmc').modal('hide');
-// });
-
-// $('#btn_add_cal_param_cmc').on('click', function () {
-//     // ดึงค่าจากฟอร์ม
-//     let description = $('#description').val();
-
-//     // ตรวจสอบว่าระหว่าง text กับ file ต้องใช้ค่าใด
-//     let range, uncertainty;
-
-//     if ($('#cal_param_use_text').is(':checked')) {
-//         // ถ้าเลือกข้อความ
-//         range = $('#cal_param_range_textarea').val();
-//     } else if ($('#cal_param_use_picture').is(':checked')) {
-//         // ถ้าเลือกไฟล์
-//         let fileInput = $('#cal_param_file')[0];
-//         if (fileInput.files.length > 0) {
-//             range = fileInput.files[0]; // เก็บไฟล์
-//         } else {
-//             alert('กรุณาอัปโหลดไฟล์สำหรับช่วงพารามิเตอร์');
-//             return;
-//         }
-//     }
-
-//     if ($('#cal_use_text').is(':checked')) {
-//         // ถ้าเลือกข้อความ
-//         uncertainty = $('#cal_cmc_uncertainty_textarea').val();
-//     } else if ($('#cal_use_picture').is(':checked')) {
-//         // ถ้าเลือกไฟล์
-//         let fileInput = $('#cal_cmc_file')[0];
-//         if (fileInput.files.length > 0) {
-//             uncertainty = fileInput.files[0]; // เก็บไฟล์
-//         } else {
-//             alert('กรุณาอัปโหลดไฟล์สำหรับ CMC');
-//             return;
-//         }
-//     }
-
-//     // ตรวจสอบค่าก่อนเพิ่ม
-//     if (!description || !range || !uncertainty) {
-//         alert('กรุณากรอกข้อมูลให้ครบทุกช่อง');
-//         return;
-//     }
-
-//     // เพิ่มข้อมูลลงใน array
-//     cal_parameter_cmc_ranges.push({
-//         description: description,
-//         range: range,
-//         uncertainty: uncertainty,
-//     });
-
-//     // แสดงข้อมูลในตาราง
-//     renderParamCMCTable();
-
-//     // ล้างฟิลด์ในฟอร์ม
-//     $('#description').val('');
-//     $('#cal_param_range_textarea').val('');
-//     $('#cal_cmc_uncertainty_textarea').val('');
-//     $('#cal_param_file').val('');
-//     $('#cal_cmc_file').val('');
-//     $('#modal-add-cal-param-cmc').modal('hide');
-// });
-
-
-// function renderParamCMCTable() {
-//     let tbody = $('#cal_parameter_cmc_body');
-//     tbody.empty(); // ลบข้อมูลเก่าทั้งหมดก่อนแสดงใหม่
-
-//     cal_parameter_cmc_ranges.forEach((item, index) => {
-//         // ตรวจสอบว่าข้อมูล range เป็นไฟล์หรือไม่
-//         let rangeDisplay = (typeof item.range === 'object' && item.range.name) 
-//             ? item.range.name // แสดงชื่อไฟล์
-//             : item.range;     // แสดงข้อความ
-
-//         // ตรวจสอบว่าข้อมูล uncertainty เป็นไฟล์หรือไม่
-//         let uncertaintyDisplay = (typeof item.uncertainty === 'object' && item.uncertainty.name) 
-//             ? item.uncertainty.name // แสดงชื่อไฟล์
-//             : item.uncertainty;     // แสดงข้อความ
-
-//         // สร้างแถวของตาราง
-//         let row = `
-//             <tr>
-//                 <td>${item.description}</td>
-//                 <td>${rangeDisplay}</td>
-//                 <td>${uncertaintyDisplay}</td>
-//                 <td class="text-center">
-//                     <button class="btn btn-danger btn-sm btn-param-cmc-delete" data-index="${index}">
-//                         ลบ
-//                     </button>
-//                 </td>
-//             </tr>
-//         `;
-//         tbody.append(row);
-//     });
-// }
-
-
-// ลบข้อมูลใน array และตาราง
-// $('#cal_parameter_cmc_body').on('click', '.btn-param-cmc-delete', function () {
-//     let index = $(this).data('index');
-//     cal_parameter_cmc_ranges.splice(index, 1); // ลบข้อมูลใน array
-//     renderParamCMCTable(); // อัปเดตตารางใหม่
-// });
-
-// สร้างโครงสร้าง measurements
-// let measurements = [{
-//     name: $('#cal_parameters').val(), // ค่า ID "cal_parameters"
-//     type: $('input[name="cal_parameters_type"]:checked').val(), // เลือกค่าจาก radio
-//     ranges: [] // อาร์เรย์สำหรับเก็บ ranges
-// }];
-
-// เพิ่มข้อมูลลงใน ranges
-// let rangeLines = "";
 let uncertaintyLines = "";
 $('#btn_add_cal_param_cmc').on('click', function () {
     // ดึงค่าจากฟอร์ม
     let description = document.getElementById('description').value;
+    // let description = processText('description')
 
-    // แยกบรรทัดจาก textarea
-    
-    
-
-    // const selectedParamValue = $('input[name="cal_param_option"]:checked').val();
-        
-    // if (selectedParamValue === 'text') {
-        // console.log("parameter ถูกเลือก: ข้อความ");
     let rangeLines = $('#cal_param_range_textarea').val().split('\n').filter(line => line.trim() !== '');
-        // ดำเนินการเมื่อเลือก 'ข้อความ'
-    // } else if (selectedParamValue === 'picture') {
-    //     console.log("parameter ถูกเลือก: รูปภาพ");
-    //     // ดำเนินการเมื่อเลือก 'รูปภาพ'
-    // }
+
     let path = '';
     const selectedCmcValue = $('input[name="cal_cmc_option"]:checked').val();
         

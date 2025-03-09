@@ -8700,8 +8700,8 @@ class MyTestController extends Controller
 
      public function generateScopePDF()
      {
-      $certilab = CertiLab::find(1976);
-      // dd($certilab);
+      $certilab = CertiLab::find(2049);
+    
 
       // dd($certilab->DataEmailDirectorLAB);
 

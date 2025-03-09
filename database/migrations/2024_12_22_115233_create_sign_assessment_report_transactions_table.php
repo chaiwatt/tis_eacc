@@ -15,10 +15,8 @@ class CreateSignAssessmentReportTransactionsTable extends Migration
     {
         Schema::create('sign_assessment_report_transactions', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('lab_report_info_id')->nullable(); 
-            $table->foreign('lab_report_info_id')->references('id')->on('lab_report_infos')->onDelete('cascade');
+            $table->unsignedInteger('report_info_id')->nullable(); 
             $table->unsignedInteger('signer_id')->nullable(); 
-            $table->foreign('signer_id')->references('id')->on('besurv_signers')->onDelete('cascade');
             $table->char('app_id',20)->default(0);
             $table->char('certificate_type',10)->default(0)->comment('0=CB,1=IB,2=LAB');
             $table->string('signer_name',250)->default(0);

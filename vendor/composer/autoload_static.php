@@ -961,6 +961,7 @@ class ComposerStaticInit5a57f53094f9308acbcb93e3439f9a62
         'App\\Models\\Bcertify\\Formula' => __DIR__ . '/../..' . '/app/Models/Bcertify/Formula.php',
         'App\\Models\\Bcertify\\Ghg' => __DIR__ . '/../..' . '/app/Models/Bcertify/Ghg.php',
         'App\\Models\\Bcertify\\GhgActivity' => __DIR__ . '/../..' . '/app/Models/Bcertify/GhgActivity.php',
+        'App\\Models\\Bcertify\\HtmlCbMemorandumRequest' => __DIR__ . '/../..' . '/app/Models/Bcertify/HtmlCbMemorandumRequest.php',
         'App\\Models\\Bcertify\\HtmlLabMemorandumPdfRequest' => __DIR__ . '/../..' . '/app/Models/Bcertify/HtmlLabMemorandumPdfRequest.php',
         'App\\Models\\Bcertify\\HtmlLabMemorandumRequest' => __DIR__ . '/../..' . '/app/Models/Bcertify/HtmlLabMemorandumRequest.php',
         'App\\Models\\Bcertify\\Iaf' => __DIR__ . '/../..' . '/app/Models/Bcertify/Iaf.php',

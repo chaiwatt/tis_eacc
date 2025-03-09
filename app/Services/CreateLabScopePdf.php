@@ -32,6 +32,7 @@ class CreateLabScopePdf
 
     public function generatePdf()
     {
+
         $app_certi_lab = CertiLab::find($this->certi_lab_id);
         // dd($app_certi_lab->lab_type);
         if($app_certi_lab->lab_type == 3 ){
@@ -295,6 +296,12 @@ class CreateLabScopePdf
                 'I' => "THSarabunNew-Italic.ttf",
                 'BI' => "THSarabunNew-BoldItalic.ttf",
             ],
+            'dejavusans' => [ // เพิ่มฟอนต์ DejaVu Sans
+                'R' => "DejaVuSans.ttf",
+                'B' => "DejaVuSans-Bold.ttf",
+                'I' => "DejaVuSerif-Italic.ttf",
+                'BI' => "DejaVuSerif-BoldItalic.ttf",
+            ],
         ];
 
         $mpdf = new Mpdf([
@@ -306,6 +313,8 @@ class CreateLabScopePdf
             'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
             'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
             'default_font'     => 'thsarabunnew', // ใช้ฟอนต์ที่กำหนดเป็นค่าเริ่มต้น
+            'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+            'mode' => 'utf-8',
             'margin_left'      => 8, // ระบุขอบด้านซ้าย
             'margin_right'     => 3, // ระบุขอบด้านขวา
             // 'margin_top'       => 97, // ระบุขอบด้านบน
@@ -318,7 +327,6 @@ class CreateLabScopePdf
         $mpdf->WriteHTML($stylesheet, 1);
         
         $mpdf->SetWatermarkImage(public_path('images/nc_hq.png'), 1, '', [170, 4]); // กำหนด opacity, , ตำแหน่ง
-        // https://upload.wikimedia.org/wikipedia/commons/2/25/Siam_lilacpoint.jpg
 
         // $mpdf->SetWatermarkImage('https://upload.wikimedia.org/wikipedia/commons/2/25/Siam_lilacpoint.jpg', 1, '', [170, 4]);
 
@@ -345,7 +353,7 @@ class CreateLabScopePdf
         ]);
         $mpdf->SetHTMLHeader($header,2);
         $mpdf->SetHTMLFooter($footer,2);
-        
+    
         $html = view('certify.scope_pdf.calibration.pdf-cal-scope', [
                 'scopes' => collect($scopes)
             ]);
@@ -353,6 +361,19 @@ class CreateLabScopePdf
 
         // แปลง PDF เป็น String
         $pdfContent = $mpdf->Output('', 'S');
+
+
+    // ดูผลลัพธ์
+    // dd($scopes);
+
+        // $title = "mypdf.pdf";
+        
+        // $mpdf->Output($title, "I");  
+
+        
+
+        // dd($scopes);
+
 
         // ใช้ PdfParser อ่าน PDF จาก String
         $parser = new Parser();
@@ -378,6 +399,12 @@ class CreateLabScopePdf
                 'I' => "THSarabunNew-Italic.ttf",
                 'BI' => "THSarabunNew-BoldItalic.ttf",
             ],
+            'dejavusans' => [ // เพิ่มฟอนต์ DejaVu Sans
+                'R' => "DejaVuSans.ttf",
+                'B' => "DejaVuSans-Bold.ttf",
+                'I' => "DejaVuSerif-Italic.ttf",
+                'BI' => "DejaVuSerif-BoldItalic.ttf",
+            ],
         ];
 
         $mpdf = new Mpdf([
@@ -389,6 +416,8 @@ class CreateLabScopePdf
             'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
             'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
             'default_font'     => 'thsarabunnew', // ใช้ฟอนต์ที่กำหนดเป็นค่าเริ่มต้น
+            'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+            'mode' => 'utf-8',
             'margin_left'      => 8, // ระบุขอบด้านซ้าย
             'margin_right'     => 3, // ระบุขอบด้านขวา
             'margin_top'       => 97, // ระบุขอบด้านบน
@@ -468,9 +497,11 @@ class CreateLabScopePdf
 
   public function generatePdfLabCalScope($id)
   {
-    // dd('ok');
+    
       $siteType = "single";
       $data = $this->getCalScopeData($id)->getData();
+
+    //   dd(count($data));
       
       if(count($data) > 1){
           $siteType = "multi";
@@ -482,13 +513,59 @@ class CreateLabScopePdf
 
         $scopes = $details->scope;
 
+        // วนลูปผ่าน $scopes เพื่อเพิ่ม measurement_edit
+        foreach ($scopes as $scope) {
+            $measurementEdit = [];
+
+            // วนลูปผ่าน measurements ของแต่ละ scope
+            foreach ($scope->measurements as $measurement) {
+                $groupedRanges = [];
+
+                // จัดกลุ่ม ranges ตาม description
+                foreach ($measurement->ranges as $range) {
+                    $description = $range->description;
+
+                    if (!isset($groupedRanges[$description])) {
+                        $groupedRanges[$description] = [
+                            'ranges' => [],
+                            'uncertainties' => []
+                        ];
+                    }
+
+                    $groupedRanges[$description]['ranges'][] = $range->range;
+                    $groupedRanges[$description]['uncertainties'][] = $range->uncertainty;
+                }
+
+                // สร้างโครงสร้าง measurement_edit ใหม่
+                $measurementEdit[] = [
+                    'name' => $measurement->name,
+                    'type' => $measurement->type,
+                    'ranges' => $groupedRanges
+                ];
+            }
+
+            // เพิ่มคีย์ measurement_edit ลงใน $scope
+            $scope->measurement_edit = $measurementEdit;
+        }
+
+        // จัดเรียง $scopes ตาม category ตามตัวอักษร
+        usort($scopes, function ($a, $b) {
+            return strcmp($a->category, $b->category);
+        });
+
+
+
           // ใช้ array_map เพื่อดึงค่าของ 'key' จากแต่ละรายการใน $scopes
           $keys = array_map(function ($item) {
             return $item->key;
           }, $scopes);
 
+        // dd($scopes);
+
           // ใช้ array_unique เพื่อลบค่าซ้ำใน $keys
           $uniqueKeys = array_unique($keys);
+
+         
 
           $report = Report::where('app_certi_lab_id',$id)->first();
 
@@ -532,21 +609,11 @@ class CreateLabScopePdf
               'siteType' => $siteType
           ];
 
-        //   $pdfData =  (object)[
-        //     'certificate_no' => 'xx-LBxxx',
-        //     'acc_no' => '',
-        //     'book_no' => '',
-        //     'from_date_th' => '',
-        //     'from_date_en' => '',
-        //     'to_date_th' => '',
-        //     'to_date_en' => '',
-        //     'uniqueKeys' => $uniqueKeys,
-        //     'siteType' => $siteType
-        // ];
 
-          // dd($uniqueKeys);
+         
 
           $scopePages = $this->getCalPageList($scopes,$pdfData,$details);
+
           
           $type = 'I';
           $fontDirs = [public_path('pdf_fonts/')]; // เพิ่มไดเรกทอรีฟอนต์ที่คุณต้องการ
@@ -556,6 +623,12 @@ class CreateLabScopePdf
                   'B' => "THSarabunNew-Bold.ttf",
                   'I' => "THSarabunNew-Italic.ttf",
                   'BI' => "THSarabunNew-BoldItalic.ttf",
+              ],
+              'dejavusans' => [ // เพิ่มฟอนต์ DejaVu Sans
+                  'R' => "DejaVuSans.ttf",
+                  'B' => "DejaVuSans-Bold.ttf",
+                  'I' => "DejaVuSerif-Italic.ttf",
+                  'BI' => "DejaVuSerif-BoldItalic.ttf",
               ],
           ];
   
@@ -569,6 +642,8 @@ class CreateLabScopePdf
                   'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
                   'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
                   'default_font'     => 'thsarabunnew',
+                  'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+                  'mode' => 'utf-8',
                   'margin_left'      => 6,
                   'margin_right'     => 5,
                   'margin_top'       => 97,
@@ -586,6 +661,8 @@ class CreateLabScopePdf
                       'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
                       'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
                       'default_font'     => 'thsarabunnew',
+                      'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+                      'mode' => 'utf-8',
                       'margin_left'      => 6,
                       'margin_right'     => 5,
                       'margin_top'       => 108,
@@ -601,6 +678,8 @@ class CreateLabScopePdf
                       'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
                       'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
                       'default_font'     => 'thsarabunnew',
+                      'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+                      'mode' => 'utf-8',
                       'margin_left'      => 6,
                       'margin_right'     => 5,
                       'margin_top'       => 85,
@@ -624,7 +703,7 @@ class CreateLabScopePdf
           $mpdf->showWatermarkImage = true; // เปิดใช้งาน watermark
   
           // เพิ่ม Text Watermark
-          $mpdf->SetWatermarkText('Confidential', 0.1); // ระบุข้อความและ opacity
+        //   $mpdf->SetWatermarkText('Confidential', 0.1); // ระบุข้อความและ opacity
           $mpdf->showWatermarkText = true; // เปิดใช้งาน text watermark
               
           $signImage = public_path('images/sign.jpg');
@@ -690,6 +769,8 @@ class CreateLabScopePdf
           'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
           'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
           'default_font'     => 'thsarabunnew',
+          'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+          'mode' => 'utf-8',
       ]);
 
     //   $combinedPdf->SetImportUse();
@@ -737,6 +818,9 @@ class CreateLabScopePdf
 
     //   $combinedPdf->Output('combined.pdf', \Mpdf\Output\Destination::INLINE);
 
+    $title = "mypdf.pdf";
+    
+    $combinedPdf->Output($title, "I");  
 
     // $defaultDisk = config('filesystems.default');
     // dd($defaultDisk);
@@ -882,6 +966,12 @@ class CreateLabScopePdf
                   'I' => "THSarabunNew-Italic.ttf",
                   'BI' => "THSarabunNew-BoldItalic.ttf",
               ],
+              'dejavusans' => [ // เพิ่มฟอนต์ DejaVu Sans
+                  'R' => "DejaVuSans.ttf",
+                  'B' => "DejaVuSans-Bold.ttf",
+                  'I' => "DejaVuSerif-Italic.ttf",
+                  'BI' => "DejaVuSerif-BoldItalic.ttf",
+              ],
           ];
   
           if ($siteType == "single") {
@@ -895,6 +985,8 @@ class CreateLabScopePdf
                   'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
                   'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
                   'default_font'     => 'thsarabunnew',
+                  'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+                  'mode' => 'utf-8',
                   'margin_left'      => 6,
                   'margin_right'     => 5,
                   'margin_top'       => 88,
@@ -914,6 +1006,8 @@ class CreateLabScopePdf
                       'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
                       'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
                       'default_font'     => 'thsarabunnew',
+                      'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+                      'mode' => 'utf-8',
                       'margin_left'      => 6,
                       'margin_right'     => 5,
                       'margin_top'       => 99,
@@ -929,6 +1023,8 @@ class CreateLabScopePdf
                       'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
                       'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
                       'default_font'     => 'thsarabunnew',
+                      'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+                      'mode' => 'utf-8',
                       'margin_left'      => 6,
                       'margin_right'     => 5,
                       'margin_top'       => 76,
@@ -955,7 +1051,7 @@ class CreateLabScopePdf
           $mpdf->showWatermarkImage = true; // เปิดใช้งาน watermark
   
           // เพิ่ม Text Watermark
-          $mpdf->SetWatermarkText('Confidential', 0.1); // ระบุข้อความและ opacity
+        //   $mpdf->SetWatermarkText('Confidential', 0.1); // ระบุข้อความและ opacity
           $mpdf->showWatermarkText = true; // เปิดใช้งาน text watermark
               
           $signImage = public_path('images/sign.jpg');
@@ -1023,6 +1119,8 @@ class CreateLabScopePdf
           'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
           'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
           'default_font'     => 'thsarabunnew',
+          'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+          'mode' => 'utf-8',
       ]);
 
     //   $combinedPdf->SetImportUse();
@@ -1153,6 +1251,12 @@ class CreateLabScopePdf
               'I' => "THSarabunNew-Italic.ttf",
               'BI' => "THSarabunNew-BoldItalic.ttf",
           ],
+          'dejavusans' => [ // เพิ่มฟอนต์ DejaVu Sans
+              'R' => "DejaVuSans.ttf",
+              'B' => "DejaVuSans-Bold.ttf",
+              'I' => "DejaVuSerif-Italic.ttf",
+              'BI' => "DejaVuSerif-BoldItalic.ttf",
+          ],
       ];
 
       $mpdf = new Mpdf([
@@ -1164,6 +1268,8 @@ class CreateLabScopePdf
           'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
           'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
           'default_font'     => 'thsarabunnew', // ใช้ฟอนต์ที่กำหนดเป็นค่าเริ่มต้น
+          'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+          'mode' => 'utf-8',
           'margin_left'      => 8, // ระบุขอบด้านซ้าย
           'margin_right'     => 3, // ระบุขอบด้านขวา
           // 'margin_top'       => 97, // ระบุขอบด้านบน
@@ -1232,6 +1338,12 @@ class CreateLabScopePdf
               'I' => "THSarabunNew-Italic.ttf",
               'BI' => "THSarabunNew-BoldItalic.ttf",
           ],
+          'dejavusans' => [ // เพิ่มฟอนต์ DejaVu Sans
+              'R' => "DejaVuSans.ttf",
+              'B' => "DejaVuSans-Bold.ttf",
+              'I' => "DejaVuSerif-Italic.ttf",
+              'BI' => "DejaVuSerif-BoldItalic.ttf",
+          ],
       ];
 
       $mpdf = new Mpdf([
@@ -1243,6 +1355,8 @@ class CreateLabScopePdf
           'fontDir'          => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], $fontDirs),
           'fontdata'         => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], $fontData),
           'default_font'     => 'thsarabunnew', // ใช้ฟอนต์ที่กำหนดเป็นค่าเริ่มต้น
+          'fontdata_fallback' => ['dejavusans', 'freesans', 'arial'],
+          'mode' => 'utf-8',
           'margin_left'      => 8, // ระบุขอบด้านซ้าย
           'margin_right'     => 3, // ระบุขอบด้านขวา
           'margin_top'       => 97, // ระบุขอบด้านบน

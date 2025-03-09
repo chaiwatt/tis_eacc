@@ -1,0 +1,19 @@
+/* custom/line_extractor/line-extractor.css */
+.editable-div {
+    width: 200px;
+    min-height: 100px;
+    white-space: pre-wrap;
+    font-family: Arial, sans-serif;
+    overflow-wrap: break-word;
+    border: 1px solid #ccc;
+    padding: 4px;
+    outline: none;
+}
+
+.editable-div:focus {
+    border-color: #666;
+}
+
+[id^="result"] {
+    margin-top: 10px;
+}

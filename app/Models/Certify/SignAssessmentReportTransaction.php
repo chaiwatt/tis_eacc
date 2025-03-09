@@ -2,6 +2,7 @@
 
 namespace App\Models\Certify;
 
+use App\Certify\CbReportInfo;
 use Kyslik\ColumnSortable\Sortable;
 use App\Models\Certify\LabReportInfo;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ class SignAssessmentReportTransaction extends Model
     protected $table = 'sign_assessment_report_transactions';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'lab_report_info_id',
+        'report_info_id',
         'signer_id',
         'app_id',
         'certificate_type',
@@ -25,7 +26,19 @@ class SignAssessmentReportTransaction extends Model
         'approval',
     ];
 
-    public function labReportInfo(){
-        return $this->belongsTo(LabReportInfo::class, 'lab_report_info_id', 'id');
+    // public function labReportInfo(){
+    //     return $this->belongsTo(LabReportInfo::class, 'report_info_id', 'id');
+    // }
+    public function reportInfo()
+    {
+        if ($this->certificate_type == 2) 
+        {
+            return $this->belongsTo(LabReportInfo::class, 'report_info_id', 'id');
+        }else if($this->certificate_type == 0)
+        {
+            return $this->belongsTo(CbReportInfo::class, 'report_info_id', 'id');
+        }
     }
+
+
 }

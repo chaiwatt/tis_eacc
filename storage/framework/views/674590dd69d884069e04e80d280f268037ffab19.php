@@ -869,12 +869,13 @@
     </div>
 
     <div class="row">
+        
         <div class="col-md-6">
             <div class="form-group <?php echo e($errors->has('lab_latitude') ? 'has-error' : ''); ?>">
-                <?php echo HTML::decode(Form::label('lab_latitude', '<span class="text-danger">*</span> พิกัดที่ตั้ง (ละติจูด)'.':'.'<br/><span class=" font_size">(latitude)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+                <?php echo HTML::decode(Form::label('lab_latitude', ' พิกัดที่ตั้ง (ละติจูด)'.':'.'<br/><span class=" font_size">(latitude)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
 
                 <div class="col-md-7">
-                    <input type="text" name="lab_latitude" id="lab_latitude" class="form-control input_address" value="<?php echo !empty($certi_lab->lab_latitude)?$certi_lab->lab_latitude: null; ?>" required>
+                    <input type="text" name="lab_latitude" id="lab_latitude" class="form-control input_address" value="<?php echo !empty($certi_lab->lab_latitude)?$certi_lab->lab_latitude: null; ?>" >
                     <?php echo $errors->first('lab_latitude', '<p class="help-block">:message</p>'); ?>
 
                 </div>
@@ -882,10 +883,10 @@
         </div>
         <div class="col-md-6">
             <div class="form-group <?php echo e($errors->has('lab_longitude') ? 'has-error' : ''); ?>">
-                <?php echo HTML::decode(Form::label('lab_longitude', '<span class="text-danger">*</span> พิกัดที่ตั้ง (ลองจิจูด)'.':'.'<br/><span class=" font_size">(longitude)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
+                <?php echo HTML::decode(Form::label('lab_longitude', ' พิกัดที่ตั้ง (ลองจิจูด)'.':'.'<br/><span class=" font_size">(longitude)</span>',['class' => 'col-md-5 control-label label-height'])); ?>
 
                 <div class="col-md-7">
-                    <input type="text" name="lab_longitude" id="lab_longitude" class="form-control input_address" value="<?php echo !empty($certi_lab->lab_longitude)?$certi_lab->lab_longitude: null; ?>" required>
+                    <input type="text" name="lab_longitude" id="lab_longitude" class="form-control input_address" value="<?php echo !empty($certi_lab->lab_longitude)?$certi_lab->lab_longitude: null; ?>" >
                     <?php echo $errors->first('lab_longitude', '<p class="help-block">:message</p>'); ?>
 
                 </div>

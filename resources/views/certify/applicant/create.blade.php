@@ -2,7 +2,9 @@
 @extends('layouts.master')
 @push('css')
 
+    <link href="{{asset('plugins/custom/line_extractor/line-extractor.css')}}" rel="stylesheet">
     <style>
+         
         .table>tbody>tr>td ,label{
             line-height: 1.7;
             color: #5f5f5f;
@@ -37,10 +39,7 @@
                     </a>
                     <div class="clearfix"></div>
                     <hr>
-                    {{-- <form method="POST" action="{{route('applicant.store')}}">
-                        @csrf
-                        <button type="submit"class="btn btn-default m-l-5" value="ส่งข้อมูล"  name="save"  >ส่งข้อมูล</button>
-                    </form> --}}
+     
 
                     {!! Form::open(['url' => 'certify/applicant/store', 'method' => 'post', 'class' => 'form-horizontal','id'=>'app_certi_form', 'files' => true]) !!}
 
@@ -76,6 +75,7 @@
 @endsection
 @section('js')
     <script src="{{asset('plugins/components/toast-master/js/jquery.toast.js')}}"></script>
+    <script src="{{asset('plugins/custom/line_extractor/line-extractor.js')}}"></script>
     <script src="{{ asset('js/jasny-bootstrap.js') }}"></script>
     <script>
         $(document).ready(function () {

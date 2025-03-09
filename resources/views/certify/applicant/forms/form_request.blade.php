@@ -876,20 +876,21 @@
     </div>
 
     <div class="row">
+        {{-- <img src="{{asset('uploads/files/applicants/check_files/67cad128662a1_20250307_175744.png')}}" style="width: 150px" alt=""> --}}
         <div class="col-md-6">
             <div class="form-group {{ $errors->has('lab_latitude') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_latitude', '<span class="text-danger">*</span> พิกัดที่ตั้ง (ละติจูด)'.':'.'<br/><span class=" font_size">(latitude)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+                {!! HTML::decode(Form::label('lab_latitude', ' พิกัดที่ตั้ง (ละติจูด)'.':'.'<br/><span class=" font_size">(latitude)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
                 <div class="col-md-7">
-                    <input type="text" name="lab_latitude" id="lab_latitude" class="form-control input_address" value="{!! !empty($certi_lab->lab_latitude)?$certi_lab->lab_latitude: null !!}" required>
+                    <input type="text" name="lab_latitude" id="lab_latitude" class="form-control input_address" value="{!! !empty($certi_lab->lab_latitude)?$certi_lab->lab_latitude: null !!}" >
                     {!! $errors->first('lab_latitude', '<p class="help-block">:message</p>') !!}
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="form-group {{ $errors->has('lab_longitude') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('lab_longitude', '<span class="text-danger">*</span> พิกัดที่ตั้ง (ลองจิจูด)'.':'.'<br/><span class=" font_size">(longitude)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
+                {!! HTML::decode(Form::label('lab_longitude', ' พิกัดที่ตั้ง (ลองจิจูด)'.':'.'<br/><span class=" font_size">(longitude)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
                 <div class="col-md-7">
-                    <input type="text" name="lab_longitude" id="lab_longitude" class="form-control input_address" value="{!! !empty($certi_lab->lab_longitude)?$certi_lab->lab_longitude: null !!}" required>
+                    <input type="text" name="lab_longitude" id="lab_longitude" class="form-control input_address" value="{!! !empty($certi_lab->lab_longitude)?$certi_lab->lab_longitude: null !!}" >
                     {!! $errors->first('lab_longitude', '<p class="help-block">:message</p>') !!}
                 </div>
             </div>
