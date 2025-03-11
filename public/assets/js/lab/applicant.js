@@ -1225,6 +1225,59 @@ $('#modal-add-parameter-two').on('shown.bs.modal', function () {
     });
 });
 
+$('#modal-add-test-standard-symbol').on('shown.bs.modal', function () {
+    // Destroy existing Summernote instance
+    $('#test_standard_txtarea').summernote('destroy');
+    
+    // Reinitialize with desired settings
+    $('#test_standard_txtarea').summernote({
+        height: 150,
+        toolbar: false,
+    });
+});
+
+// $('.symbol-btn-add-test-standard').on('click', function() {
+
+//     var symbol = $(this).data('symbol');
+    
+//     // เพิ่มสัญลักษณ์ลงใน Summernote ของ #cal_method_textarea
+//     $('#test_standard_txtarea').summernote('insertText', symbol);
+
+//     // ปิด modal-add-cal-method-symbol หลังจากเพิ่มสัญลักษณ์
+//     $('#modal-add-test-standard-symbol').modal('hide');
+// });
+
+$('.symbol-btn-add-test-standard').on('click', function() {
+    var symbol = $(this).data('symbol');
+    $('#test_standard_txtarea').summernote('insertText', symbol);
+    $('#modal-add-test-standard-symbol').modal('hide');
+});
+
+// ฟังก์ชันสำหรับตัวยก (superscript)
+$('#add-superscript-btn').on('click', function() {
+    var base = prompt("กรุณาใส่ฐาน (เช่น z, 2):");
+    var exponent = prompt("กรุณาใส่เลขชี้กำลัง (เช่น a, ε):");
+    if (base && exponent) {
+        var superscriptHtml = base + '<sup>' + exponent + '</sup>';
+        console.log(superscriptHtml);
+        // $('#test_standard_txtarea').summernote('insertHTML', superscriptHtml);
+        $('#test_standard_txtarea').summernote('pasteHTML', superscriptHtml);
+        $('#modal-add-test-standard-symbol').modal('hide');
+    }
+});
+
+// ฟังก์ชันสำหรับตัวห้อย (subscript)
+$('#add-subscript-btn').on('click', function() {
+    var base = prompt("กรุณาใส่ฐาน (เช่น H):");
+    var subscript = prompt("กรุณาใส่ตัวห้อย (เช่น 2):");
+    if (base && subscript) {
+        var subscriptHtml = base + '<sub>' + subscript + '</sub>';
+        // $('#test_standard_txtarea').summernote('insertHTML', subscriptHtml);
+         $('#test_standard_txtarea').summernote('pasteHTML', subscriptHtml);
+        $('#modal-add-test-standard-symbol').modal('hide');
+    }
+});
+
 $('#modal-add-cal-method').on('shown.bs.modal', function () {
     // Destroy existing Summernote instance
     $('#cal_method_textarea').summernote('destroy');
@@ -2206,7 +2259,7 @@ $('#button_add_test_scope').on('click', function () {
     let detail = $('#test_param_detail_textarea').val(); 
     let description = $('#test_parameter_desc').val(); 
 
-    console.log(category_eng);
+    console.log(standard);
 
     if (!category || category === "") {
         // ถ้า category ไม่มีค่า

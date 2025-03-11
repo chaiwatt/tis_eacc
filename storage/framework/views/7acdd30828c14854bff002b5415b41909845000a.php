@@ -1,6 +1,6 @@
 
-<input type="text" id="lab_addresses_input" name="lab_addresses" />
-<input type="text" id="lab_main_address_input" name="lab_main_address" />
+<input type="hidden" id="lab_addresses_input" name="lab_addresses" />
+<input type="hidden" id="lab_main_address_input" name="lab_main_address" />
 <div >
     <div class="clearfix"></div>
     <hr>

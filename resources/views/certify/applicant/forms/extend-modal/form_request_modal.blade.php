@@ -971,6 +971,7 @@
 </div>
 {{-- modal cal method --}}
 
+
 {{-- modal show cal scope --}}
 
 <div class="modal fade" id="modal-show-cal-scope">
@@ -1072,6 +1073,9 @@
                             </div>
                         {{-- </div> --}}
                         <div class="col-md-12 form-group" >
+                            <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#modal-add-test-standard-symbol">
+                                สัญลักษณ์พิเศษ
+                            </button>
                             <label for="test_standard_txtarea">วิธีสอบเทียบ / มาตรฐานที่ใช้</label>
                             <textarea class="form-control" rows="5" id="test_standard_txtarea"></textarea>
                         </div>
@@ -1157,4 +1161,57 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modal-add-test-standard-symbol">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">เลือกสัญลักษณ์พิเศษ</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body text-left">
+                <div class="d-flex flex-wrap justify-content-start align-items-center" style="gap: 10px; padding: 10px;">
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="Ω">Ω</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="π">π</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="Σ">Σ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="β">β</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="α">α</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="γ">γ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="µ">µ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="±">±</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="∞">∞</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="θ">θ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="δ">δ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="ξ">ξ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="φ">φ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="χ">χ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="ψ">ψ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="ω">ω</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="ε">ε</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="Δ">Δ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="√">√</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="∮">∮</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="∫">∫</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="∂">∂</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="∇">∇</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="∑">∑</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="∏">∏</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="∆">∆</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="λ">λ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="ω">ω</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="σ">σ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="ρ">ρ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="℃">℃</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="℉">℉</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-test-standard" data-symbol="Ξ">Ξ</button>
+                    <!-- ปุ่มสำหรับตัวยก (superscript) -->
+                    <button type="button" class="btn btn-default" id="add-superscript-btn">xʸ</button>
+                    <!-- ปุ่มสำหรับตัวห้อย (subscript) -->
+                    <button type="button" class="btn btn-default" id="add-subscript-btn">xₙ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 

@@ -818,9 +818,9 @@ class CreateLabScopePdf
 
     //   $combinedPdf->Output('combined.pdf', \Mpdf\Output\Destination::INLINE);
 
-    $title = "mypdf.pdf";
+    // $title = "mypdf.pdf";
     
-    $combinedPdf->Output($title, "I");  
+    // $combinedPdf->Output($title, "I");  
 
     // $defaultDisk = config('filesystems.default');
     // dd($defaultDisk);
