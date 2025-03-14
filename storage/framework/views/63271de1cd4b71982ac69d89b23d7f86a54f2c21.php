@@ -44,7 +44,7 @@
         }
     ?>
 
-<table width="100%"  cellspacing="0" cellpadding="5" >
+<table   width="100%"  cellspacing="0" cellpadding="5" >
     <tbody>
         <?php
             $previousCategoryTh = null;
@@ -61,10 +61,10 @@
                         <span style="font-size: 16px">(<?php echo $item->category; ?> field)</span>
                     </span>
                 </td>
-                <td style="vertical-align: top;width:25%">
-                    <table class="table-one" cellspacing="0" width="100%" style="padding-right: 1px"  >
+                <td style="vertical-align: top;width:28.33%">
+                    <table   class="table-one" cellspacing="0" width="100%" style="padding-right: 1px"  >
                         <tr>
-                            <td style="padding-left: 0px" >
+                            <td style="padding-left: 5px" >
                                 <span style="margin-top:5px"><?php echo $item->instrument; ?></span><span style="font-size:1px;visibility: hidden">*<?php echo e($key); ?>*</span>
                                 <?php if($item->instrument !== ""): ?>
                                     <span><br><?php echo $item->instrument_two; ?> </span>
@@ -73,14 +73,14 @@
                         </tr>
                         <tr>
                             <td>
-                                <table class="table-two" cellspacing="0"  width="100%" >
+                                <table   class="table-two" cellspacing="0"  width="100%"  >
 
                                     <?php if(!empty($item->description)): ?>
                                         <tr><td><span><?php echo $item->description; ?></span></td></tr>
                                     <?php endif; ?>
                                     <tr>
                                         <td style="<?php if($item->description !== ''): ?> margin-left:15px <?php endif; ?>">
-                                            <table class="table-three" cellspacing="0"  width="100%">
+                                            <table   class="table-three" cellspacing="0"  width="100%">
                                                 <?php $__currentLoopData = $item->measurement_edit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $measurement): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <tr>
                                                         <td style="<?php if($i > 0): ?> padding-top: 15px; <?php endif; ?>">
@@ -89,7 +89,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            <table class="table-four" cellspacing="0" width="100%" style="margin-left:0px;padding-right:3px">
+                                                            <table   class="table-four" cellspacing="0" width="100%" style="margin-left:0px;padding-right:3px">
                                                                 <?php $__currentLoopData = $measurement['ranges']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $description_i => $range): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 <?php if(!empty($description_i)): ?>
                                                                     <tr>
@@ -122,8 +122,8 @@
                 </td>
 
         
-               <td style="vertical-align: top;width:25%">
-                    <table class="table-one" cellspacing="0" width="100%"  style="padding-right: 1px">
+               <td style="vertical-align: top;width:28.33%">
+                    <table   class="table-one" cellspacing="0" width="100%"  style="padding-right: 1px" >
                         <tr>
                             <td style="padding-left: 0px">
                                 <span style="visibility: hidden;margin-top:5px"><?php echo $item->instrument; ?></span><span style="font-size:1px;visibility: hidden">*<?php echo e($key); ?>*</span>
@@ -134,13 +134,13 @@
                         </tr>
                         <tr>
                             <td>
-                                <table class="table-two" cellspacing="0"  width="100%">
+                                <table   class="table-two" cellspacing="0"  width="100%">
                                     <?php if(!empty($item->description)): ?>
                                         <tr><td><span style="visibility: hidden;"><?php echo $item->description; ?></span></td></tr>
                                     <?php endif; ?>
                                     <tr>
                                         <td style="<?php if($item->description !== ''): ?> margin-left:15px <?php endif; ?>">
-                                            <table class="table-three" cellspacing="0"  width="100%">
+                                            <table   class="table-three" cellspacing="0"  width="100%">
                                                 <?php $__currentLoopData = $item->measurement_edit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $measurement): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <tr>
                                                         <td style="<?php if($j > 0): ?> padding-top: 15px; <?php endif; ?>">
@@ -149,7 +149,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            <table class="table-four" cellspacing="0" width="100%" style="margin-left:0px;text-align: center;padding-right:3px">
+                                                            <table   class="table-four" cellspacing="0" width="100%" style="margin-left:0px;text-align: center;padding-right:3px">
                                                                 <?php $__currentLoopData = $measurement['ranges']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $description_j => $range): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 <?php if(!empty($description_j)): ?>
                                                                     <tr>
@@ -184,25 +184,32 @@
                         </tr>
                     </table>
                 </td> 
-                <td style="vertical-align: top;width:25%">
-                    <table class="table-one" cellspacing="0" width="100%"  style="padding-right: 1px">
+                <td style="vertical-align: top;width:28.33%">
+                    <table   class="table-one" cellspacing="0" width="100%"  style="padding-right: 1px"  >
                         <tr>
-                            <td style="padding-left: 0px">
-                                <span style="visibility: hidden;margin-top:5px"><?php echo $item->instrument; ?></span><span style="font-size:1px;visibility: hidden">*<?php echo e($key); ?>*</span>
+                            <td style="padding-left: 10px;">
+                                <div><span style="visibility: hidden;margin-top:5px"><?php echo $item->instrument; ?></span><span style="font-size:1px;visibility: hidden">*<?php echo e($key); ?>*</span></div>
+                                <?php if(count($item->measurement_edit) == 0): ?>
+                                    <div><?php echo $item->standard; ?></div>
+                                <?php endif; ?>
+
                                 <?php if($item->instrument !== ""): ?>
                                     <span style="visibility: hidden;"><br><?php echo $item->instrument_two; ?> </span>
                                 <?php endif; ?>
+
+                              
                             </td>
                         </tr>
+
                         <tr>
                             <td>
-                                <table class="table-two" cellspacing="0"  width="100%">
+                                <table   class="table-two" cellspacing="0"  width="100%" >
                                     <?php if(!empty($item->description)): ?>
                                         <tr><td><span style="visibility: hidden;"><?php echo $item->description; ?></span></td></tr>
                                     <?php endif; ?>
                                     <tr>
                                         <td style="<?php if($item->description !== ''): ?> margin-left:15px <?php endif; ?>">
-                                            <table class="table-three" cellspacing="0"  width="100%">
+                                            <table   class="table-three" cellspacing="0"  width="100%" >
                                                 <?php $__currentLoopData = $item->measurement_edit; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k => $measurement): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <tr>
                                                        
@@ -219,7 +226,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            <table class="table-four" cellspacing="0" width="100%" style="margin-left:0px;text-align: center;padding-right:3px">
+                                                            <table   class="table-four" cellspacing="0" width="100%" style="margin-left:0px;text-align: center;padding-right:3px">
                                                                 <?php $__currentLoopData = $measurement['ranges']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $description_k => $range): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 <?php if(!empty($description_k)): ?>
                                                                     <tr>

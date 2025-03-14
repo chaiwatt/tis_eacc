@@ -46,38 +46,55 @@ class LineExtractor {
         tempDiv.style.overflowWrap = 'break-word';
         tempDiv.style.fontFamily = window.getComputedStyle(this.editableDiv).fontFamily;
         tempDiv.style.fontSize = window.getComputedStyle(this.editableDiv).fontSize;
-
-        let text = this.editableDiv.innerText.replace(/\n/g, '');
+    
+        // ใช้ innerText โดยไม่ลบ newline
+        let text = this.editableDiv.innerText;
         tempDiv.textContent = text;
         document.body.appendChild(tempDiv);
-
+    
         const lines = [];
         const range = document.createRange();
         let currentLine = '';
         let lastTop = null;
-
-        for (let i = 0; i < text.length; i++) {
-            range.setStart(tempDiv.firstChild, i);
-            range.setEnd(tempDiv.firstChild, i + 1);
-            const rect = range.getClientRects()[0];
-
-            if (rect) {
-                if (lastTop !== null && rect.top !== lastTop) {
-                    lines.push(currentLine.trim());
-                    currentLine = text[i];
-                } else {
-                    currentLine += text[i];
+    
+        // แยกข้อความตาม newline ก่อน
+        const textLines = text.split('\n');
+    
+        for (let line of textLines) {
+            if (line.trim() === '') {
+                // ถ้าเป็นบรรทัดว่างจาก newline ให้เพิ่มเข้าไป
+                lines.push('');
+                continue;
+            }
+    
+            // ใส่ข้อความของบรรทัดนี้เข้า tempDiv เพื่อเช็คการตัดตามความกว้าง
+            tempDiv.textContent = line;
+    
+            let subCurrentLine = '';
+            for (let i = 0; i < line.length; i++) {
+                range.setStart(tempDiv.firstChild, i);
+                range.setEnd(tempDiv.firstChild, i + 1);
+                const rect = range.getClientRects()[0];
+    
+                if (rect) {
+                    if (lastTop !== null && rect.top !== lastTop) {
+                        lines.push(subCurrentLine.trim());
+                        subCurrentLine = line[i];
+                    } else {
+                        subCurrentLine += line[i];
+                    }
+                    lastTop = rect.top;
                 }
-                lastTop = rect.top;
+    
+                if (i === line.length - 1) {
+                    lines.push(subCurrentLine.trim());
+                }
             }
-
-            if (i === text.length - 1) {
-                lines.push(currentLine.trim());
-            }
+            lastTop = null; // รีเซ็ต lastTop สำหรับบรรทัดถัดไป
         }
-
+    
         document.body.removeChild(tempDiv);
-
+    
         return lines;
     }
 }

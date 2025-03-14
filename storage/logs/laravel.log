@@ -1332,3 +1332,15 @@
 #59 F:\\tisi_source_code\\e-acc\\server.php(21): require_once('F:\\\\tisi_source_...')
 #60 {main}
 "} 
+[2025-03-12 15:56:51] local.ERROR: Method Illuminate\View\View::__toString() must not throw an exception, caught ErrorException: Undefined variable: k (View: F:\tisi_source_code\e-acc\resources\views\certify\scope_pdf\calibration\pdf-cal-scope.blade.php) {"userId":115,"email":"wilais@th.cavagnagroup.com","exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalErrorException(code: 1): Method Illuminate\\View\\View::__toString() must not throw an exception, caught ErrorException: Undefined variable: k (View: F:\\tisi_source_code\\e-acc\esources\\views\\certify\\scope_pdf\\calibration\\pdf-cal-scope.blade.php) at F:\\tisi_source_code\\e-acc\\vendor\\mpdf\\mpdf\\src\\Mpdf.php:0)
+[stacktrace]
+#0 {main}
+"} 
+[2025-03-12 15:57:56] local.ERROR: Method Illuminate\View\View::__toString() must not throw an exception, caught ErrorException: Undefined variable: k (View: F:\tisi_source_code\e-acc\resources\views\certify\scope_pdf\calibration\pdf-cal-scope.blade.php) {"userId":115,"email":"wilais@th.cavagnagroup.com","exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalErrorException(code: 1): Method Illuminate\\View\\View::__toString() must not throw an exception, caught ErrorException: Undefined variable: k (View: F:\\tisi_source_code\\e-acc\esources\\views\\certify\\scope_pdf\\calibration\\pdf-cal-scope.blade.php) at F:\\tisi_source_code\\e-acc\\vendor\\mpdf\\mpdf\\src\\Mpdf.php:0)
+[stacktrace]
+#0 {main}
+"} 
+[2025-03-12 16:23:05] local.ERROR: Method Illuminate\View\View::__toString() must not throw an exception, caught ErrorException: Undefined variable: index (View: F:\tisi_source_code\e-acc\resources\views\certify\scope_pdf\calibration\pdf-cal-scope.blade.php) {"userId":115,"email":"wilais@th.cavagnagroup.com","exception":"[object] (Symfony\\Component\\Debug\\Exception\\FatalErrorException(code: 1): Method Illuminate\\View\\View::__toString() must not throw an exception, caught ErrorException: Undefined variable: index (View: F:\\tisi_source_code\\e-acc\esources\\views\\certify\\scope_pdf\\calibration\\pdf-cal-scope.blade.php) at F:\\tisi_source_code\\e-acc\\vendor\\mpdf\\mpdf\\src\\Mpdf.php:0)
+[stacktrace]
+#0 {main}
+"} 

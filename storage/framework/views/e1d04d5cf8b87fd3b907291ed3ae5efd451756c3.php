@@ -37,6 +37,25 @@
     .table-no-hover tbody tr:hover {
         background-color: transparent !important;
     }
+
+    .editable-div {
+    width: 200px;
+    min-height: 100px;
+    white-space: pre-wrap;
+    font-family: Arial, sans-serif;
+    overflow-wrap: break-word;
+    border: 1px solid #ccc;
+    padding: 4px;
+    outline: none;
+}
+
+.editable-div:focus {
+    border-color: #666;
+}
+
+[id^="result"] {
+    margin-top: 10px;
+}
 </style>
 <div class="modal fade" id="modal-add-address">
     <div class="modal-dialog modal-xl">
@@ -405,46 +424,45 @@
                         </div>
                     </div>
                     
-                    <div class="row" id="cal_infomation_scope">
+                    <div class="row" id="cal_infomation_scope" >
+                     
                         <hr>
-                        <div class="col-md-12 form-group" >
+                        <div class="col-md-12 form-group" style="margin-left: -20px">
+                            <div class="col-md-12 form-group" style="display: flex; gap: 20px; align-items: flex-start; padding-left: 0;">
+                                <div id="parameter_desc_wrapper">
+                                    <label for="parameter_desc" style="display: block;">คำอธิบายพารามิเตอร์(ถ้ามี)</label>
+                                    <div id="parameter_desc" class="editable-div" contenteditable="true" style="width: 220px; font-family: kanit;"></div>
+                                </div>
+                                <div>
+                                    <label for="cal_standard_txtarea" style="display: block;">วิธีสอบเทียบ / มาตรฐานที่ใช้</label>
+                                    <div id="cal_standard_txtarea" class="editable-div" contenteditable="true" style="width: 220px; font-family: kanit;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="cal_parameter_cmc_table">
+                            <table class="table table-bordered" id="cal_parameter_cmc_table_notuse">
+                                <thead class="bg-primary">
+                                    <tr>
+                                        <th class="text-center text-white "  width="30%">คำอธิบาย</th>
+                                        <th class="text-center text-white "  width="30%">รายละเอียด</th>
+                                        <th class="text-center text-white "  width="30%">ขีดความสามารถการสอบเทียบและการวัด (CMC)</th>
+                                        <th class="text-center text-white "  width="10%">ลบ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cal_parameter_cmc_body">
                             
-                            <div class="col-md-12 form-group" 
-                            style="display: flex; gap: 20px; align-items: flex-start;">
-                            <div>
-                                <label for="cal_standard_txtarea" style="display: block;">คำอธิบายพารามิเตอร์(ถ้ามี)</label>
-                                <div id="parameter_desc" class="editable-div" contenteditable="true" 
-                                        style="width: 220px; font-family: kanit;"></div>
-                            </div>
-                            <div>
-                                <label for="cal_standard_txtarea" style="display: block;">วิธีสอบเทียบ / มาตรฐานที่ใช้</label>
-                                <div id="cal_standard_txtarea" class="editable-div" contenteditable="true" 
-                                        style="width: 220px; font-family: kanit;"></div>
+                               
+                                </tbody>
+                            </table>
+    
+                             <div class="col-md-12 form-group">
+                                <button type="button" class="btn btn-success pull-right ml-2" id="button_add_cal_param_cmc">
+                                    <span aria-hidden="true">เพิ่มรายละเอียดพารามิเตอร์</span>
+                                </button>
+                               
                             </div>
                         </div>
-                        </div>
-
-                         <table class="table table-bordered" id="cal_parameter_cmc_table">
-                            <thead class="bg-primary">
-                                <tr>
-                                    <th class="text-center text-white "  width="30%">คำอธิบาย</th>
-                                    <th class="text-center text-white "  width="30%">รายละเอียด</th>
-                                    <th class="text-center text-white "  width="30%">ขีดความสามารถการสอบเทียบและการวัด (CMC)</th>
-                                    <th class="text-center text-white "  width="10%">ลบ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cal_parameter_cmc_body">
-                        
-                           
-                            </tbody>
-                        </table>
-
-                         <div class="col-md-12 form-group">
-                            <button type="button" class="btn btn-success pull-right ml-2" id="button_add_cal_param_cmc">
-                                <span aria-hidden="true">เพิ่มรายละเอียดพารามิเตอร์</span>
-                            </button>
-                           
-                        </div>
+                      
 
                     
                         
@@ -504,9 +522,9 @@
                         
                         <div class="col-md-6 form-group" id="cmc_wrapper">
                             <label for="exampleInputPassword1">
-                                <label for="">ขีดความสามารถฯ (CMC)  <button type="button" class="btn btn-primary btn-xs" id="show_modal_add_cmc_symbol">
-                                    <i class="fa fa-plus"></i> สัญลักษณ์
-                                </button></label>
+                                <label for="">ขีดความสามารถฯ (CMC)  
+                                    
+                            </label>
                       
                                 
                             </label>
@@ -1016,10 +1034,8 @@
                             </div>
                         
                         <div class="col-md-12 form-group" >
-                            <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#modal-add-test-standard-symbol">
-                                สัญลักษณ์พิเศษ
-                            </button>
-                            <label for="test_standard_txtarea">วิธีสอบเทียบ / มาตรฐานที่ใช้</label>
+                            
+                            <label for="test_standard_txtarea">วิธีทดสอบ / มาตรฐานที่ใช้</label>
                             <textarea class="form-control" rows="5" id="test_standard_txtarea"></textarea>
                         </div>
                     </div>

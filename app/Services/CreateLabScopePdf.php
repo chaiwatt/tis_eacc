@@ -355,7 +355,8 @@ class CreateLabScopePdf
         $mpdf->SetHTMLFooter($footer,2);
     
         $html = view('certify.scope_pdf.calibration.pdf-cal-scope', [
-                'scopes' => collect($scopes)
+                'scopes' => collect($scopes),
+                'index' => 0
             ]);
         $mpdf->WriteHTML($html);
 
@@ -450,7 +451,8 @@ class CreateLabScopePdf
         $mpdf->SetHTMLFooter($footer,2);
         
         $html = view('certify.scope_pdf.calibration.pdf-cal-scope', [
-                'scopes' => collect($scope)
+                'scopes' => collect($scope),
+                'index' => 0
             ]);
         $mpdf->WriteHTML($html);
 
@@ -547,6 +549,8 @@ class CreateLabScopePdf
             // เพิ่มคีย์ measurement_edit ลงใน $scope
             $scope->measurement_edit = $measurementEdit;
         }
+
+        // dd($scopes);
 
         // จัดเรียง $scopes ตาม category ตามตัวอักษร
         usort($scopes, function ($a, $b) {
@@ -738,7 +742,8 @@ class CreateLabScopePdf
                   ]);
                   $mpdf->SetHTMLHeader($firstPageHeader, 2);
                   $html = view('certify.scope_pdf.calibration.pdf-cal-scope', [
-                      'scopes' => collect($scopes)
+                      'scopes' => collect($scopes),
+                      'index' => $index
                   ]);
                   $mpdf->WriteHTML($html);
               } else if ($index > 0) {
@@ -751,7 +756,8 @@ class CreateLabScopePdf
                   $mpdf->SetHTMLHeader($header, 2);
                   $mpdf->AddPage('', '', '', '', '', 6, 5, 75, 30); 
                   $html = view('certify.scope_pdf.calibration.pdf-cal-scope', [
-                      'scopes' => collect($scopes)
+                      'scopes' => collect($scopes),
+                      'index' => $index
                   ]);
                   $mpdf->WriteHTML($html);
               }

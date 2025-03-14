@@ -64,38 +64,55 @@ class LineExtractor {
         tempDiv.style.overflowWrap = 'break-word';
         tempDiv.style.fontFamily = window.getComputedStyle(this.editableDiv).fontFamily;
         tempDiv.style.fontSize = window.getComputedStyle(this.editableDiv).fontSize;
-
-        let text = this.editableDiv.innerText.replace(/\n/g, '');
+    
+        // ใช้ innerText โดยไม่ลบ newline
+        let text = this.editableDiv.innerText;
         tempDiv.textContent = text;
         document.body.appendChild(tempDiv);
-
+    
         const lines = [];
         const range = document.createRange();
         let currentLine = '';
         let lastTop = null;
-
-        for (let i = 0; i < text.length; i++) {
-            range.setStart(tempDiv.firstChild, i);
-            range.setEnd(tempDiv.firstChild, i + 1);
-            const rect = range.getClientRects()[0];
-
-            if (rect) {
-                if (lastTop !== null && rect.top !== lastTop) {
-                    lines.push(currentLine.trim());
-                    currentLine = text[i];
-                } else {
-                    currentLine += text[i];
+    
+        // แยกข้อความตาม newline ก่อน
+        const textLines = text.split('\n');
+    
+        for (let line of textLines) {
+            if (line.trim() === '') {
+                // ถ้าเป็นบรรทัดว่างจาก newline ให้เพิ่มเข้าไป
+                lines.push('');
+                continue;
+            }
+    
+            // ใส่ข้อความของบรรทัดนี้เข้า tempDiv เพื่อเช็คการตัดตามความกว้าง
+            tempDiv.textContent = line;
+    
+            let subCurrentLine = '';
+            for (let i = 0; i < line.length; i++) {
+                range.setStart(tempDiv.firstChild, i);
+                range.setEnd(tempDiv.firstChild, i + 1);
+                const rect = range.getClientRects()[0];
+    
+                if (rect) {
+                    if (lastTop !== null && rect.top !== lastTop) {
+                        lines.push(subCurrentLine.trim());
+                        subCurrentLine = line[i];
+                    } else {
+                        subCurrentLine += line[i];
+                    }
+                    lastTop = rect.top;
                 }
-                lastTop = rect.top;
+    
+                if (i === line.length - 1) {
+                    lines.push(subCurrentLine.trim());
+                }
             }
-
-            if (i === text.length - 1) {
-                lines.push(currentLine.trim());
-            }
+            lastTop = null; // รีเซ็ต lastTop สำหรับบรรทัดถัดไป
         }
-
+    
         document.body.removeChild(tempDiv);
-
+    
         return lines;
     }
 }
@@ -170,9 +187,9 @@ $(document).ready(function () {
 
         console.log("หน้า edit ต้องสร้าง createLabMainAddressStorage จากฐานข้อมูลนะ")
 
-        console.log('labRequestMain',labRequestMain);
-        console.log('labRequestBranchs',labRequestBranchs);
-        console.log('certi_lab type',labRequestMain.certi_lab.lab_type);
+        // console.log('labRequestMain',labRequestMain);
+        // console.log('labRequestBranchs',labRequestBranchs);
+        // console.log('certi_lab type',labRequestMain.certi_lab.lab_type);
 
         if (labRequestMain) {
             if (labRequestMain.certi_lab.lab_type == 3){
@@ -1225,16 +1242,13 @@ $('#modal-add-parameter-two').on('shown.bs.modal', function () {
     });
 });
 
-$('#modal-add-test-standard-symbol').on('shown.bs.modal', function () {
-    // Destroy existing Summernote instance
-    $('#test_standard_txtarea').summernote('destroy');
-    
-    // Reinitialize with desired settings
-    $('#test_standard_txtarea').summernote({
-        height: 150,
-        toolbar: false,
-    });
-});
+// $('#modal-add-test-standard-symbol').on('shown.bs.modal', function () {
+//     $('#test_standard_txtarea').summernote('destroy');
+//     $('#test_standard_txtarea').summernote({
+//         height: 150,
+//         toolbar: false,
+//     });
+// });
 
 // $('.symbol-btn-add-test-standard').on('click', function() {
 
@@ -1247,36 +1261,32 @@ $('#modal-add-test-standard-symbol').on('shown.bs.modal', function () {
 //     $('#modal-add-test-standard-symbol').modal('hide');
 // });
 
-$('.symbol-btn-add-test-standard').on('click', function() {
-    var symbol = $(this).data('symbol');
-    $('#test_standard_txtarea').summernote('insertText', symbol);
-    $('#modal-add-test-standard-symbol').modal('hide');
-});
+// $('.symbol-btn-add-test-standard').on('click', function() {
+//     var symbol = $(this).data('symbol');
+//     $('#test_standard_txtarea').summernote('insertText', symbol);
+//     $('#modal-add-test-standard-symbol').modal('hide');
+// });
 
-// ฟังก์ชันสำหรับตัวยก (superscript)
-$('#add-superscript-btn').on('click', function() {
-    var base = prompt("กรุณาใส่ฐาน (เช่น z, 2):");
-    var exponent = prompt("กรุณาใส่เลขชี้กำลัง (เช่น a, ε):");
-    if (base && exponent) {
-        var superscriptHtml = base + '<sup>' + exponent + '</sup>';
-        console.log(superscriptHtml);
-        // $('#test_standard_txtarea').summernote('insertHTML', superscriptHtml);
-        $('#test_standard_txtarea').summernote('pasteHTML', superscriptHtml);
-        $('#modal-add-test-standard-symbol').modal('hide');
-    }
-});
 
-// ฟังก์ชันสำหรับตัวห้อย (subscript)
-$('#add-subscript-btn').on('click', function() {
-    var base = prompt("กรุณาใส่ฐาน (เช่น H):");
-    var subscript = prompt("กรุณาใส่ตัวห้อย (เช่น 2):");
-    if (base && subscript) {
-        var subscriptHtml = base + '<sub>' + subscript + '</sub>';
-        // $('#test_standard_txtarea').summernote('insertHTML', subscriptHtml);
-         $('#test_standard_txtarea').summernote('pasteHTML', subscriptHtml);
-        $('#modal-add-test-standard-symbol').modal('hide');
-    }
-});
+// $('#add-superscript-btn').on('click', function() {
+//     var base = prompt("กรุณาใส่ฐาน (เช่น z, 2):");
+//     var exponent = prompt("กรุณาใส่เลขชี้กำลัง (เช่น a, ε):");
+//     if (base && exponent) {
+//         var superscriptHtml = base + '<sup>' + exponent + '</sup>';
+//         $('#test_standard_txtarea').summernote('pasteHTML', superscriptHtml);
+//         $('#modal-add-test-standard-symbol').modal('hide');
+//     }
+// });
+
+// $('#add-subscript-btn').on('click', function() {
+//     var base = prompt("กรุณาใส่ฐาน (เช่น H):");
+//     var subscript = prompt("กรุณาใส่ตัวห้อย (เช่น 2):");
+//     if (base && subscript) {
+//         var subscriptHtml = base + '<sub>' + subscript + '</sub>';
+//          $('#test_standard_txtarea').summernote('pasteHTML', subscriptHtml);
+//         $('#modal-add-test-standard-symbol').modal('hide');
+//     }
+// });
 
 $('#modal-add-cal-method').on('shown.bs.modal', function () {
     // Destroy existing Summernote instance
@@ -2057,7 +2067,10 @@ function showAddCalScopeModal()
             $('#cal_parameter_one_wrapper').hide();
             $('#cal_parameters_wrapper').hide();
             $('#cal_parameter_two_wrapper').hide();
-            $('#cal_infomation_scope').hide();
+            // $('#cal_infomation_scope').hide();
+            $('#cal_parameter_cmc_table').hide();
+            $('#parameter_desc_wrapper').hide();
+            $('#cal_standard_txtarea').empty();
             $.ajax({
                     // url:"{{route('api.calibrate')}}",
                     url:"/certify/applicant/api/calibrate",
@@ -2070,6 +2083,8 @@ function showAddCalScopeModal()
                         $('#cal_main_branch').empty();
                         $('#cal_main_branch').select2('destroy').empty();
                         $('#cal_main_branch').append('<option value="not_select" disabled selected>- สาขาสอบเทียบ -</option>');
+                       
+                        
 
                         $.each(result,function (index,value) {
                             $('#cal_main_branch').append('<option value='+value.id+' data-id='+value.title_en+'>'+value.title+'</option>')
@@ -2091,7 +2106,9 @@ $(document).on('change', '#cal_main_branch', function() {
     $('#cal_parameter_one_wrapper').hide();
     $('#cal_parameters_wrapper').hide();
     $('#cal_parameter_two_wrapper').hide();
-    $('#cal_infomation_scope').hide();
+    // $('#cal_infomation_scope').hide();
+    $('#cal_parameter_cmc_table').hide();
+    $('#parameter_desc_wrapper').hide();
     
 
     $.ajax({
@@ -2254,12 +2271,15 @@ $('#button_add_test_scope').on('click', function () {
     let test_parameter_th = $('#test_parameter option:selected').text();
     let test_parameter_en = $('#test_parameter option:selected').data('id');
 
-    let standard = $('#test_standard_txtarea').val(); 
+    // let standard = $('#test_standard_txtarea').val(); 
+    let standard = $('#test_standard_txtarea').val();
+    standard = standard.replace(/\n/g, '<br>');
     let condition_description = $('#test_condition_description').val(); 
     let detail = $('#test_param_detail_textarea').val(); 
     let description = $('#test_parameter_desc').val(); 
+   
 
-    console.log(standard);
+    // console.log(standard); 
 
     if (!category || category === "") {
         // ถ้า category ไม่มีค่า
@@ -3276,7 +3296,9 @@ $(document).on('change', '#cal_instrumentgroup', function() {
     $('#cal_parameter_one_wrapper').hide();
     $('#cal_parameter_two_wrapper').hide();
     $('#cal_parameters_wrapper').hide();
-    $('#cal_infomation_scope').hide();
+    // $('#cal_infomation_scope').hide();
+    $('#cal_parameter_cmc_table').hide();
+    $('#parameter_desc_wrapper').hide();
 
     $.ajax({
         url: "/certify/applicant/api/instrument",
@@ -3403,7 +3425,9 @@ $(document).on('change', '#cal_instrumentgroup', function() {
                 // ซ่อน wrapper ทั้งหมดก่อน
                 $('#cal_parameter_one_wrapper').hide();
                 $('#cal_parameter_two_wrapper').hide();
-                $('#cal_infomation_scope').hide();
+                // $('#cal_infomation_scope').hide();
+                $('#cal_parameter_cmc_table').hide();
+                $('#parameter_desc_wrapper').hide();
 
                 // แสดง wrapper ตามตัวเลือก
                 if (selectedValue === 'parameter_one') {
@@ -3417,7 +3441,9 @@ $(document).on('change', '#cal_instrumentgroup', function() {
 
             // เพิ่มการเปลี่ยนแปลงใน #cal_parameters
             $('#cal_parameter_one').on('change', function () {
-                $('#cal_infomation_scope').show();
+                // $('#cal_infomation_scope').show();
+                $('#cal_parameter_cmc_table').show();
+                $('#parameter_desc_wrapper').show();
                 measurements = [];
                 let parameterName = $(this).find(':selected').text();
                 let parameterType = $(this).val(); // ประเภทพารามิเตอร์ที่เลือก
@@ -3446,7 +3472,9 @@ $(document).on('change', '#cal_instrumentgroup', function() {
 
 
             $('#cal_parameter_two').on('change', function () {
-                $('#cal_infomation_scope').show();
+                // $('#cal_infomation_scope').show();
+                $('#cal_parameter_cmc_table').show();
+                $('#parameter_desc_wrapper').show();
                 measurements = [];
                 let parameterName = $(this).find(':selected').text();
                 let parameterType = $(this).val(); // ประเภทพารามิเตอร์ที่เลือก
@@ -3593,10 +3621,11 @@ $('#button_add_cal_scope').on('click', function () {
     // const resultDiv1 = document.getElementById('cal_standard_txtarea');
     // resultDiv1.innerHTML = lines1.map(line => line + '<br>').join('');
     const editable_cal_standard_txtarea_lines = editable_cal_standard_txtarea.getLines(); 
+    // console.log(editable_cal_standard_txtarea_lines)
     // let standard = $('#cal_standard_txtarea').val(); // ID: cal_standard_txtarea
   
     let standard = editable_cal_standard_txtarea_lines.map(line => line + '<br>').join('');
-    console.log(standard)
+
     let code = "2"; // ค่าคงที่ตามที่ระบุ
 
     if (!category || category === "") {
@@ -3714,7 +3743,9 @@ $('#button_add_cal_scope').on('click', function () {
     // ซ่อนและรีเซ็ตส่วนที่เกี่ยวข้อง
     $('#cal_parameter_one_wrapper').hide();
     $('#cal_parameter_two_wrapper').hide();
-    $('#cal_infomation_scope').hide();
+    // $('#cal_infomation_scope').hide();
+    $('#cal_parameter_cmc_table').hide();
+    $('#parameter_desc_wrapper').hide();
 
     // รีเซ็ต measurements
     measurements = [];
@@ -4074,11 +4105,7 @@ function renderCalScopeWithParameterTable() {
                         </td>
                         <td>
                             <div style="visibility: hidden;">${item.instrument_text}</div>
-                            <div style="margin-left: 15px;">
-                                ${item.measurements.map(measurement => `
-                                    <div>${item.standard ? item.standard.split('\n').map(line => `<div>${line}</div>`).join('') : ''}</div>
-                                `).join('')}
-                            </div>
+                            <div style="margin-left: 15px;">${item.standard}</div>
                         </td>
                         <td class="text-center">
                               ${

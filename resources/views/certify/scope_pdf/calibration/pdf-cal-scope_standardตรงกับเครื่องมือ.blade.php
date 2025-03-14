@@ -7,7 +7,7 @@
         padding: 0;
     }
     .table-one {
-        margin-left: 3px;    
+        margin-left: 5px;    
     }
     .table-two {
         margin-left: 5px
@@ -18,6 +18,7 @@
     .table-four {
         margin-left: 5px
     }
+
 </style>
     @php
         if (!function_exists('formatRangeWithSpecialChars')) {
@@ -44,7 +45,10 @@
         }
     @endphp
 
-<table   width="100%"  cellspacing="0" cellpadding="5" >
+{{-- @if ($index == 0)
+    first
+@endif --}}
+<table  width="100%"  cellspacing="0" cellpadding="5" >
     <tbody>
         @php
             $previousCategoryTh = null;
@@ -61,14 +65,14 @@
                     <span @if ($key != 0 && $item->category_th === $previousCategoryTh)
                             style="visibility: hidden"
                           @endif>
-                        สาขา{!! $item->category_th !!} <br>
+                        สาขา{!! $item->category_th !!}<br>
                         <span style="font-size: 16px">({!! $item->category !!} field)</span>
                     </span>
                 </td>
-                <td style="vertical-align: top;width:28.33%">
+                <td style="vertical-align: top;width:28.33%;">
                     <table   class="table-one" cellspacing="0" width="100%" style="padding-right: 1px"  >
                         <tr>
-                            <td style="padding-left: 5px" >
+                            <td style="padding-left: 0px" >
                                 <span style="margin-top:5px">{!! $item->instrument !!}</span><span style="font-size:1px;visibility: hidden">*{{$key}}*</span>
                                 @if ($item->instrument !== "")
                                     <span><br>{!! $item->instrument_two !!} </span>
@@ -77,14 +81,14 @@
                         </tr>
                         <tr>
                             <td>
-                                <table   class="table-two" cellspacing="0"  width="100%"  >
+                                <table   class="table-two" cellspacing="0"  width="100%" >
 
                                     @if (!empty($item->description))
                                         <tr><td><span>{!! $item->description !!}</span></td></tr>
                                     @endif
                                     <tr>
                                         <td style="@if ($item->description !== '') margin-left:15px @endif">
-                                            <table   class="table-three" cellspacing="0"  width="100%">
+                                            <table   class="table-three" cellspacing="0"  width="100%" >
                                                 @foreach ($item->measurement_edit as $i => $measurement)
                                                     <tr>
                                                         <td style="@if ($i > 0) padding-top: 15px; @endif">
@@ -93,7 +97,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            <table   class="table-four" cellspacing="0" width="100%" style="margin-left:0px;padding-right:3px">
+                                                            <table   class="table-four" cellspacing="0" width="100%" style="margin-left:0px;padding-right:3px" >
                                                                 @foreach ($measurement['ranges'] as $description_i => $range)
                                                                 @if (!empty($description_i))
                                                                     <tr>
@@ -127,7 +131,7 @@
 
         
                <td style="vertical-align: top;width:28.33%">
-                    <table   class="table-one" cellspacing="0" width="100%"  style="padding-right: 1px" >
+                    <table   class="table-one" cellspacing="0" width="100%"  style="padding-right: 1px">
                         <tr>
                             <td style="padding-left: 0px">
                                 <span style="visibility: hidden;margin-top:5px">{!! $item->instrument !!}</span><span style="font-size:1px;visibility: hidden">*{{$key}}*</span>
@@ -189,45 +193,35 @@
                     </table>
                 </td> 
                 <td style="vertical-align: top;width:28.33%">
-                    <table   class="table-one" cellspacing="0" width="100%"  style="padding-right: 1px"  >
+                    <table   class="table-one" cellspacing="0" width="100%"  style="padding-right: 1px">
                         <tr>
-                            <td style="padding-left: 10px;">
-                                <div><span style="visibility: hidden;margin-top:5px">{!! $item->instrument !!}</span><span style="font-size:1px;visibility: hidden">*{{$key}}*</span></div>
-                                @if (count($item->measurement_edit) == 0)
-                                    <div>{!! $item->standard !!}</div>
-                                @endif
-
+                            <td style="padding-left: 0px">
+                                <span>{!! $item->standard !!}</span><span style="font-size:1px;visibility: hidden">*{{$key}}*</span>
                                 @if ($item->instrument !== "")
                                     <span style="visibility: hidden;"><br>{!! $item->instrument_two !!} </span>
                                 @endif
-
-                              
                             </td>
                         </tr>
-
                         <tr>
                             <td>
-                                <table   class="table-two" cellspacing="0"  width="100%" >
+                                <table   class="table-two" cellspacing="0"  width="100%">
                                     @if (!empty($item->description))
                                         <tr><td><span style="visibility: hidden;">{!! $item->description !!}</span></td></tr>
                                     @endif
                                     <tr>
                                         <td style="@if ($item->description !== '') margin-left:15px @endif">
-                                            <table   class="table-three" cellspacing="0"  width="100%" >
-                                                @foreach ($item->measurement_edit as $k => $measurement)
-                                                    <tr>
+                                            <table   class="table-three" cellspacing="0"  width="100%">
+                                                <tr>
                                                        
-                                                        @if ($k == 0)
-                                                                <td style="@if ($k > 0) padding-top: 15px; @endif">
-                                                                    <span >{!! $item->standard !!}</span>
-                                                                </td>
-                                                            @else
-                                                            <td style="@if ($k > 0) padding-top: 15px; @endif">
-                                                                <span >{!! $item->standard !!}</span>
-                                                            </td>
-                                                        @endif
+                                           
+                                                    <td>
+                                                        <span style="visibility: hidden;">{!! $item->standard !!}</span>
+                                                    </td>
+                                             
 
-                                                    </tr>
+                                                </tr>
+                                                @foreach ($item->measurement_edit as $k => $measurement)
+                                               
                                                     <tr>
                                                         <td>
                                                             <table   class="table-four" cellspacing="0" width="100%" style="margin-left:0px;text-align: center;padding-right:3px">

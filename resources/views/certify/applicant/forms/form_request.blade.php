@@ -164,47 +164,61 @@
 <script>
     var select = document.querySelector('.custom-select');
     var selected = document.querySelector('.select-selected');
-    var items = document.querySelector('.select-items');
+    // var items = document.querySelector('.select-items');
     var selectedItems = [];
 
-    selected.addEventListener('click', function() {
-        select.classList.toggle('active');
-    });
+    // selected.addEventListener('click', function() {
+    //     select.classList.toggle('active');
+    // });
 
-    items.addEventListener('click', function(e) {
-        if (e.target.tagName === 'DIV' || e.target.tagName === 'P' || e.target.tagName === 'LI') {
-            var targetDiv = e.target.closest('div');
-            var testName = targetDiv.innerText.trim().split('\n')[0];
-            var selectionType = select.getAttribute('data-selection');
-
-            if (selectionType === 'single') {
-                // Logic สำหรับ Single Selection
-                selectedItems = [testName];
-                updateSelectedItems();
-
-                // Unselect options อื่นๆ
-                items.querySelectorAll('.selected-option').forEach(function(div) {
-                    div.classList.remove('selected-option');
-                });
-                targetDiv.classList.add('selected-option');
-
-                // ปิด dropdown หลังจากเลือกแล้ว
-                select.classList.remove('active');
-            } else if (selectionType === 'multiple') {
-                if (!selectedItems.includes(testName)) {
-                    selectedItems.push(testName);
-                    targetDiv.classList.add('selected-option');
-                } else {
-                    selectedItems = selectedItems.filter(item => item !== testName);
-                    targetDiv.classList.remove('selected-option');
-                }
-                updateSelectedItems();
-
-                // ปิด dropdown หลังจากเลือกแล้ว
-                select.classList.remove('active');
+    if (selected) {  // ตรวจสอบว่า element มีอยู่จริง
+        selected.addEventListener('click', function() {
+            var select = this.parentElement.querySelector('.select'); // หา element ที่มี class 'select'
+            if (select) {  // ตรวจสอบว่าเจอ element
+                select.classList.toggle('active');
             }
-        }
-    });
+        });
+    }
+
+
+    var items = document.querySelector('.select-items');
+
+    if (items) {  
+        items.addEventListener('click', function(e) {
+            if (e.target.tagName === 'DIV' || e.target.tagName === 'P' || e.target.tagName === 'LI') {
+                var targetDiv = e.target.closest('div');
+                var testName = targetDiv.innerText.trim().split('\n')[0];
+                var selectionType = select.getAttribute('data-selection');
+
+                if (selectionType === 'single') {
+                    // Logic สำหรับ Single Selection
+                    selectedItems = [testName];
+                    updateSelectedItems();
+
+                    // Unselect options อื่นๆ
+                    items.querySelectorAll('.selected-option').forEach(function(div) {
+                        div.classList.remove('selected-option');
+                    });
+                    targetDiv.classList.add('selected-option');
+
+                    // ปิด dropdown หลังจากเลือกแล้ว
+                    select.classList.remove('active');
+                } else if (selectionType === 'multiple') {
+                    if (!selectedItems.includes(testName)) {
+                        selectedItems.push(testName);
+                        targetDiv.classList.add('selected-option');
+                    } else {
+                        selectedItems = selectedItems.filter(item => item !== testName);
+                        targetDiv.classList.remove('selected-option');
+                    }
+                    updateSelectedItems();
+
+                    // ปิด dropdown หลังจากเลือกแล้ว
+                    select.classList.remove('active');
+                }
+            }
+        });
+    }
 
     window.addEventListener('click', function(e) {
         if (!select.contains(e.target)) {
