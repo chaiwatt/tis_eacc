@@ -61,7 +61,8 @@
 @endsection
 @push('js')
     <script>
-
+        var methodType = @json($methodType);
+        // console.log(methodType)
         $(document).ready(function () {
            
             if($('input[name="branch_type"]').val() == 1){

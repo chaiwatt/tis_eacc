@@ -2,58 +2,62 @@
 
 namespace App\Http\Controllers\Certify;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
-use App\applicantIB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use stdClass;
 use HP;
-use App\Models\Basic\Province;
-use App\Models\Basic\Amphur;
-use App\Models\Basic\District;
-
-use App\Models\Esurv\Trader;
 use App\User;
 
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use niklasravnsborg\LaravelPdf\Facades\Pdf;
-
-use App\Models\Certify\ApplicantIB\CertiIb; 
-use App\Models\Certify\ApplicantIB\CertiIBAttachAll; 
-use App\Models\Certify\ApplicantIB\CertiIbHistory; 
-
-use App\Models\Certify\ApplicantIB\CertiIBCost; 
-use App\Models\Certify\ApplicantIB\CertiIBCostItem;
-use App\Models\Certify\ApplicantIB\CertiIBAuditors;
-use App\Models\Certify\ApplicantIB\CertiIBPayInOne; 
-use App\Models\Certify\ApplicantIB\CertiIBSaveAssessment; 
-use App\Models\Certify\ApplicantIB\CertiIBSaveAssessmentBug;
-use App\Models\Certify\ApplicantIB\CertiIBReview;
-use App\Models\Certify\ApplicantIB\CertiIBReport; 
-use App\Models\Certify\ApplicantIB\CertiIBPayInTwo;
-
-use App\Models\Certify\ApplicantIB\CertiIBExport;
-use App\Models\Certify\ApplicantIB\CertiIbExportMapreq;
-
-use Illuminate\Support\Facades\Mail; 
-use Illuminate\Support\Facades\DB;
-use App\Mail\IB\IBApplicantMail; 
-use App\Mail\IB\IBRequestDocumentsMail; 
+use stdClass;
+use Carbon\Carbon;
+use App\applicantIB;
+use App\Http\Requests;
 use App\Mail\IB\IBCostMail; 
-use App\Mail\IB\IBAuditorsMail; 
-use App\Mail\IB\IBConFirmAuditorsMail;  
-use App\Mail\IB\IBPayInOneMail; 
-use App\Mail\IB\IBSaveAssessmentMail; 
-use App\Mail\IB\IBInspectiontMail; 
+use App\Models\Basic\Amphur;
+use App\Models\Esurv\Trader;
+use Illuminate\Http\Request;
 use App\Mail\IB\IBReportMail; 
+use App\Models\Basic\District;
+
+use App\Models\Basic\Province;
+use App\Mail\IB\IBAuditorsMail; 
+
+use App\Mail\IB\IBPayInOneMail; 
 use App\Mail\IB\IBPayInTwoMail; 
 
 use App\Models\Bcertify\Formula;
+use App\Mail\IB\IBApplicantMail; 
+use Illuminate\Support\Facades\DB;
+
+use App\Mail\IB\IBInspectiontMail; 
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail; 
+use App\Mail\IB\IBSaveAssessmentMail; 
+use Illuminate\Support\Facades\Storage;
+use App\Mail\IB\IBConFirmAuditorsMail;  
+use App\Mail\IB\IBRequestDocumentsMail; 
+use App\Models\Certificate\IbScopeTopic;
+
+use App\Models\Certificate\IbScopeDetail;
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
+
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\Certify\ApplicantIB\CertiIb; 
+use App\Models\Certificate\IbSubCategoryScope;
+use App\Models\Certificate\IbMainCategoryScope;
+use App\Models\Certify\ApplicantIB\CertiIBCost; 
+use App\Models\Certify\ApplicantIB\CertiIBExport;
+use App\Models\Certify\ApplicantIB\CertiIBReview;
 use App\Models\Certify\ApplicantIB\CertiIBFileAll;
+use App\Models\Certify\ApplicantIB\CertiIBReport; 
+use App\Models\Certify\ApplicantIB\CertiIBAuditors;
+use App\Models\Certify\ApplicantIB\CertiIBCostItem;
+use App\Models\Certify\ApplicantIB\CertiIbHistory; 
+
+use App\Models\Certify\ApplicantIB\CertiIBPayInTwo;
+use App\Models\Certify\ApplicantIB\CertiIBPayInOne; 
+use App\Models\Certify\ApplicantIB\CertiIBAttachAll; 
+use App\Models\Certify\ApplicantIB\CertiIbExportMapreq;
+use App\Models\Certify\ApplicantIB\CertiIBSaveAssessment; 
+use App\Models\Certify\ApplicantIB\CertiIBSaveAssessmentBug;
 
 class ApplicantIBController extends Controller
 {
@@ -146,14 +150,15 @@ class ApplicantIBController extends Controller
             $app_certi_ib = DB::table('app_certi_ib')->where('tax_id',$data_session->tax_number)->select('id');
             $certificate_exports = DB::table('app_certi_ib_export')->whereIn('app_certi_ib_id',$app_certi_ib)->where('status',3)->pluck('certificate','id');
             $certificate_no = DB::table('app_certi_ib_export')->select('id')->whereIn('app_certi_ib_id',$app_certi_ib)->where('status',3)->get();
-
+            // dd('ok');
             return view('certify.applicant_ib.create',[
                                                         'tis_data'=>$data_session,
                                                         'previousUrl' =>$previousUrl,
                                                         'certi_ib' => $certi_ib,
                                                         'formulas' => $formulas,
                                                         'certificate_exports' => $certificate_exports,
-                                                        'certificate_no' => $certificate_no
+                                                        'certificate_no' => $certificate_no,
+                                                        'methodType' => 'create'
                                                       ]);
             }
             abort(403);
@@ -2032,6 +2037,41 @@ class ApplicantIBController extends Controller
      }
  
  
+   public function getIbMainCategory()
+   {
+        $ibMainCategoryScopes = IbMainCategoryScope::all();
+        return response()->json([
+            'ibMainCategoryScopes' => $ibMainCategoryScopes,
+        ]);
+   }
+   // ดึงข้อมูล IbSubCategoryScope ตาม ib_main_category_scope_id
+   public function getIbSubCategory(Request $request)
+   {
+       $ibMainCategoryScopeId = $request->input('ib_main_category_scope_id');
+       $ibSubCategoryScopes = IbSubCategoryScope::where('ib_main_category_scope_id', $ibMainCategoryScopeId)->get();
+       return response()->json([
+           'ibSubCategoryScopes' => $ibSubCategoryScopes,
+       ]);
+   }
 
+   // ดึงข้อมูล IbScopeTopic ตาม ib_sub_category_scope_id
+   public function getIbScopeTopic(Request $request)
+   {
+       $ibSubCategoryScopeId = $request->input('ib_sub_category_scope_id');
+       $ibScopeTopics = IbScopeTopic::where('ib_sub_category_scope_id', $ibSubCategoryScopeId)->get();
+       return response()->json([
+           'ibScopeTopics' => $ibScopeTopics,
+       ]);
+   }
+
+   // ดึงข้อมูล IbScopeDetail ตาม ib_scope_topic_id
+   public function getIbScopeDetail(Request $request)
+   {
+       $ibScopeTopicId = $request->input('ib_scope_topic_id');
+       $ibScopeDetails = IbScopeDetail::where('ib_scope_topic_id', $ibScopeTopicId)->get();
+       return response()->json([
+           'ibScopeDetails' => $ibScopeDetails,
+       ]);
+   }
 
 }

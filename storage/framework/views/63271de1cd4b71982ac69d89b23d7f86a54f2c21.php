@@ -166,7 +166,10 @@
                                                                                     <span> <img src="<?php echo e(public_path('uploads/files/applicants/check_files/' . basename($uncertain))); ?>" style="width: 160px" alt=""> </span><br>
                                                                                 </span>
                                                                             <?php else: ?>
-                                                                                <span><?php echo $uncertain; ?></span><br> 
+                                                                                
+                                                                                <span><?php echo formatRangeWithSpecialChars($uncertain); ?></span><br> 
+                                                                                
+                                                                                
                                                                             <?php endif; ?>
                                                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                                     </td>

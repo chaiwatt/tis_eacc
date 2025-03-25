@@ -6,8 +6,13 @@
  <div class="container-fluid">
      <div class="row">
         <div class="col-md-12">
-           <div class="white-box">
-           <h3 class="box-title pull-left">ใบรับรองระบบงาน (CB)  </h3>
+           <div class="white-box"> 
+           <h3 class="box-title pull-left">ใบรับรองระบบงาน (CB) 
+            @if ($certi_cb->CertiAuditors->count() > $certi_cb->fullyApprovedAuditorNoCancels->count())
+            <span class="text-danger">(รอดำเนินการ {{$certi_cb->CertiAuditors->count() - $certi_cb->fullyApprovedAuditorNoCancels->count()}} คณะ)</span> 
+            @endif
+            
+           </h3>
 
                 <a class="btn btn-danger text-white pull-right" href="{{url('certify/applicant-cb')}}">
                         <i class="icon-arrow-left-circle"></i> กลับ
@@ -30,10 +35,20 @@
          <div class="white-box" style="border: 2px solid #e5ebec;">
          <legend><h3>ขอความเห็นแต่งตั้งคณะผู้ตรวจประเมิน</h3></legend>
          <div class="container-fluid">
-          
- @foreach($certi_cb->CertiAuditorsMany as $key => $item)
-       
+   
+            
+@php
+    // สร้างตัวแปรเก็บรายการที่ status == 1
+    $approvedAuditors = $certi_cb->fullyApprovedAuditorNoCancels->filter(function ($item) {
+        return $item->status != 1;
+    })->values()->all(); // filter เฉพาะรายการที่ status == 1 และ reset keys
+@endphp
 
+{{-- {{count($approvedAuditors)}} --}}
+
+ {{-- @foreach($certi_cb->CertiAuditorsMany as $key => $item) --}}
+ @foreach($certi_cb->fullyApprovedAuditorNoCancels as $key => $item)
+     
 <div class="row">
      <div class="col-md-12">
         <div class="white-box" style="border: 2px solid #e5ebec;">

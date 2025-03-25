@@ -43,6 +43,15 @@ class DatabaseSeeder extends Seeder
         //  $this->call(CbScopePersonalScopeListsTableSeeder::class);
         //  $this->call(CbScopePersonalSchemesTableSeeder::class);
 
+         $this->call(IbMainCategoryScopesTableSeeder::class);
+         $this->call(IbSubCategoryScopesTableSeeder::class);
+         $this->call(IbScopeTopicsTableSeeder::class);
+         $this->call(IbScopeDetailsTableSeeder::class);
+        
+        
+        
+        
+
         
         
         

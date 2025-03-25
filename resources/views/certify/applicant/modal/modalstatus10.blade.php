@@ -136,30 +136,30 @@
           {{-- <legend><h3>คณะผู้ตรวจประเมิน </h3></legend> --}}
           {{-- @if(count($certi->certi_auditors) > 0)  --}}
           @if($certi->fullyApprovedAuditors->count() > 0) 
-          <legend><h3>คณะผู้ตรวจประเมิน  </h3>  </legend>
-          <div class="row">
-              <div class="col-md-12">
-               <table class="table table-bordered">
-                  <thead class="bg-primary">
-                      <tr>
-                          <th class="text-center text-white" width="2%">ลำดับ</th>
-                          <th class="text-center text-white" width="50%">คณะผู้ตรวจประเมิน</th>
-                          <th class="text-center text-white" width="48%">สถานะ</th>
-                      </tr>
-                  </thead>
-                   <tbody>
-                      {{-- @foreach($certi->certi_auditors as $key => $item) --}}
-                      @foreach($certi->fullyApprovedAuditors as $key => $item)
-                      <tr>
-                          <td class="text-center">{{$key+1}}</td>
-                          <td>{{ $item->auditor ?? null }}</td>
-                          <td>{{ $item->certi_lab_step_to->title ?? null }}</td>
-                      </tr>
-                       @endforeach
-                  </tbody>
-              </table>
-          </div>
-      </div>
+                <legend><h3>คณะผู้ตรวจประเมิน  </h3>  </legend>
+                <div class="row">
+                    <div class="col-md-12">
+                    <table class="table table-bordered">
+                        <thead class="bg-primary">
+                            <tr>
+                                <th class="text-center text-white" width="2%">ลำดับ</th>
+                                <th class="text-center text-white" width="50%">คณะผู้ตรวจประเมิน</th>
+                                <th class="text-center text-white" width="48%">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{-- @foreach($certi->certi_auditors as $key => $item) --}}
+                            @foreach($certi->fullyApprovedAuditors as $key => $item)
+                            <tr>
+                                <td class="text-center">{{$key+1}}</td>
+                                <td>{{ $item->auditor ?? null }}</td>
+                                <td>{{ $item->certi_lab_step_to->title ?? null }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
           @endif
       </div>
                   {{-- <div class="modal-footer">

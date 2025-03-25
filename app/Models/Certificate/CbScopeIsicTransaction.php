@@ -2,6 +2,7 @@
 
 namespace App\Models\Certificate;
 
+use App\Models\Bcertify\CbScopeIsicCategory;
 use Kyslik\ColumnSortable\Sortable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Bcertify\CbScopeIsicIsic;
@@ -32,4 +33,10 @@ class CbScopeIsicTransaction extends Model
     {
         return $this->belongsTo(CbScopeIsicIsic::class, 'isic_id', 'id');
     }
+
+    public function cbScopeIsicCategories() {
+        $cbScopeIsicCategories = CbScopeIsicCategory::where('isic_id',$this->isic_id)->get();
+        return $cbScopeIsicCategories;
+    }
+
 }

@@ -56,23 +56,6 @@
 
         <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
 
-        {{-- @if ( count($formulas) == 1 )
-            <div class="form-group {{ $errors->has('type_standard') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('type_standard', '<span class="text-danger">*</span> ข้อกำหนดที่ใช้ในการรับรอง'.':'.'<br/><span class="  font_size">(According to TIS)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
-                <div class="col-md-6" >
-                    {!! Form::select('type_standard', $Formula_Arr,  !empty( $certi_cb->type_standard )?$certi_cb->type_standard:$formulas[0]->id, ['class' => 'form-control', 'id'=>'type_standard','required' => true]) !!}
-                    {!! $errors->first('type_standard', '<p class="help-block">:message</p>') !!}
-                </div>
-            </div>
-        @else
-            <div class="form-group {{ $errors->has('type_standard') ? 'has-error' : ''}}">
-                {!! HTML::decode(Form::label('type_standard', '<span class="text-danger">*</span> ข้อกำหนดที่ใช้ในการรับรอง'.':'.'<br/><span class="  font_size">(According to TIS)</span>', ['class' => 'col-md-3 control-label label-height'])) !!}
-                <div class="col-md-6" >
-                    {!! Form::select('type_standard', $Formula_Arr,  !empty( $certi_cb->type_standard )?$certi_cb->type_standard:null, ['class' => 'form-control', 'id'=>'type_standard','required' => true, 'placeholder' =>'- เลือกข้อกำหนดที่ใช้ในการรับรอง -']) !!}
-                    {!! $errors->first('type_standard', '<p class="help-block">:message</p>') !!}
-                </div>
-            </div>
-        @endif --}}
 
         @if (count($formulas) == 1)
             <div class="form-group {{ $errors->has('type_standard') ? 'has-error' : ''}}">

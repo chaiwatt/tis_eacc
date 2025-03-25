@@ -8,7 +8,7 @@
      <div class="row">
         <div class="col-md-12">
            <div class="white-box">
-           <h3 class="box-title pull-left">ใบรับรองระบบงาน (CB)  </h3>
+           <h3 class="box-title pull-left">ใบรับรองระบบงาน (CB) </h3>
 
                 <a class="btn btn-danger text-white pull-right" href="{{url('certify/applicant-cb')}}">
                         <i class="icon-arrow-left-circle"></i> กลับ
@@ -360,7 +360,7 @@
         <label class="col-md-3 text-right">  เห็นชอบกับ Scope : </label>
         <div class="col-md-7">
             <label>   <input type="radio" class="check check-readonly" data-radio="iradio_square-green" {{ ($item1->status == 1 ) ? 'checked' : ' '  }}>  &nbsp;ยืนยัน Scope &nbsp;</label>
-            <label>   <input type="radio" class="check check-readonly" data-radio="iradio_square-red" {{ ($item1->status == 2 ) ? 'checked' : ' '  }}>  &nbsp; แก้ไข Scope &nbsp;</label>
+            <label hidden>   <input type="radio" class="check check-readonly" data-radio="iradio_square-red" {{ ($item1->status == 2 ) ? 'checked' : ' '  }} >  &nbsp; แก้ไข Scope &nbsp;</label>
         </div>
     </div>
 </div>
@@ -452,9 +452,17 @@
                 <div class="col-md-3 text-right">
                      <p class="text-nowrap">เห็นชอบกับ Scope  </p>
                 </div>
-                <div class="col-md-9">
+                {{-- <div class="col-md-9">
                         <label>{!! Form::radio('status_scope', '1', true, ['class'=>'check', 'data-radio'=>'iradio_square-green']) !!} &nbsp;ยืนยัน Scope &nbsp;</label>
                         <label>{!! Form::radio('status_scope', '2', false, ['class'=>'check', 'data-radio'=>'iradio_square-red']) !!} &nbsp;ขอแก้ไข Scope &nbsp;</label>
+                </div> --}}
+                <div class="col-md-9">
+                    <label>
+                        <input type="radio" name="status_scope" value="1" checked class="check" data-radio="iradio_square-green"> ยืนยัน Scope
+                    </label>
+                    <label hidden>
+                        <input type="radio" name="status_scope" value="2" class="check" data-radio="iradio_square-red" hidden> ขอแก้ไข Scope
+                    </label>
                 </div>
             </div>
             <div  style="display: none" id="DivStatusScope">

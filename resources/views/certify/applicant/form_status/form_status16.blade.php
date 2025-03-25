@@ -30,7 +30,7 @@
      <div class="row">
         <div class="col-md-12">
            <div class="white-box">
-           <h3 class="box-title pull-left">ยื่นคำขอรับใบรับรองระบบงาน</h3>
+           <h3 class="box-title pull-left">ยื่นคำขอรับใบรับรองระบบงาน landing</h3>
 
                 <a class="btn btn-danger text-white pull-right" href="{{app('url')->previous()}}">
                         <i class="icon-arrow-left-circle"></i> กลับ
@@ -52,12 +52,29 @@
         <a data-toggle="collapse" data-parent="#accordion" href="#collapse"> <dd> ข้อบกพร่อง/ข้อสังเกต</dd>  </a>
     </h4>
 </div>
- 
+{{-- <div class="row">
+    <div class="col-md-12">
+        <legend>รายงานการตรวจประเมิน(รายงานที่1)</legend>
+        @if(!is_null($assessment) && !is_null($assessment->file) )
+            <div style="margin-left: 10px;margin-top:10px">
+                <a href="{{url('certify/check/file_client/'.$assessment->file.'/'.( !empty($assessment->file_client_name) ? $assessment->file_client_name : 'null' ))}}" 
+                    title=" {{ !empty($assessment->file_client_name) ? $assessment->file_client_name : basename($assessment->file)}}"   target="_blank">
+                    {!! HP::FileExtension($assessment->file)  ?? '' !!}  {{basename($assessment->file)}}
+                </a>
+               
+            </div>
+        @endif 
+    </div>
+
+</div> --}}
+
+
 <div id="collapse" class="panel-collapse collapse ">
+   
     <br>
  <div class="container-fluid">
     
- 
+
     
 @foreach($assessment->CertificateHistorys as $key1 => $item1)
 {{-- {{$item1->details_table}} --}}
@@ -76,10 +93,14 @@
                         <th class="text-center" width="2%">ลำดับ</th>
                         <th class="text-center" width="20%">ผลการประเมินที่พบ</th>
                         <th class="text-center" width="7%">ประเภท</th>
+                        @if($key1 > 0) 
+                        <th  class="text-center" width="20%">สาเหตุ</th>
+                        @endif
+
                         <th class="text-center" width="35%">แนวทางการแก้ไข</th>
         
                         @if($key1 > 0) 
-                        <th  class="text-center" width="20%">สาเหตุ</th>
+                        
                         <th class="text-center" width="10%" >หลักฐาน</th>
                         
                         @endif
@@ -99,6 +120,11 @@
                         <td class="text-center" style="padding: 0px">
                             {{  array_key_exists($item2->type,$type) ? $type[$item2->type] : '-' }}  
                         </td>
+                        @if($key1 > 0) 
+                        <td style="padding: 0px">
+                            {{ @$item2->cause ?? null }}
+                        </td>
+                        @endif
                         <td style="padding: 0px">
                             
                             {{ @$item2->details ?? null }}
@@ -111,9 +137,7 @@
                         </td>
         
                         @if($key1 > 0) 
-                        <td style="padding: 0px">
-                            {{ @$item2->cause ?? null }}
-                        </td>
+                        
                           <td style="padding: 0px">
                                 @if($item2->status == 1) 
                                             @if($item2->file_status == 1)
@@ -185,6 +209,8 @@
         
             @if(!is_null($item1->date)) 
             <div class="row">
+
+
             <div class="col-md-3 text-right">
                 <p class="text-nowrap">วันที่บันทึก :</p>
             </div>
@@ -212,7 +238,7 @@
     
 @endif
 
-<input type="text" id="notice_id" value="{{$assessment->id}}">
+<input type="hidden" id="notice_id" value="{{$assessment->id}}">
 
  {!! Form::open(['url' => 'certify/applicant/assessment/update/'.$assessment->id,
                 'class' => 'form-horizontal',
@@ -366,6 +392,25 @@
 
 @if(in_array($assessment->degree,[1,3,4,6]))
 <div class="row">
+    @if(!is_null($assessment) && !is_null($assessment->file) )
+        <div class="form-group" style="margin-top: 20px;margin-bottom:50px">
+            <div class="col-md-12">
+                <label class="col-md-3 text-right"><span class="text-danger">*</span> รายงานการตรวจประเมิน(รายงานที่1): </label>
+                <div class="col-md-6">
+                    
+                
+                        <p>
+                            <a href="{{url('certify/check/file_client/'.$assessment->file.'/'.( !empty($assessment->file_client_name) ? $assessment->file_client_name : 'null' ))}}" 
+                                title=" {{ !empty($assessment->file_client_name) ? $assessment->file_client_name : basename($assessment->file)}}"   target="_blank">
+                                {!! HP::FileExtension($assessment->file)  ?? '' !!}  {{basename($assessment->file)}}
+                            </a>
+                            {{-- <button id="button_audit_report" type="button" class="btn btn-danger btn-xs {{ ($find_notice->report_status == 2) ? 'hide' : '' }}"><i class="fa fa-trash"></i></button> --}}
+                        </p>
+                
+                </div>
+            </div>
+        </div>
+    @endif
     <div class="form-group">
         <div class="col-md-offset-5 col-md-6">
                 

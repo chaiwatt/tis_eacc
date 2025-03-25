@@ -30,6 +30,7 @@ use App\Models\Certify\ApplicantCB\CertiCb;
 use App\Models\Certificate\TrackingAssessment;
 use App\Models\Certificate\TrackingInspection;
 use App\Models\Basic\ConfigRoles as config_roles;
+use App\Models\Certificate\CbScopeIsicTransaction;
 use App\Models\Bcertify\CalibrationBranchInstrument;
 use App\Models\Bcertify\LabCalInstrumentTransaction;
 use App\Models\Bcertify\LabCalParameterOneTransaction;
@@ -9157,7 +9158,11 @@ class MyTestController extends Controller
   public function cbIsicSopePdf()
   {
 
-    $certiCb = CertiCb::find(227);
+    // $cbScopeIsicTransactions = CbScopeIsicTransaction::where('certi_cb_id',241)->get();
+
+    // dd($cbScopeIsicTransactions);
+
+    $certiCb = CertiCb::find(242);
     $pdfService = new CreateCbScopeIsicPdf($certiCb);
     $pdfContent = $pdfService->generatePdf();
 

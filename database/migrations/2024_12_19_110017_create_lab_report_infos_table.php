@@ -244,6 +244,7 @@ class CreateLabReportInfosTable extends Migration
             $table->string('file_client_name')->nullable();
             $table->longText('persons')->nullable();
             $table->char('status',1)->default(1);
+            $table->char('notified_signers',1)->default(1);
 
             $table->timestamps();
         });

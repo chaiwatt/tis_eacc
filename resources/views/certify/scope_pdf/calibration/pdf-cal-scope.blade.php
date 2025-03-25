@@ -170,7 +170,10 @@
                                                                                     <span> <img src="{{public_path('uploads/files/applicants/check_files/' . basename($uncertain))}}" style="width: 160px" alt=""> </span><br>
                                                                                 </span>
                                                                             @else
-                                                                                <span>{!! $uncertain !!}</span><br> 
+                                                                                {{-- <span>{!! $uncertain !!}</span><br>  --}}
+                                                                                <span>{!! formatRangeWithSpecialChars($uncertain) !!}</span><br> 
+                                                                                
+                                                                                
                                                                             @endif
                                                                         @endforeach
                                                                     </td>

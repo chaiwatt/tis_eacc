@@ -24,6 +24,7 @@ class CreateSignAssessmentReportTransactionsTable extends Migration
             $table->string('signer_order',250)->default(0);
             $table->string('file_path',250)->nullable();
             $table->char('linesapce',2)->default(20);
+            $table->char('report_type',1)->default(1);
             $table->string('view_url',200)->nullable();
             $table->char('approval',1)->default(0);
             $table->timestamps();

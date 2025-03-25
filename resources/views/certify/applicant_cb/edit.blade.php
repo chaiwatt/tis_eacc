@@ -19,7 +19,14 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="white-box">
-                    <h3 class="box-title pull-left">แก้ไขคำขอรับบริการหน่วยรับรอง (CB)</h3>
+                    <h3 class="box-title pull-left">
+                        @if ($methodType == "edit")
+                        แก้ไขคำขอรับบริการหน่วยรับรอง (CB)
+                            @elseif($methodType == "show")
+                            คำขอรับบริการหน่วยรับรอง (CB)
+                        @endif
+                       
+                    </h3>
                     @if( HP::CheckPermission('view-'.str_slug('applicantcbs')))
                         <a class="btn btn-success pull-right" href="{{ url("certify/applicant-cb") }}" >
                             <i class="icon-arrow-left-circle"></i> กลับ
@@ -57,6 +64,7 @@
 
                         @include ('certify.applicant_cb.form')
 
+                        @if ($methodType == "edit")
                         <div class="row form-group">
                             <div class="col-md-12 text-center">
                                 <div id="status_btn"></div>
@@ -65,6 +73,9 @@
                                 <a href="{{ url("certify/applicant-cb") }}"  class="btn btn-danger text-white m-l-5" id="cancel_edit_calibrate">ยกเลิก</a>
                             </div>
                         </div>
+                        @endif
+
+
                     {!! Form::close() !!}
 
                 </div>
@@ -76,9 +87,9 @@
 
 @push('js')
     <script>
-
+        var methodType = @json($methodType);
         $(document).ready(function () {
-
+            console.log(methodType)
             @if( HP::check_api('check_api_certify_check_certificate_cb') && isset($certi_cb->id) && in_array( $certi_cb->status, [3] ) )
                 $('.btn-update-compare').click(function (e) { 
                     

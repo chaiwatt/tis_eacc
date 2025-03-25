@@ -19,7 +19,8 @@ class CertiCBReport extends Model
                             'details',
                             'created_by',
                             'updated_by',
-                            
+                            'review_approve',
+                            'ability_confirm'
                             ];
      //รายงาน Scope
      public function FileAttachReport1To()

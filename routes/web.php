@@ -819,7 +819,9 @@ Route::group(['prefix'=>'certify'],function (){ // ระบบยื่นค�
     //log
     Route::get('/applicant-cb/Log-CB/{token?}','Certify\ApplicantCBController@DataLogCB');
 
-    Route::get('applicant-cb/get_app_no_and_certificate_exports_no','Certify\ApplicantCBController@get_app_no_and_certificate_exports_no');
+    Route::get('/applicant-cb/get_app_no_and_certificate_exports_no','Certify\ApplicantCBController@get_app_no_and_certificate_exports_no');
+
+    Route::post('/applicant-cb/ability-confirm','Certify\ApplicantCBController@abilityConfirm')->name('applicant-cb.ability-confirm');
 
     Route::resource('applicant-cb','Certify\ApplicantCBController');
       // อ่านไฟล์ที่แนบมา
@@ -833,6 +835,11 @@ Route::group(['prefix'=>'certify'],function (){ // ระบบยื่นค�
     // ใบรับรองระบบงาน (IB)
     Route::post('/certi_ib/update_delete','Certify\ApplicantIBController@deleteApplicant');
     Route::get('/certi_ib/delete/{path}/{token}','Certify\ApplicantIBController@removeFilesCertiIBAttachAll');
+
+    Route::post('/certi_ib/get_ib_main_category', 'Certify\ApplicantIBController@getIbMainCategory')->name('certi_ib.get-ib-main-category');
+    Route::post('/certi_ib/get_ib_sub_category', 'Certify\ApplicantIBController@getIbSubCategory')->name('certi_ib.get-ib-sub-category');
+    Route::post('/certi_ib/get_ib_scope_topic', 'Certify\ApplicantIBController@getIbScopeTopic')->name('certi_ib.get-ib-scope-topic');
+    Route::post('/certi_ib/get_ib_scope_detail', 'Certify\ApplicantIBController@getIbScopeDetail')->name('certi_ib.get-ib-scope-detail');
 
     Route::get('applicant-ib/delete/file_app_certi_ib_attach_all/{id?}/{token?}', function($id,$token)
     {

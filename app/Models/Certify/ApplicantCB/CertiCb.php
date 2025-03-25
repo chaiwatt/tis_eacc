@@ -97,8 +97,10 @@ class CertiCb extends Model
                             'doc_auditor_assignment',
                             'doc_review_update',
                             'doc_review_reject',
-                            'doc_review_reject_message'
-
+                            'doc_review_reject_message',
+                            'require_scope_update',
+                            'scope_view_signer_id',
+                            'scope_view_status',
                             ];
 
 
@@ -140,11 +142,31 @@ class CertiCb extends Model
  {
      return $this->hasMany(CertiCBCost::class, 'app_certi_cb_id');
  }
+
+ public function fullyApprovedAuditors()
+ {
+     return $this->CertiAuditors()->whereDoesntHave('messageRecordTransactions', function ($query) {
+         $query->where('approval', 0);
+     });
+ }
+
+
    // แต่งตั้งคณะผู้ตรวจประเมิน
    public function CertiAuditors()
    {
        return $this->hasMany(CertiCBAuditors::class, 'app_certi_cb_id');
    }
+
+
+   public function fullyApprovedAuditorNoCancels()
+   {
+       return $this->CertiAuditors()
+        ->whereNull('status_cancel')
+        ->whereDoesntHave('messageRecordTransactions', function ($query) {
+            $query->where('approval', 0);
+        });
+   }
+
     // แต่งตั้งคณะผู้ตรวจประเมิน
    public function CertiAuditorsMany()
    {
@@ -292,6 +314,10 @@ class CertiCb extends Model
         //   $datas[] = 'tisipermit@gmail.com';
       return $datas;
   }
+
+  public function basic_province() {
+    return $this->belongsTo(Province::class, 'province_id');
+ }
 
    //e-mail   Mail แจ้งเตือน ผก. + ลท.
    public function getCertiEmailDirectorAndLtAttribute() {

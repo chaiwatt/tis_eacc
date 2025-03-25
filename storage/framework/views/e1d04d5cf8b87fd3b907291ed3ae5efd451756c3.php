@@ -523,7 +523,9 @@
                         <div class="col-md-6 form-group" id="cmc_wrapper">
                             <label for="exampleInputPassword1">
                                 <label for="">ขีดความสามารถฯ (CMC)  
-                                    
+                                    <button type="button" class="btn btn-primary btn-xs" id="show_modal_add_cmc_symbol">
+                                    <i class="fa fa-plus"></i> สัญลักษณ์
+                                    </button>
                             </label>
                       
                                 
@@ -689,38 +691,38 @@
             </div>
             <div class="modal-body text-left">
                 <div class="d-flex flex-wrap justify-content-start align-items-center" style="gap: 10px; padding: 10px;">
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="Ω">Ω</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="π">π</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="Σ">Σ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="β">β</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="α">α</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="γ">γ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="µ">µ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="±">±</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="∞">∞</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="θ">θ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="δ">δ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="ξ">ξ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="φ">φ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="χ">χ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="ψ">ψ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="ω">ω</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="ε">ε</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="Δ">Δ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="√">√</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="∮">∮</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="∫">∫</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="∂">∂</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="∇">∇</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="∑">∑</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="∏">∏</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="∆">∆</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="λ">λ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="σ">σ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="ρ">ρ</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="℃">℃</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="℉">℉</button>
-                    <button type="button" class="btn btn-default symbol-btn-add-cal-parameter" data-symbol="Ξ">Ξ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="Ω">Ω</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="π">π</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="Σ">Σ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="β">β</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="α">α</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="γ">γ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="µ">µ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="±">±</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="∞">∞</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="θ">θ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="δ">δ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="ξ">ξ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="φ">φ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="χ">χ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="ψ">ψ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="ω">ω</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="ε">ε</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="Δ">Δ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="√">√</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="∮">∮</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="∫">∫</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="∂">∂</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="∇">∇</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="∑">∑</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="∏">∏</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="∆">∆</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="λ">λ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="σ">σ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="ρ">ρ</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="℃">℃</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="℉">℉</button>
+                    <button type="button" class="btn btn-default symbol-btn-add-cal-cmc" data-symbol="Ξ">Ξ</button>
                 </div>
             </div>
         </div>

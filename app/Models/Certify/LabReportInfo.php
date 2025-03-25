@@ -240,7 +240,8 @@ class LabReportInfo extends Model
         'file',
         'file_client_name',
         'persons',
-        'status'
+        'status',
+        'notified_signers'
     ];
 
     public function notice(){

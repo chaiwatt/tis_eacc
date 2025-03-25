@@ -191,6 +191,7 @@ class ApplicantCBController extends Controller
                                                         'certifieds'            =>  $certifieds,
                                                         'Formula_Arr'            =>  $Formula_Arr,
                                                         'cbTrustmarks'            =>  $cbTrustmarks,
+                                                        'methodType' => 'create'
                                                       ]);
          }
          abort(403);
@@ -451,6 +452,34 @@ class ApplicantCBController extends Controller
         }
     }
 
+    public function clearCbScopeIsic($certiCb)
+    {
+        // ดึง transactions ก่อน
+        $transactions = CbScopeIsicTransaction::where('certi_cb_id', $certiCb->id)->get();
+        
+        // ดึง category transactions ที่เกี่ยวข้อง
+        $categoryTransactions = CbScopeIsicCategoryTransaction::whereIn('cb_scope_isic_transaction_id', 
+            $transactions->pluck('id')->toArray()
+        )->get();
+    
+        // ลบ Subcategories
+        if ($categoryTransactions->isNotEmpty()) {
+            CbScopeIsicSubCategoryTransaction::whereIn('cb_scope_isic_category_transaction_id', 
+                $categoryTransactions->pluck('id')->toArray()
+            )->delete();
+        }
+    
+        // ลบ Categories
+        if ($categoryTransactions->isNotEmpty()) {
+            CbScopeIsicCategoryTransaction::whereIn('cb_scope_isic_transaction_id', 
+                $transactions->pluck('id')->toArray()
+            )->delete();
+        }
+    
+        // ลบ ISIC transactions
+        CbScopeIsicTransaction::where('certi_cb_id', $certiCb->id)->delete();
+    }
+
     public function storeCbScopeIsicIsic($selectedIsicData,$certiCb) 
     {
         // dd($selectedIsicData);
@@ -459,7 +488,6 @@ class ApplicantCBController extends Controller
                 continue; // ข้ามหากไม่มี isic_id
             }
 
-            
             // ตรวจสอบและบันทึก ISIC
             $transaction = CbScopeIsicTransaction::firstOrCreate([
                 'certi_cb_id' => $certiCb->id,
@@ -510,6 +538,13 @@ class ApplicantCBController extends Controller
         }
     }
 
+    public function clearCbScopeBcms($certiCb)
+    {
+        // ลบทุก record ที่เกี่ยวข้องกับ certi_cb_id
+        CbScopeBcmsTransaction::where('certi_cb_id', $certiCb->id)
+            ->delete();
+    }
+
     public function storeCbScopeBcms($selectedBcmsData, $certiCb)
     {
         if (!is_array($selectedBcmsData) || empty($selectedBcmsData)) {
@@ -533,7 +568,7 @@ class ApplicantCBController extends Controller
 
     public function show($token)
     {
-        
+        // dd('ok');
         $model = str_slug('applicantcbs','-');
         $data_session     =    HP::CheckSession();
      if(!empty($data_session)){
@@ -547,14 +582,66 @@ class ApplicantCBController extends Controller
             $certificate_exports = DB::table('app_certi_cb_export')->whereIn('app_certi_cb_id',$app_certi_cb)->where('status',3)->pluck('certificate','id');
             $certificate_no = DB::table('app_certi_cb_export')->select('id')->whereIn('app_certi_cb_id',$app_certi_cb)->where('status',3)->get();
 
-            return view('certify.applicant_cb.show', compact('tis_data',
-                                                             'previousUrl',
-                                                             'certi_cb',
-                                                             'attach_path',
-                                                             'certificate_exports',
-                                                             'certificate_no',
-                                                             'formulas'
-                                                            ));
+            $previousUrl = app('url')->previous();
+            $certi_cb    =  CertiCb::where('token',$token)->first();
+
+            $tis_data = $data_session;
+ 
+            $Province =  Province::where('PROVINCE_NAME', 'LIKE', '%'.str_replace(" ","",$data_session->province).'%')->first();
+            $contact_province =  Province::where('PROVINCE_NAME', 'LIKE', '%'.str_replace(" ","",$data_session->contact_province).'%')->first();
+            $data_session->contact_province_id  =    $contact_province->PROVINCE_ID ?? '';
+
+            $tis_data->PROVINCE_ID  =    $Province->PROVINCE_ID ?? '';
+            // $Amphur =  Amphur::where('AMPHUR_NAME', 'LIKE', '%'.str_replace(" ","",$user_tis->trader_address_amphur).'%')->first();
+            $tis_data->AMPHUR_ID    =    $data_session->district ?? '';
+            // $District =  District::where('DISTRICT_NAME', 'LIKE', '%'.str_replace(" ","",$user_tis->trader_address_tumbol).'%')->first();
+            $tis_data->DISTRICT_ID  =     $data_session->subdistrict ?? '';
+
+            $attach_path = $this->attach_path;//path ไฟล์แนบ
+
+            $formulas = DB::table('bcertify_formulas')->select('*')->where('state',1)->where('applicant_type',1)->get();
+
+            $app_certi_cb = DB::table('app_certi_cb')->where('tax_id',$data_session->tax_number)->select('id');
+            $certificate_exports = DB::table('app_certi_cb_export')->whereIn('app_certi_cb_id',$app_certi_cb)->where('status',3)->pluck('certificate','id');
+            $certificate_no = DB::table('app_certi_cb_export')->select('id')->whereIn('app_certi_cb_id',$app_certi_cb)->where('status',3)->get();
+  
+            $certifieds = CertiCBExport::whereIn('app_no',$app_certi_cb->get()->pluck('app_no')->toArray())->get();
+            // dd($certifieds);
+            // $Formula_Arr = Formula::where('applicant_type',1)->where('state',1)->orderbyRaw('CONVERT(title USING tis620)')->pluck('title','id');
+            $Formula_Arr = Formula::where('applicant_type', 1)
+                ->where('state', 1)
+                ->whereHas('certificationBranchs', function ($query) {
+                    $query->whereNotNull('model_name');
+                })
+                ->pluck('title', 'id');
+            
+            $cbTrustmarks = CbTrustMark::where('bcertify_certification_branche_id',$certi_cb->petitioner_id)->get();
+            // dd($cbTrustmarks);
+            // $transactions = CbScopeIsicTransaction::where('certi_cb_id',$certi_cb->id)->with('cbScopeIsicCategoryTransactions.cbScopeIsicSubCategoryTransactions')->get();
+            $certificationBranch = CertificationBranch::find($certi_cb->petitioner_id);
+            $methodType = "show";
+            // return view('certify.applicant_cb.show', compact('tis_data',
+            //                                                  'previousUrl',
+            //                                                  'certi_cb',
+            //                                                  'attach_path',
+            //                                                  'certificate_exports',
+            //                                                  'certificate_no',
+            //                                                  'formulas'
+            //                                                 ));
+
+                                                            return view('certify/applicant_cb.edit', compact('tis_data',
+                                                            'previousUrl',
+                                                            'certi_cb',
+                                                            'attach_path',
+                                                            'certificate_exports',
+                                                            'certificate_no',
+                                                            'formulas',
+                                                            'certifieds',
+                                                            'Formula_Arr',
+                                                            'cbTrustmarks',
+                                                            'certificationBranch',
+                                                            'methodType'
+                                                             ));                                                
         }
         abort(403);
     }else{
@@ -575,7 +662,7 @@ class ApplicantCBController extends Controller
      */
     public function edit($token)
     {
-        // dd('jjj');
+        
         $model = str_slug('applicantcbs','-');
         $data_session     =    HP::CheckSession();
        if(!empty($data_session)){
@@ -619,6 +706,7 @@ class ApplicantCBController extends Controller
             // $transactions = CbScopeIsicTransaction::where('certi_cb_id',$certi_cb->id)->with('cbScopeIsicCategoryTransactions.cbScopeIsicSubCategoryTransactions')->get();
             $certificationBranch = CertificationBranch::find($certi_cb->petitioner_id);
             // dd($certi_cb);
+            $methodType = "edit";
             return view('certify/applicant_cb.edit', compact('tis_data',
                                                              'previousUrl',
                                                              'certi_cb',
@@ -630,6 +718,8 @@ class ApplicantCBController extends Controller
                                                              'Formula_Arr',
                                                              'cbTrustmarks',
                                                              'certificationBranch',
+                                                             'methodType'
+
                                                               ));
         }
           abort(403);
@@ -697,22 +787,101 @@ class ApplicantCBController extends Controller
      */
     public function update(Request $request, $token)
     {
+        // ดึงข้อมูล JSON จาก request
+        $cbScopeJson = json_decode($request->cbScopeJson, true);
+
+        // dd($request->all());
+        
+
+        $selectedModel = $request->selectedModel;
+        
+        // dd($cbScopeJson,$selectedModel);
+
+
         $certi_cb =  CertiCb::where('token',$token)->first();
-        // dd($certi_cb->status);
-        if($certi_cb->status == 9 && $certi_cb->doc_review_reject !== null)
+
+
+        if($certi_cb->require_scope_update != "1")
         {
-            $this->docUpdate($request, $token);
-            $certi_cb->update([
-                'doc_review_reject' => null
-            ]);
+            if($certi_cb->status == 9 && $certi_cb->doc_review_reject !== null)
+            {
+                $this->docUpdate($request, $token);
+                $certi_cb->update([
+                    'doc_review_reject' => null
+                ]);
+            }else{
+    
+                if($selectedModel == "CbScopeIsicIsic")
+                {
+                    $this->clearCbScopeIsic($certi_cb);
+                    $certi_cb =  CertiCb::where('token',$token)->first();
+                    $this->storeCbScopeIsicIsic($cbScopeJson,$certi_cb);
+                    $pdfService = new CreateCbScopeIsicPdf($certi_cb);
+                    $pdfContent = $pdfService->generatePdf();
+                
+    
+                }else if($selectedModel == "CbScopeBcms")
+                {
+                    $this->clearCbScopeBcms($certi_cb);
+                    $certi_cb =  CertiCb::where('token',$token)->first();
+                    $this->storeCbScopeBcms($cbScopeJson,$certi_cb);
+                    $pdfService = new CreateCbScopeBcmsPdf($certi_cb);
+                    $pdfContent = $pdfService->generatePdf();
+                }
+    
+                $this->normalUpdate($request, $token);
+            }
         }else{
-            $this->normalUpdate($request, $token);
+
+            if($selectedModel == "CbScopeIsicIsic")
+            {
+                // dd($cbScopeJson);
+                $this->clearCbScopeIsic($certi_cb);
+                $certi_cb =  CertiCb::where('token',$token)->first();
+                $this->storeCbScopeIsicIsic($cbScopeJson,$certi_cb);
+                $pdfService = new CreateCbScopeIsicPdf($certi_cb);
+                $pdfContent = $pdfService->generatePdf();
+            
+
+            }else if($selectedModel == "CbScopeBcms")
+            {
+                $this->clearCbScopeBcms($certi_cb);
+                $certi_cb =  CertiCb::where('token',$token)->first();
+                $this->storeCbScopeBcms($cbScopeJson,$certi_cb);
+                $pdfService = new CreateCbScopeBcmsPdf($certi_cb);
+                $pdfContent = $pdfService->generatePdf();
+            }
+            CertiCb::where('token',$token)->first()->update([
+                'require_scope_update' => 2
+            ]);
+
         }
+        // dd($certi_cb->status);
+
 
         return redirect('certify/applicant-cb')->with('message', 'แก้ไขเรียบร้อยแล้ว!');
       
 
     }
+
+    //     public function update(Request $request, $token)
+    // {
+    //     $certi_cb =  CertiCb::where('token',$token)->first();
+    //     // dd($certi_cb->status);
+    //     if($certi_cb->status == 9 && $certi_cb->doc_review_reject !== null)
+    //     {
+    //         $this->docUpdate($request, $token);
+    //         $certi_cb->update([
+    //             'doc_review_reject' => null
+    //         ]);
+    //     }else{
+    //         $this->normalUpdate($request, $token);
+    //     }
+
+    //     return redirect('certify/applicant-cb')->with('message', 'แก้ไขเรียบร้อยแล้ว!');
+      
+
+    // }
 
     public function normalUpdate($request, $token)
     {
@@ -751,6 +920,9 @@ class ApplicantCBController extends Controller
 
                       // เงื่อนไขเช็คมีใบรับรอง 
                      $this->save_certicb_export_mapreq( $certi_cb );
+
+
+                     
    
     
                     if(!is_null($certi_cb)){
@@ -2053,6 +2225,8 @@ class ApplicantCBController extends Controller
         return redirect('certify/applicant-cb')->with('message', 'เรียบร้อยแล้ว!');
     }
 
+    
+
     public function UpdatePayInTwo(Request $request, $id)
     {
         $data_session     =    HP::CheckSession();
@@ -2164,6 +2338,14 @@ class ApplicantCBController extends Controller
     } catch (\Exception $e) {
         return redirect('certify/applicant-cb')->with('message_error', 'เกิดข้อผิดพลาดกรุณาบันทึกใหม่');
     } 
+   }
+
+   public function abilityConfirm(Request $request)
+   {
+    // dd($request->all());
+    CertiCBReport::where('app_certi_cb_id',$request->id)->first()->update([
+        'ability_confirm' => 1
+    ]);
    }
 
         //log

@@ -7,7 +7,7 @@
      <div class="row">
         <div class="col-md-12">
            <div class="white-box">
-           <h3 class="box-title pull-left"> ยื่นคำขอรับใบรับรองระบบงาน 
+           <h3 class="box-title pull-left"> ยื่นคำขอรับใบรับรองระบบงาน landing 
             @if ($certi_lab->certi_auditors_many->count() > $certi_lab->fullyApprovedAuditorNoCancels->count())
             <span class="text-danger">(รอดำเนินการ {{$certi_lab->certi_auditors_many->count() - $certi_lab->fullyApprovedAuditorNoCancels->count()}} คณะ)</span> 
             @endif

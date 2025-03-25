@@ -105,7 +105,6 @@
     @include ('certify.applicant_cb/froms.form_request')
 @endif
 
-{{-- @if ($certi_cb->doc_review_reject == null) --}}
 
 
 
@@ -153,7 +152,8 @@
 
 </fieldset>
 @endif
-
+{{-- {{$methodType}} --}}
+@if ($methodType != 'show')
 <center>
     <div class="row form-group">
         <div class="col-md-12">
@@ -166,6 +166,8 @@
         </div>
     </div>
 </center>
+@endif
+
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
     <div class="modal-dialog  modal-lg" role="document">

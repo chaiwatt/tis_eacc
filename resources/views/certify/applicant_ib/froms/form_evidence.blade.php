@@ -1,3 +1,125 @@
+<style>
+        .symbol-btn {
+        width: 60px; /* ปรับความกว้างตามที่ต้องการ */
+        margin: 5px; /* ช่องว่างระหว่างปุ่ม */
+    }
+/* เส้นขอบรอบตาราง */
+.custom-bordered-table {
+    border-collapse: separate;
+    border: 0.5px solid #dee2e6; /* เส้นขอบรอบตาราง */
+    border-spacing: 0; /* ไม่มีช่องว่างระหว่างเซลล์ */
+}
+
+/* เส้นขอบเฉพาะด้านซ้ายและขวาสำหรับ td และ th */
+.custom-bordered-table td,
+.custom-bordered-table th {
+    border-left: 0.5px solid #dee2e6 !important; /* ขอบซ้าย */
+    border-right: 0.5px solid #dee2e6 !important; /* ขอบขวา */
+    border-top: none !important; /* ไม่มีขอบบน */
+    border-bottom: none !important; /* ไม่มีขอบล่าง */
+}
+
+/* ยกเลิกเส้นขอบที่อาจซ้อนมาจาก Bootstrap */
+.custom-bordered-table th,
+.custom-bordered-table td {
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+}
+
+/* เส้นขอบด้านล่างสุดของตาราง */
+.custom-bordered-table tr:last-child td {
+    border-bottom: none !important; /* ยกเลิกขอบล่างของแถวสุดท้าย */
+}
+
+    /* ปิดเอฟเฟกต์ hover */
+    .table-no-hover tbody tr:hover {
+        background-color: transparent !important;
+    }
+
+    .editable-div {
+    width: 200px;
+    min-height: 100px;
+    white-space: pre-wrap;
+    font-family: Arial, sans-serif;
+    overflow-wrap: break-word;
+    border: 1px solid #ccc;
+    padding: 4px;
+    outline: none;
+}
+
+.editable-div:focus {
+    border-color: #666;
+}
+
+[id^="result"] {
+    margin-top: 10px;
+}
+
+.select2-results__option {
+    white-space: normal; /* อนุญาตให้ข้อความขึ้นบรรทัดใหม่ */
+    line-height: 1.5; /* ปรับระยะห่างระหว่างบรรทัด */
+}
+
+.select2-results__option span {
+    display: block; /* ทำให้แต่ละ span ขึ้นบรรทัดใหม่ */
+}
+
+</style>
+
+<div class="modal fade" id="modal-add-ib-scope">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span id="scope-modal-title">เพิ่มขอบข่ายหน่วยตรวจ (IB)</span>  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </h4>
+                <h5>
+                  <span class="text-danger">*โปรดทราบ!! ถ้าไม่พบขอบข่ายที่ต้องการ โปรดติดต่อเจ้าหน้าที่เพื่อเพิ่มเติมขอบข่าย ==></span> <span><a href="{{url('certify/scope-request/lab-scope-request')}}" target="_blank">ขอเพิ่มขอบข่าย</a></span>
+                </h5>
+            </div>
+            <div class="modal-body">
+                <fieldset class="white-box">
+                    <div class="row" id="select_wrapper">
+                        <div class="col-md-4 form-group">
+                            <label for="">สาขา</label>
+                            <select class="form-control" name="" id="main_category_ib">
+                            </select>
+                        </div>
+                        <div class="col-md-4 form-group" id="sub_category_ib_wrapper" style="display: none;">
+                            <label for="">สาขาการย่อย</label>
+                            <select class="form-control" name="" id="sub_category_ib">
+                            </select>
+                        </div>
+                        <div class="col-md-4 form-group" id="scope_topic_ib_wrapper" style="display: none;">
+                            <label for="">ขอบข่ายย่อย1</label>
+                            <select class="form-control" name="" id="scope_topic_ib">
+                            </select>
+                        </div>
+                        <div class="col-md-4 form-group" id="scope_detail_ib_wrapper" style="display: none;">
+                            <label for="">ขอบข่ายย่อย2</label>
+                            <select class="form-control" name="" id="scope_detail_ib">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 form-group"> 
+                            <label for="">ข้อกำหนดที่ใช้</label>
+                            <textarea name="standard" id="standard" rows="5" class="form-control"></textarea>
+                         </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success pull-right ml-2" id="button_add_ib_scope">
+                    <span aria-hidden="true">เพิ่ม</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <fieldset class="white-box">
     <legend><h4><span class="text-danger">*</span> 2. คู่มือคุณภาพและขั้นตอนการดำเนินงานของหน่วยงานตรวจสอบที่สอดคล้องตามข้อกำหนดมาตรฐานเลขที่ มอก.17020 (Inspection body implementations which are conformed with TIS 17020)</h4></legend>
 
@@ -122,7 +244,33 @@
                 </div>
             </div> 
         </div>
+        <div class="col-md-12">
+            <table class="table">
+                <tr>
+                    <th>หมวดหมู่ / สาขาการตรวจ </th>
+                    <th>ขั้นตอนและช่วงการตรวจ </th>
+                    <th>ข้อกำหนดที่ใช้ </th>
+                </tr>
+                <tbody id="ib_scope_wrapper"></tbody>
+                
+            </table>
+        </div>
     </div>
+
+    @if ($methodType != 'show')
+        <div class="row repeater-form-file">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div class="col-md-10"></div>
+                    <div class="col-md-2">
+                        <button type="button" id="btn_add_ib_scope" class="btn btn-success">
+                            <i class="icon-plus"></i>เพิ่มขอบข่าย
+                        </button>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    @endif
 </fieldset>
 
 <fieldset class="white-box">
@@ -521,3 +669,265 @@
     </div>
 
 </fieldset>
+@push('js')
+<script>
+
+let transactions = [];
+
+// เมื่อหน้าโหลด ให้เริ่มต้น array ว่าง
+$(document).ready(function() {
+    transactions = []; // สร้าง array ว่างสำหรับเก็บ transactions
+});
+    
+// เมื่อคลิกปุ่มเพิ่ม scope
+$('#btn_add_ib_scope').on('click', function() {
+    const _token = $('input[name="_token"]').val();
+    $.ajax({
+        url: "{{ route('certi_ib.get-ib-main-category') }}",
+        method: "POST",
+        contentType: 'application/json',
+        headers: {
+            'X-CSRF-TOKEN': _token
+        },
+        success: function(response) {
+            ibMainCategoryScopes = response.ibMainCategoryScopes;
+            $('#main_category_ib').empty();
+            $('#main_category_ib').select2('destroy').empty();
+            $('#main_category_ib').append('<option value="not_select" disabled selected>- สาขาทดสอบ -</option>');
+            $.each(ibMainCategoryScopes, function (index, value) {
+                $('#main_category_ib').append('<option value="' + value.id + '">' + value.name + '</option>');
+            });
+            $('#main_category_ib').select2();
+        }
+    });
+    $('#modal-add-ib-scope').modal('show');
+});
+
+// เมื่อเลือก main_category_ib
+$(document).on('change', '#main_category_ib', function() {
+    const _token = $('input[name="_token"]').val();
+    const ibMainCategoryScopeId = $(this).val();
+
+    if (ibMainCategoryScopeId !== 'not_select') {
+        $.ajax({
+            url: "{{ route('certi_ib.get-ib-sub-category') }}",
+            method: "POST",
+            contentType: 'application/json',
+            headers: {
+                'X-CSRF-TOKEN': _token
+            },
+            data: JSON.stringify({ ib_main_category_scope_id: ibMainCategoryScopeId }),
+            success: function(response) {
+                const ibSubCategoryScopes = response.ibSubCategoryScopes;
+                $('#sub_category_ib').empty();
+                $('#sub_category_ib').select2('destroy').empty();
+                $('#sub_category_ib').append('<option value="not_select" disabled selected>- เลือกสาขาการย่อย -</option>');
+                $.each(ibSubCategoryScopes, function(index, value) {
+                    $('#sub_category_ib').append('<option value="' + value.id + '">' + value.name + '</option>');
+                });
+                $('#sub_category_ib').select2();
+                $('#sub_category_ib_wrapper').show(); // แสดง wrapper
+            },
+            error: function(xhr) {
+                console.log('Error:', xhr);
+            }
+        });
+    } else {
+        $('#sub_category_ib_wrapper').hide(); // ซ่อน sub_category
+        $('#scope_topic_ib_wrapper').hide();  // ซ่อน scope_topic
+        $('#scope_detail_ib_wrapper').hide(); // ซ่อน scope_detail
+    }
+});
+
+
+
+// เมื่อเลือก sub_category_ib
+$(document).on('change', '#sub_category_ib', function() {
+    const _token = $('input[name="_token"]').val();
+    const ibSubCategoryScopeId = $(this).val();
+
+    if (ibSubCategoryScopeId !== 'not_select') {
+        $.ajax({
+            url: "{{ route('certi_ib.get-ib-scope-topic') }}",
+            method: "POST",
+            contentType: 'application/json',
+            headers: {
+                'X-CSRF-TOKEN': _token
+            },
+            data: JSON.stringify({ ib_sub_category_scope_id: ibSubCategoryScopeId }),
+            success: function(response) {
+                const ibScopeTopics = response.ibScopeTopics;
+                $('#scope_topic_ib').empty();
+                $('#scope_topic_ib').select2('destroy').empty();
+                $('#scope_topic_ib').append('<option value="not_select" disabled selected>- เลือกขอบข่ายย่อย1 -</option>');
+                $.each(ibScopeTopics, function(index, value) {
+                    $('#scope_topic_ib').append('<option value="' + value.id + '">' + value.name + '</option>');
+                });
+                $('#scope_topic_ib').select2();
+                $('#scope_topic_ib_wrapper').show(); // แสดง wrapper
+            },
+            error: function(xhr) {
+                console.log('Error:', xhr);
+            }
+        });
+    } else {
+        $('#scope_topic_ib_wrapper').hide();  // ซ่อน scope_topic
+        $('#scope_detail_ib_wrapper').hide(); // ซ่อน scope_detail
+    }
+});
+
+// เมื่อเลือก scope_topic_ib
+$(document).on('change', '#scope_topic_ib', function() {
+    const _token = $('input[name="_token"]').val();
+    const ibScopeTopicId = $(this).val();
+
+    if (ibScopeTopicId !== 'not_select') {
+        $.ajax({
+            url: "{{ route('certi_ib.get-ib-scope-detail') }}",
+            method: "POST",
+            contentType: 'application/json',
+            headers: {
+                'X-CSRF-TOKEN': _token
+            },
+            data: JSON.stringify({ ib_scope_topic_id: ibScopeTopicId }),
+            success: function(response) {
+                const ibScopeDetails = response.ibScopeDetails;
+                $('#scope_detail_ib').empty();
+                $('#scope_detail_ib').select2('destroy').empty();
+                $('#scope_detail_ib').append('<option value="not_select" disabled selected>- เลือกขอบข่ายย่อย2 -</option>');
+                $.each(ibScopeDetails, function(index, value) {
+                    $('#scope_detail_ib').append('<option value="' + value.id + '">' + value.name + '</option>');
+                });
+                $('#scope_detail_ib').select2();
+                $('#scope_detail_ib_wrapper').show(); // แสดง wrapper
+            },
+            error: function(xhr) {
+                console.log('Error:', xhr);
+            }
+        });
+    } else {
+        $('#scope_detail_ib_wrapper').hide(); // ซ่อน scope_detail
+    }
+});
+
+
+// เมื่อคลิกปุ่มเพิ่มใน modal footer
+$('#button_add_ib_scope').on('click', function() {
+    const mainCategoryId = $('#main_category_ib').val();
+    const mainCategoryText = $('#main_category_ib option:selected').text();
+    const subCategoryId = $('#sub_category_ib').val();
+    const subCategoryText = $('#sub_category_ib option:selected').text();
+    const scopeTopicId = $('#scope_topic_ib').val();
+    const scopeTopicText = $('#scope_topic_ib option:selected').text();
+    const scopeDetailId = $('#scope_detail_ib').val();
+    const scopeDetailText = $('#scope_detail_ib option:selected').text();
+    const standard = $('#standard').val();
+
+    // ตรวจสอบว่าเลือกครบทุก dropdown และ textarea ไม่ว่าง
+    if (mainCategoryId !== 'not_select' && subCategoryId !== 'not_select' && 
+        scopeTopicId !== 'not_select' && scopeDetailId !== 'not_select' && standard.trim() !== '') {
+        
+        // สร้าง JSON object สำหรับ transaction รวมทั้ง ID และ text
+        const transaction = {
+            ib_main_category_scope_id: mainCategoryId,
+            ib_main_category_scope_text: mainCategoryText,
+            ib_sub_category_scope_id: subCategoryId,
+            ib_sub_category_scope_text: subCategoryText,
+            ib_scope_topic_id: scopeTopicId,
+            ib_scope_topic_text: scopeTopicText,
+            ib_scope_detail_id: scopeDetailId,
+            ib_scope_detail_text: scopeDetailText,
+            standard: standard
+        };
+
+        // เพิ่ม transaction ลงใน array
+        transactions.push(transaction);
+
+
+// เรียงลำดับ transactions ตาม main category
+transactions.sort((a, b) => a.ib_main_category_scope_id - b.ib_main_category_scope_id);
+
+// เคลียร์ข้อมูลเก่าใน <tbody>
+$("#ib_scope_wrapper").empty();
+
+// จัดกลุ่มข้อมูลตาม main category
+let groupedData = {};
+
+// จัดกลุ่ม transactions
+transactions.forEach(transaction => {
+    let key = transaction.ib_main_category_scope_text;
+    if (!groupedData[key]) {
+        groupedData[key] = [];
+    }
+    groupedData[key].push(transaction);
+});
+
+console.log(groupedData)
+
+// Render ข้อมูลลงในตาราง
+$.each(groupedData, function(mainCategoryText, items) {
+    let mainCategoryRowSpan = items.length; // จำนวนแถวที่ต้องรวม
+
+    let firstRow = true;
+    $.each(items, function(index, transaction) {
+        let row = "<tr>";
+
+        // แสดงหมวดหมู่หลักและรายการย่อยรวมกันเพียงครั้งเดียว
+        if (firstRow) {
+            row += `
+                <td rowspan="${mainCategoryRowSpan}">
+                    <b>${transaction.ib_main_category_scope_text}</b><br>
+                    - ${transaction.ib_sub_category_scope_text}
+                </td>
+            `;
+            firstRow = false;
+        }
+
+        // แสดงขั้นตอนการตรวจสอบเป็นรายการ
+        row += `
+            <td>
+                <ul>
+                    <li>${transaction.ib_scope_topic_text}</li>
+                    <li>${transaction.ib_scope_detail_text}</li>
+                </ul>
+            </td>
+        `;
+
+        // แสดงข้อกำหนดที่ใช้เป็นรายการ
+        row += `
+            <td>
+                <ul>
+                    <li>${transaction.standard}</li>
+                </ul>
+            </td>
+        `;
+
+        row += "</tr>";
+
+        // เพิ่มแถวลงใน tbody
+        $("#ib_scope_wrapper").append(row);
+    });
+});
+
+
+
+        // รีเซ็ต dropdown และ textarea กลับไปที่ค่าเริ่มต้น
+        $('#main_category_ib').val('not_select').trigger('change');
+        $('#sub_category_ib').val('not_select').trigger('change');
+        $('#scope_topic_ib').val('not_select').trigger('change');
+        $('#scope_detail_ib').val('not_select').trigger('change');
+        $('#standard').val('');
+
+        // ซ่อน wrapper ของ dropdown ถัดไป
+        $('#sub_category_ib_wrapper').hide();
+        $('#scope_topic_ib_wrapper').hide();
+        $('#scope_detail_ib_wrapper').hide();
+
+        // ปิด modal (ถ้าต้องการ)
+        $('#modal-add-ib-scope').modal('hide');
+    } else {
+        alert('กรุณาเลือกข้อมูลให้ครบทุกช่องและกรอกข้อกำหนดที่ใช้');
+    }
+});
+</script>
+@endpush

@@ -2,11 +2,12 @@
 
 namespace App\Services;
 use HP;
+use stdClass;
 use Mpdf\Mpdf;
 use Carbon\Carbon;
 use App\CertificateExport;
-use Smalot\PdfParser\Parser;
 
+use Smalot\PdfParser\Parser;
 use Mpdf\Config\FontVariables;
 use Mpdf\Config\ConfigVariables;
 use Illuminate\Support\Facades\DB;
@@ -18,11 +19,13 @@ use App\Models\Certify\Applicant\Report;
 use App\Models\Bcertify\CalibrationBranch;
 use App\Models\Certify\Applicant\CertiLab;
 use App\Models\Certify\ApplicantCB\CertiCb;
+use App\Models\Certify\ApplicantCB\CertiCBReport;
 use App\Models\Certificate\CbScopeIsicTransaction;
 use App\Models\Certify\Applicant\CertiLabAttachAll;
 use App\Models\Bcertify\CalibrationBranchInstrument;
 use App\Models\Certify\ApplicantCB\CertiCBAttachAll;
 use App\Models\Bcertify\CalibrationBranchInstrumentGroup;
+use App\Models\Certify\ApplicantCB\CertiCBSaveAssessment;
 
 class CreateCbScopeIsicPdf
 {
@@ -116,6 +119,8 @@ class CreateCbScopeIsicPdf
         ]);
 
         //  $combinedPdf->SetImportUse();
+
+        
         
         // สร้างไฟล์ PDF ชั่วคราวจาก `$mpdfArray`
         $tempFiles = []; // เก็บรายชื่อไฟล์ชั่วคราว
@@ -151,6 +156,19 @@ class CreateCbScopeIsicPdf
             }
         }
 
+
+        $tbx = new CertiCBSaveAssessment;
+        $tb = new CertiCBReport;
+
+       
+
+
+        // dd($checkScopeCertiCBSaveAssessment,$checkScopeCertiCBReport);
+
+        // $title = "cbscopeisic.pdf";
+        
+        // $combinedPdf->Output($title, "I");  
+
         // $combinedPdf->Output('combined.pdf', \Mpdf\Output\Destination::INLINE);
         $app_certi_cb = CertiCb::find($this->certi_cb_id);
         $no = str_replace("RQ-", "", $app_certi_cb->app_no);
@@ -162,10 +180,8 @@ class CreateCbScopeIsicPdf
     
         // สร้างไฟล์ชั่วคราว
         $tempFilePath = tempnam(sys_get_temp_dir(), 'pdf_') . '.pdf';
-    
         // บันทึก PDF ไปยังไฟล์ชั่วคราว
         $combinedPdf->Output($tempFilePath, \Mpdf\Output\Destination::FILE);
-    
         // ใช้ Storage::putFileAs เพื่อย้ายไฟล์
         Storage::putFileAs($attachPath, new \Illuminate\Http\File($tempFilePath), $fullFileName);
     
@@ -187,9 +203,95 @@ class CreateCbScopeIsicPdf
         $certi_cb_attach->token            = str_random(16);
         $certi_cb_attach->save();
 
+        $checkScopeCertiCBSaveAssessment = CertiCBAttachAll::where('app_certi_cb_id',$this->certi_cb_id)
+        ->where('table_name', (new CertiCBSaveAssessment)->getTable())
+        ->where('file_section', 2)
+        ->latest() // ใช้ latest() เพื่อให้เรียงตาม created_at โดยอัตโนมัติ
+        ->first(); // ดึง record ล่าสุดเพียงตัวเดียว
+
+
+        if($checkScopeCertiCBSaveAssessment != null)
+        {
+            $assessment = CertiCBSaveAssessment::find($checkScopeCertiCBSaveAssessment->ref_id);
+            $json = $this->copyScopeCbFromAttachement($assessment->app_certi_cb_id);
+            $copiedScopes = json_decode($json, true);
+            $tbx = new CertiCBSaveAssessment;
+            $certi_cb_attach_more = new CertiCBAttachAll();
+            $certi_cb_attach_more->app_certi_cb_id      = $assessment->app_certi_cb_id ?? null;
+            $certi_cb_attach_more->ref_id               = $assessment->id;
+            $certi_cb_attach_more->table_name           = $tbx->getTable();
+            $certi_cb_attach_more->file_section         = '2';
+            $certi_cb_attach_more->file                 = $copiedScopes[0]['attachs'];
+            $certi_cb_attach_more->file_client_name     = $copiedScopes[0]['file_client_name'];
+            $certi_cb_attach_more->token                = str_random(16);
+            $certi_cb_attach_more->save();
+        }
+
+        $checkScopeCertiCBReport= CertiCBAttachAll::where('app_certi_cb_id',$this->certi_cb_id)
+        ->where('table_name',(new CertiCBReport)->getTable())
+        ->where('file_section',1)
+        ->latest() // ใช้ latest() เพื่อให้เรียงตาม created_at โดยอัตโนมัติ
+        ->first(); // ดึง record ล่าสุดเพียงตัวเดียว
+
+        if($checkScopeCertiCBReport != null)
+        {
+            $report = CertiCBReport::find($checkScopeCertiCBReport->ref_id);
+            $json = $this->copyScopeCbFromAttachement($report->app_certi_cb_id);
+            $copiedScopes = json_decode($json, true);
+            $tb = new CertiCBReport;
+            $certi_cb_attach_more = new CertiCBAttachAll();
+            $certi_cb_attach_more->app_certi_cb_id      = $report->app_certi_cb_id ?? null;
+            $certi_cb_attach_more->ref_id               = $report->id;
+            $certi_cb_attach_more->table_name           = $tb->getTable();
+            $certi_cb_attach_more->file_section         = '1';
+            $certi_cb_attach_more->file                 = $copiedScopes[0]['attachs'];
+            $certi_cb_attach_more->file_client_name     = $copiedScopes[0]['file_client_name'];
+            $certi_cb_attach_more->token                = str_random(16);
+            $certi_cb_attach_more->save();
+        }
+
+
     }
 
-
+    public function copyScopeCbFromAttachement($certiCbId)
+    {
+        $copiedScoped = null;
+        $fileSection = null;
+    
+        $app = CertiCb::find($certiCbId);
+    
+        $latestRecord = CertiCBAttachAll::where('app_certi_cb_id', $certiCbId)
+        ->where('file_section', 3)
+        ->where('table_name', 'app_certi_cb')
+        ->orderBy('created_at', 'desc') // เรียงลำดับจากใหม่ไปเก่า
+        ->first();
+    
+        $existingFilePath = 'files/applicants/check_files_cb/' . $latestRecord->file ;
+    
+        // ตรวจสอบว่าไฟล์มีอยู่ใน FTP และดาวน์โหลดลงมา
+        if (HP::checkFileStorage($existingFilePath)) {
+            $localFilePath = HP::getFileStoragePath($existingFilePath); // ดึงไฟล์ลงมาที่เซิร์ฟเวอร์
+            $no  = str_replace("RQ-","",$app->app_no);
+            $no  = str_replace("-","_",$no);
+            $dlName = 'scope_'.basename($existingFilePath);
+            $attach_path  =  'files/applicants/check_files_cb/'.$no.'/';
+    
+            if (file_exists($localFilePath)) {
+                $storagePath = Storage::putFileAs($attach_path, new \Illuminate\Http\File($localFilePath),  $dlName );
+                $filePath = $attach_path . $dlName;
+                if (Storage::disk('ftp')->exists($filePath)) {
+                    $list  = new  stdClass;
+                    $list->attachs =  $no.'/'.$dlName;
+                    $list->file_client_name =  $dlName;
+                    $scope[] = $list;
+                    $copiedScoped = json_encode($scope);
+                } 
+                unlink($localFilePath);
+            }
+        }
+    
+        return $copiedScoped;
+    }
     public function setMpdf($margin_left,$margin_right,$margin_top,$margin_bottom)
     {
        

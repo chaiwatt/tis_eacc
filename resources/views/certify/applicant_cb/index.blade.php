@@ -67,7 +67,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="white-box">
-                    <h3 class="box-title pull-left">ใบรับรองระบบงาน (CB)</h3>
+                    <h3 class="box-title pull-left">ใบรับรองระบบงาน (CB) landing</h3>
 
                     <div class="pull-right">
 
@@ -254,11 +254,14 @@
 
 
                                         @elseif($item->status == 10 || $item->status == 11) <!-- อยู่ระหว่างดำเนินการ  -->
+                                       
+                                        {{-- {{$item->fullyApprovedAuditorNoCancels()->count() }} --}}
                                             <button style="border: none" data-toggle="modal"  data-target="#TakeAction{{$loop->iteration}}" data-id="{{ $item->token }}"  >
                                                 <i class="mdi mdi-magnify"></i>เห็นชอบการแต่งตั้งคณะผู้ตรวจประเมิน
                                             </button>
 
                                             @include ('certify.applicant_cb.modal.modalstatus10',['id'=> $loop->iteration,'token'=> $item->token,'auditors' => $item->CertiAuditorsMany,'certi' => $item ])
+
                                         @elseif($item->status == 13) <!-- รอยืนยันคำขอ  -->
                                             <button type="button"  style="border: none;"  data-toggle="modal" data-target="#ReportModal{{$item->id}}">
                                                 <i class="mdi mdi-magnify"></i>  {{ $data_status  }}
@@ -281,17 +284,47 @@
                                                                                                     'std_name' => $item->FormulaTo->title,
                                                                                                     'save_date' => $item->save_date
                                                                                                    ])
+
+                                        @elseif($item->status == 17)  
+
+                                            @if ($item->CertiCBReportTo !== null)
+                                                    @if ($item->CertiCBReportTo->ability_confirm == null)
+                                                        <button style="border: none" data-toggle="modal" data-target="#action20{{$loop->iteration}}"  data-id="{{ $item->token }}"  id="action20">
+                                                            <i class="mdi mdi-magnify"></i>   ยืนยันความสามารถ
+                                                        </button>
+                                                        @include ('certify.applicant_cb.modal.modalstatus_ability_confirm',array('id'=>$loop->iteration,  'token'=>$item->token, 'certificate' => $item->CertiCBReportTo))
+                                                    @else
+                                                        {{ $data_status  }}
+                                                    @endif
+                                                @else
+                                                {{ $data_status  }}
+                                            @endif
                                         @else
-                                            {{ $data_status ?? '-' }}
+                                            
+                                            @if ($item->status == 12 && $item->require_scope_update == "1")
+                                                    
+                                                    <span>แก้ไขขอบข่าย</span>
+                                                @else
+                                                  {{ $data_status ?? '-' }}
+                                            @endif
                                         @endif
                                         (ID:{{$item->status}})
                                     </td>
                                     <td>
+
+                                        @if ($item->require_scope_update == "1")
+                                            <a href="{{ url('/certify/applicant-cb/' . $item->token . '/edit') }}"  title="Edit ApplicantCB" class="btn btn-primary btn-xs">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"> </i>
+                                            </a>
+                                        @endif
+                                       
                                         
                                         @if( HP::CheckPermission('view-'.str_slug('applicantcbs')))
                                             <a href="{{ url('/certify/applicant-cb/' . $item->token) }}"  title="View ApplicantCB" class="btn btn-info btn-xs">
                                                 <i class="fa fa-eye" aria-hidden="true"></i>
                                             </a>
+
+                                    
                                         @endif
 
                                         @if($item->status != 4 &&  $item->status != 5  )

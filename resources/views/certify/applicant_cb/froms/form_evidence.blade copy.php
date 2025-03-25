@@ -1,5 +1,3 @@
-
-
 <fieldset class="white-box">
     <legend>
         <h4><span class="text-danger">*</span> 1. คู่มือคุณภาพและขั้นตอนการดำเนินงานของ<span id="span_certification">{{!empty($certi_cb->CertiCBFormulasTo->title) ? $certi_cb->CertiCBFormulasTo->title : 'หน่วยรับรอง' }}</span>ที่สอดคล้องตามข้อกำหนดมาตรฐานที่ มอก.
@@ -28,47 +26,39 @@
                         <div class="col-md-4 text-light"></div>
                         <div class="col-md-6">
                             <a href="{!! HP::getFileStorage($attach_path.$section1->file) !!}" target="_blank" class="view-attach">{!! HP::FileExtension($section1->file_client_name)  ?? '' !!} {!! $section1->file_client_name  ?? '' !!}</a>
-                            @if ($methodType != 'show')
-                                <a href="{{url('certify/applicant-cb/delete/file_app_certi_cb_attach_all').'/'.$section1->id.'/'.$certi_cb->token}}" class="btn btn-danger btn-xs box_remove_file" onclick="return confirm('ต้องการลบไฟล์นี้ใช่หรือไม่ ?')">
-                                    <i class="fa fa-remove"></i>
-                                </a>
-                            @endif
-                            
+                            <a href="{{url('certify/applicant-cb/delete/file_app_certi_cb_attach_all').'/'.$section1->id.'/'.$certi_cb->token}}" class="btn btn-danger btn-xs box_remove_file" onclick="return confirm('ต้องการลบไฟล์นี้ใช่หรือไม่ ?')">
+                                <i class="fa fa-remove"></i>
+                            </a>
                         </div>
                     </div>
                 @endforeach
                 
             @endif
 
-            @if ($methodType != 'show')
-                <div class="form-group box_remove_file" data-repeater-item>
-                    <div class="col-md-4 text-light"></div>
-                    <div class="col-md-6">
-                        <div class="fileinput fileinput-new input-group " data-provides="fileinput">
-                            <div class="form-control" data-trigger="fileinput">
-                                <i class="glyphicon glyphicon-file fileinput-exists"></i>
-                                <span class="fileinput-filename"></span>
-                            </div>
-                            <span class="input-group-addon btn btn-default btn-file">
-                                <span class="fileinput-new">เลือกไฟล์</span>
-                                <span class="fileinput-exists">เปลี่ยน</span>
-                                <input type="file" name="attachs_sec1" class="attachs_sec1 check_max_size_file" {!!  $section1_required !!}>
-                            </span> 
-                            <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">ลบ</a>
+            <div class="form-group box_remove_file" data-repeater-item>
+                <div class="col-md-4 text-light"></div>
+                <div class="col-md-6">
+                    <div class="fileinput fileinput-new input-group " data-provides="fileinput">
+                        <div class="form-control" data-trigger="fileinput">
+                            <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                            <span class="fileinput-filename"></span>
                         </div>
-                        {!! $errors->first('attachs_sec1', '<p class="help-block">:message</p>') !!}
+                        <span class="input-group-addon btn btn-default btn-file">
+                            <span class="fileinput-new">เลือกไฟล์</span>
+                            <span class="fileinput-exists">เปลี่ยน</span>
+                            <input type="file" name="attachs_sec1" class="attachs_sec1 check_max_size_file" {!!  $section1_required !!}>
+                        </span> 
+                        <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">ลบ</a>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-danger delete-sec1" type="button" data-repeater-delete>
-                            <i class="fa fa-close"></i>
-                        </button>
-                    </div>
+                    {!! $errors->first('attachs_sec1', '<p class="help-block">:message</p>') !!}
                 </div>
-            @endif
-
-
+                <div class="col-md-2">
+                    <button class="btn btn-danger delete-sec1" type="button" data-repeater-delete>
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-        @if ($methodType != 'show')
         <div class="col-md-12">
             <div class="form-group">
                 <div class="col-md-10"></div>
@@ -77,8 +67,6 @@
                 </div>
             </div> 
         </div>
-        @endif
-
     </div>
 
 </fieldset>
@@ -104,56 +92,47 @@
                         <div class="col-md-4 text-light"></div>
                         <div class="col-md-6">
                             <a href="{!! HP::getFileStorage($attach_path.$section2->file) !!}" target="_blank" class="view-attach"> {!! HP::FileExtension($section2->file_client_name)  ?? '' !!} {!! $section2->file_client_name  ?? '' !!}</a>
-                            @if ($methodType != 'show')
                             <a href="{{url('certify/applicant-cb/delete/file_app_certi_cb_attach_all').'/'.$section2->id.'/'.$certi_cb->token}}" class="btn btn-danger btn-xs box_remove_file" onclick="return confirm('ต้องการลบไฟล์นี้ใช่หรือไม่ ?')">
                                 <i class="fa fa-remove"></i>
                             </a>
-                            @endif
-                          
                         </div>
                     </div>
                 @endforeach
                 
             @endif
 
-            @if ($methodType != 'show')
-                <div class="form-group box_remove_file" data-repeater-item>
-                    <div class="col-md-4 text-light"></div>
-                    <div class="col-md-6">
-                        <div class="fileinput fileinput-new input-group " data-provides="fileinput">
-                            <div class="form-control" data-trigger="fileinput">
-                                <i class="glyphicon glyphicon-file fileinput-exists"></i>
-                                <span class="fileinput-filename"></span>
-                            </div>
-                            <span class="input-group-addon btn btn-default btn-file">
-                                <span class="fileinput-new">เลือกไฟล์</span>
-                                <span class="fileinput-exists">เปลี่ยน</span>
-                                <input type="file" name="attachs_sec2" class="attachs_sec2 check_max_size_file">
-                            </span> 
-                            <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">ลบ</a>
+            <div class="form-group box_remove_file" data-repeater-item>
+                <div class="col-md-4 text-light"></div>
+                <div class="col-md-6">
+                    <div class="fileinput fileinput-new input-group " data-provides="fileinput">
+                        <div class="form-control" data-trigger="fileinput">
+                            <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                            <span class="fileinput-filename"></span>
                         </div>
-                        {!! $errors->first('attachs_sec2', '<p class="help-block">:message</p>') !!}
+                        <span class="input-group-addon btn btn-default btn-file">
+                            <span class="fileinput-new">เลือกไฟล์</span>
+                            <span class="fileinput-exists">เปลี่ยน</span>
+                            <input type="file" name="attachs_sec2" class="attachs_sec2 check_max_size_file">
+                        </span> 
+                        <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">ลบ</a>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-danger delete-sec2" type="button" data-repeater-delete>
-                            <i class="fa fa-close"></i>
-                        </button>
-                    </div>
+                    {!! $errors->first('attachs_sec2', '<p class="help-block">:message</p>') !!}
                 </div>
-            @endif
-
-        </div>
-        @if ($methodType != 'show')
-            <div class="col-md-12">
-                <div class="form-group">
-                    <div class="col-md-10"></div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-success" data-repeater-create><i class="icon-plus"></i>เพิ่ม</button>
-                    </div>
-                </div> 
+                <div class="col-md-2">
+                    <button class="btn btn-danger delete-sec2" type="button" data-repeater-delete>
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
             </div>
-        @endif
-
+        </div>
+        <div class="col-md-12">
+            <div class="form-group">
+                <div class="col-md-10"></div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-success" data-repeater-create><i class="icon-plus"></i>เพิ่ม</button>
+                </div>
+            </div> 
+        </div>
     </div>
 </fieldset>
 
@@ -175,42 +154,18 @@
                 </h4>
             </legend>
 
-            @if ( isset( $certi_cb->id ) && count( App\Models\Certify\ApplicantCB\CertiCBAttachAll::where('app_certi_cb_id', $certi_cb->id )->where('file_section', '1')->get() ) > 0 )
-
-                @php
-                    $file_section3 = App\Models\Certify\ApplicantCB\CertiCBAttachAll::where('app_certi_cb_id', $certi_cb->id)
-                                    ->where('file_section', '1')
-                                    ->latest() // เรียงตาม created_at จากใหม่ไปเก่า
-                                    ->first(); // ดึงรายการล่าสุดเพียงรายการเดียว
-                    
-                @endphp
-
-    
-                <div class="form-group">
-                    <div class="col-md-4 text-light"></div>
-                    <div class="col-md-6">
-                        <a href="{!! HP::getFileStorage($attach_path.$file_section3->file) !!}" target="_blank" class="view-attach"> {!! HP::FileExtension($file_section3->file_client_name)  ?? '' !!} {!! $file_section3->file_client_name  ?? '' !!}</a>
-                    
-                    </div>
+            <div class="row repeater-form-file">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-md-10"></div>
+                        <div class="col-md-2">
+                            <button type="button" id="btn_add_cb_scope_isic_isic" class="btn btn-success">
+                                <i class="icon-plus"></i>เพิ่มขอบข่าย
+                            </button>
+                        </div>
+                    </div> 
                 </div>
-            @endif
-            
-            @if ($methodType != 'show')
-                <div class="row repeater-form-file">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <div class="col-md-10"></div>
-                            <div class="col-md-2">
-                                <button type="button" id="btn_add_cb_scope_isic_isic" class="btn btn-success">
-                                    <i class="icon-plus"></i>เพิ่มขอบข่าย
-                                </button>
-                            </div>
-                        </div> 
-                    </div>
-                </div>
-            @endif
-
-
+            </div>
 
         </fieldset>
     @endif
@@ -243,39 +198,32 @@
                         <div class="col-md-4 text-light"></div>
                         <div class="col-md-6">
                             <a href="{!! HP::getFileStorage($attach_path.$section5->file) !!}" target="_blank" class="view-attach"> {!! HP::FileExtension($section5->file_client_name)  ?? '' !!} {!! $section5->file_client_name  ?? '' !!}</a>
-                            @if ($methodType != 'show')
-                                <a href="{{url('certify/applicant-cb/delete/file_app_certi_cb_attach_all').'/'.$section5->id.'/'.$certi_cb->token}}" class="btn btn-danger btn-xs box_remove_file" onclick="return confirm('ต้องการลบไฟล์นี้ใช่หรือไม่ ?')">
-                                    <i class="fa fa-remove"></i>
-                                </a>
-                            @endif
-
+                            <a href="{{url('certify/applicant-cb/delete/file_app_certi_cb_attach_all').'/'.$section5->id.'/'.$certi_cb->token}}" class="btn btn-danger btn-xs box_remove_file" onclick="return confirm('ต้องการลบไฟล์นี้ใช่หรือไม่ ?')">
+                                <i class="fa fa-remove"></i>
+                            </a>
                         </div>
                     </div>
                 @endforeach
 
             @else
 
-         
                 <div class="form-group box_remove_file" data-repeater-item>
-                    @if ($methodType != 'show')
-                        <div class="col-md-4 text-light"></div>
-                        <div class="col-md-6">
-                            <div class="fileinput fileinput-new input-group " data-provides="fileinput">
-                                <div class="form-control" data-trigger="fileinput">
-                                    <i class="glyphicon glyphicon-file fileinput-exists"></i>
-                                    <span class="fileinput-filename"></span>
-                                </div>
-                                <span class="input-group-addon btn btn-default btn-file">
-                                    <span class="fileinput-new">เลือกไฟล์</span>
-                                    <span class="fileinput-exists">เปลี่ยน</span>
-                                    <input type="file" name="attachs_sec5" class="attachs_sec5 check_max_size_file">
-                                </span> 
-                                <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">ลบ</a>
+                    <div class="col-md-4 text-light"></div>
+                    <div class="col-md-6">
+                        <div class="fileinput fileinput-new input-group " data-provides="fileinput">
+                            <div class="form-control" data-trigger="fileinput">
+                                <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                                <span class="fileinput-filename"></span>
                             </div>
-                            {!! $errors->first('attachs_sec5', '<p class="help-block">:message</p>') !!}
+                            <span class="input-group-addon btn btn-default btn-file">
+                                <span class="fileinput-new">เลือกไฟล์</span>
+                                <span class="fileinput-exists">เปลี่ยน</span>
+                                <input type="file" name="attachs_sec5" class="attachs_sec5 check_max_size_file">
+                            </span> 
+                            <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">ลบ</a>
                         </div>
-                    @endif
-                
+                        {!! $errors->first('attachs_sec5', '<p class="help-block">:message</p>') !!}
+                    </div>
                 </div>
                 
             @endif
@@ -306,59 +254,49 @@
                         <div class="col-md-4 text-light"><input type="text" class='form-control' value="{!! !empty( $section4->file_desc )?$section4->file_desc:null !!}" disabled></div>
                         <div class="col-md-6">
                             <a href="{!! HP::getFileStorage($attach_path.$section4->file) !!}" target="_blank" class="view-attach"> {!! HP::FileExtension($section4->file_client_name)  ?? '' !!} {!! $section4->file_client_name  ?? '' !!}</a>
-                            @if ($methodType != 'show')
-                                <a href="{{url('certify/applicant-cb/delete/file_app_certi_cb_attach_all').'/'.$section4->id.'/'.$certi_cb->token}}" class="btn btn-danger btn-xs box_remove_file" onclick="return confirm('ต้องการลบไฟล์นี้ใช่หรือไม่ ?')">
-                                    <i class="fa fa-remove"></i>
-                                </a>
-                            @endif
-                          
+                            <a href="{{url('certify/applicant-cb/delete/file_app_certi_cb_attach_all').'/'.$section4->id.'/'.$certi_cb->token}}" class="btn btn-danger btn-xs box_remove_file" onclick="return confirm('ต้องการลบไฟล์นี้ใช่หรือไม่ ?')">
+                                <i class="fa fa-remove"></i>
+                            </a>
                         </div>
                     </div>
                 @endforeach
                 
             @endif
 
-            @if ($methodType != 'show')
-                <div class="form-group box_remove_file" data-repeater-item>
-                    <div class="col-md-4 text-light">
-                        {!! Form::text('attachs_txt', null, ['class' => 'form-control', 'placeholder' => 'กรุณากรอกชื่อไฟล์']) !!}
-                    </div>
-                    <div class="col-md-6">
-                        <div class="fileinput fileinput-new input-group " data-provides="fileinput">
-                            <div class="form-control" data-trigger="fileinput">
-                                <i class="glyphicon glyphicon-file fileinput-exists"></i>
-                                <span class="fileinput-filename"></span>
-                            </div>
-                            <span class="input-group-addon btn btn-default btn-file">
-                                <span class="fileinput-new">เลือกไฟล์</span>
-                                <span class="fileinput-exists">เปลี่ยน</span>
-                                <input type="file" name="attachs_sec4" class="attachs_sec4 check_max_size_file">
-                            </span> 
-                            <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">ลบ</a>
+            <div class="form-group box_remove_file" data-repeater-item>
+                <div class="col-md-4 text-light">
+                    {!! Form::text('attachs_txt', null, ['class' => 'form-control', 'placeholder' => 'กรุณากรอกชื่อไฟล์']) !!}
+                </div>
+                <div class="col-md-6">
+                    <div class="fileinput fileinput-new input-group " data-provides="fileinput">
+                        <div class="form-control" data-trigger="fileinput">
+                            <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                            <span class="fileinput-filename"></span>
                         </div>
-                        {!! $errors->first('attachs_sec4', '<p class="help-block">:message</p>') !!}
+                        <span class="input-group-addon btn btn-default btn-file">
+                            <span class="fileinput-new">เลือกไฟล์</span>
+                            <span class="fileinput-exists">เปลี่ยน</span>
+                            <input type="file" name="attachs_sec4" class="attachs_sec4 check_max_size_file">
+                        </span> 
+                        <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">ลบ</a>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-danger delete-sec4" type="button" data-repeater-delete>
-                            <i class="fa fa-close"></i>
-                        </button>
-                    </div>
-                </div>    
-            @endif
-
-           
+                    {!! $errors->first('attachs_sec4', '<p class="help-block">:message</p>') !!}
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-danger delete-sec4" type="button" data-repeater-delete>
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-        @if ($methodType != 'show')
-            <div class="col-md-12">
-                <div class="form-group">
-                    <div class="col-md-10"></div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-success" data-repeater-create><i class="icon-plus"></i>เพิ่ม</button>
-                    </div>
-                </div> 
-            </div>      
-        @endif
-
+        <div class="col-md-12">
+            <div class="form-group">
+                <div class="col-md-10"></div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-success" data-repeater-create><i class="icon-plus"></i>เพิ่ม</button>
+                </div>
+            </div> 
+        </div>
     </div>
 </fieldset>
 
@@ -579,10 +517,13 @@
 
         });
 
-        function addCbScopeIsicModel() {
-            const _token = $('input[name="_token"]').val();
 
-            $.ajax({
+        function addCbScopeIsicModel()
+        {
+            const _token = $('input[name="_token"]').val();
+            console.log(selectedModel,_token)
+
+                $.ajax({
                 url: "{{route('applicant_cb.get_cb_isic_scope')}}",
                 method: "POST",
                 data: {
@@ -590,14 +531,17 @@
                     _token: _token
                 },
                 success: function(result) {
+                    console.log(result);
+
                     let accordionWrapper = $("#cb_scope_isic_accordion_wrapper");
                     accordionWrapper.empty(); // ล้างข้อมูลเก่าก่อน
 
-                    let accordionId = "accordion" + Math.floor(Math.random() * 100000);
+                    let accordionId = "accordion" + Math.floor(Math.random() * 100000); // สร้าง ID ไม่ซ้ำกัน
                     let accordionHtml = `<div class="panel-group" id="${accordionId}" role="tablist" aria-multiselectable="false">`;
 
                     $.each(result, function(index, item) {
-                        var panelId = `panel_${item.id}`;
+                        // สร้าง panelHtml โดยใช้ item.id จากข้อมูลที่ได้รับมา
+                        var panelId = `panel_${item.id}`;  // สร้าง panelId จาก item.id
                         var headingId = `heading_${item.id}`;
                         var collapseId = `collapse_${item.id}`;
                         var accordionId = `accordion_${item.id}`;
@@ -665,310 +609,66 @@
 
                     accordionHtml += `</div>`;
                     accordionWrapper.append(accordionHtml);
-
-                    // โหลดข้อมูลเดิมจาก selectedIsicData
+                    console.log(selectedIsicData)
+                            // ทำการเช็คค่า checkbox หลังจาก UI สร้างเสร็จ
                     selectedIsicData.forEach(function(isic) {
-                        $(`#isic_${isic.isic_id}`).prop('checked', true);
+                        var panelId = `panel_${isic.isic_id}`;
+                        $(`#isic_${isic.isic_id}`).prop('checked', true);  // เช็ค ISIC checkbox
+
                         isic.categories.forEach(function(category) {
-                            $(`#category_${category.category_id}`).prop('checked', category.is_checked);
+                            // เช็ค checkbox ของ category
+                            $(`#${panelId} .category_check[data-id="${category.category_id}"]`).prop('checked', category.is_checked);
                             category.subcategories.forEach(function(subcategory) {
+                                // เช็ค checkbox ของ subcategory
                                 $(`#subcategory_${subcategory.subcategory_id}`).prop('checked', subcategory.is_checked);
                             });
                         });
                     });
 
-                    // อัพเดท selectedIsicData เมื่อมีการเปลี่ยนแปลง checkbox
-                    function updateSelectedIsicData() {
-                        selectedIsicData = []; // เคลียร์ข้อมูลเก่า
+                        $(document).on('click', '#button_add_cb_scope_isic_isic', function() {
+                            $('.panel').each(function() {
+                                var panelId = $(this).attr('id');
+                                var isicId = $(this).data('id'); // panel มี data-isic-id เป็น isic_code
 
-                        $('.panel').each(function() {
-                            var panelId = $(this).attr('id');
-                            var isicId = $(this).data('id');
-                            var isIsicChecked = $(`#${panelId} .isic_check`).prop('checked');
-
-                            if (isIsicChecked) {
-                                var isic = result.find(item => item.id == isicId);
-                                if (isic) {
-                                    var isicData = {
-                                        isic_id: isic.id,
-                                        categories: []
-                                    };
-
-                                    $(`#${panelId} .category_check`).each(function() {
-                                        var categoryId = $(this).data('id');
-                                        var isCategoryChecked = $(this).prop('checked');
-                                        
-                                        if (isCategoryChecked) {
-                                            var category = isic.categories.find(cat => cat.id == categoryId);
-                                            if (category) {
-                                                var categoryData = {
+                                var isIsicChecked = $(`#${panelId} .isic_check`).prop('checked');
+                                if (isIsicChecked) {
+                                    // กรองข้อมูลจาก result ที่มี isic_id ตรงกับ isicId ที่เลือก
+                                    var isic = result.find(item => item.id == isicId); // กรอง isic ตาม isic_id ที่ตรง
+                                    if (isic) {
+                                        // สร้างข้อมูลสำหรับ JSON
+                                        var isicData = {
+                                            isic_id: isic.id,
+                                            categories: isic.categories.map(category => {
+                                                return {
                                                     category_id: category.id,
-                                                    is_checked: true,
-                                                    subcategories: []
+                                                    subcategories: category.subcategories.map(subcategory => {
+                                                        return {
+                                                            subcategory_id: subcategory.id,
+                                                            is_checked: $(`#subcategory_${subcategory.id}`).prop('checked') // เช็คว่า subcategory ถูกเลือกหรือไม่
+                                                        };
+                                                    }),
+                                                    is_checked: $(`#category_${category.id}`).prop('checked') // เช็คว่า category ถูกเลือกหรือไม่
                                                 };
-
-                                                $(`#${panelId} .subcategory_check[data-category-id="${categoryId}"]`).each(function() {
-                                                    var subcategoryId = $(this).data('id');
-                                                    var isSubcategoryChecked = $(this).prop('checked');
-                                                    
-                                                    if (isSubcategoryChecked) {
-                                                        var subcategory = category.subcategories.find(sub => sub.id == subcategoryId);
-                                                        if (subcategory) {
-                                                            categoryData.subcategories.push({
-                                                                subcategory_id: subcategory.id,
-                                                                is_checked: true
-                                                            });
-                                                        }
-                                                    }
-                                                });
-
-                                                isicData.categories.push(categoryData);
-                                            }
-                                        }
-                                    });
-
-                                    selectedIsicData.push(isicData);
+                                            })
+                                        };
+                                        selectedIsicData.push(isicData);
+                                    }
                                 }
-                            }
+                            });
+                            console.log(JSON.stringify(selectedIsicData, null, 2));
+                            $('#modal-add-cb-scope-isic-isic').modal('hide');
+
                         });
-                    }
-
-                    // Event listener สำหรับการเปลี่ยนแปลง checkbox
-                    $(document).on('change', '.isic_check, .category_check, .subcategory_check', function() {
-                        updateSelectedIsicData();
-                        console.log(JSON.stringify(selectedIsicData, null, 2));
-                    });
-
-                    // เมื่อกดบันทึก
-                    $(document).on('click', '#button_add_cb_scope_isic_isic', function() {
-                        updateSelectedIsicData(); // อัพเดทข้อมูลล่าสุด
-                        console.log(JSON.stringify(selectedIsicData, null, 2));
-                        $('#modal-add-cb-scope-isic-isic').modal('hide');
-                    });
                 }
             });
 
             $('#modal-add-cb-scope-isic-isic').modal('show');
         }
 
-        // function addCbScopeIsicModel()
-        // {
-        //     const _token = $('input[name="_token"]').val();
-        //     console.log(selectedModel,_token)
-
-        //         $.ajax({
-        //         url: "{{route('applicant_cb.get_cb_isic_scope')}}",
-        //         method: "POST",
-        //         data: {
-        //             selectedModel: selectedModel,
-        //             _token: _token
-        //         },
-        //         success: function(result) {
-        //             console.log(result);
-
-        //             let accordionWrapper = $("#cb_scope_isic_accordion_wrapper");
-        //             accordionWrapper.empty(); // ล้างข้อมูลเก่าก่อน
-
-        //             let accordionId = "accordion" + Math.floor(Math.random() * 100000); // สร้าง ID ไม่ซ้ำกัน
-        //             let accordionHtml = `<div class="panel-group" id="${accordionId}" role="tablist" aria-multiselectable="false">`;
-
-        //             $.each(result, function(index, item) {
-        //                 // สร้าง panelHtml โดยใช้ item.id จากข้อมูลที่ได้รับมา
-        //                 var panelId = `panel_${item.id}`;  // สร้าง panelId จาก item.id
-        //                 var headingId = `heading_${item.id}`;
-        //                 var collapseId = `collapse_${item.id}`;
-        //                 var accordionId = `accordion_${item.id}`;
-
-        //                 accordionHtml += `
-        //                     <div class="panel panel-default" id="${panelId}" data-id="${item.id}">
-        //                         <div class="panel-heading" role="tab" id="${headingId}">
-        //                             <h5 class="panel-title">
-        //                                 <div style="display: inline-block; margin-right: 10px;">
-        //                                     <input id="isic_${item.id}" class="isic_check" type="checkbox" name="isic_checkbox[]"
-        //                                         value="${item.id}" data-id="${item.id}">
-        //                                     <label for="isic_${item.id}">
-        //                                         <span style="font-size:17px !important">ISIC#${item.isic_code}: ${item.description_th}</span>
-        //                                     </label>
-        //                                 </div>
-        //                                 ${item.categories.length > 0 ? `
-        //                                     <a role="button" data-toggle="collapse" class="accordion-plus-toggle collapsed"
-        //                                         data-parent="#${accordionId}"
-        //                                         href="#${collapseId}"
-        //                                         aria-expanded="false"
-        //                                         aria-controls="${collapseId}"
-        //                                         id="${panelId}" 
-        //                                         data-isic="${item.id}"
-        //                                         style="position: relative; top:-10px;">
-        //                                     </a>
-        //                                 ` : ''}
-        //                             </h5>
-        //                         </div>
-        //                         <div id="${collapseId}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="${headingId}">
-        //                             <div class="panel-body" style="padding:0">
-        //                                 <div class="categories-list">
-        //                                     ${item.categories.map(category => {
-        //                                         return `
-        //                                             <ul>
-        //                                                 <li style="list-style: none; margin-bottom: 5px;">
-        //                                                     <input id="category_${category.id}" class="category_check" type="checkbox" 
-        //                                                         name="category_checkbox[${panelId}][${category.id}][]" value="${category.id}" data-id="${category.id}">
-        //                                                     <label for="category_${category.id}">
-        //                                                         <span style="font-size:16px !important">${category.description_th}</span>
-        //                                                     </label>
-        //                                                 </li>
-        //                                                 ${category.subcategories.map(subcategory => {
-        //                                                     return `
-        //                                                         <ul style="padding-left: 20px;">
-        //                                                             <li style="list-style: none; margin-bottom: 5px;">
-        //                                                                 <input id="subcategory_${subcategory.id}" class="subcategory_check" type="checkbox" 
-        //                                                                     name="subcategory_checkbox[${panelId}][${category.id}][${subcategory.id}][]" value="${subcategory.id}" 
-        //                                                                     data-id="${subcategory.id}" data-category-id="${category.id}">
-        //                                                                 <label for="subcategory_${subcategory.id}">
-        //                                                                     <span style="font-size:16px !important">${subcategory.description_th}</span>
-        //                                                                 </label>
-        //                                                             </li>
-        //                                                         </ul>
-        //                                                     `;
-        //                                                 }).join('')}
-        //                                             </ul>
-        //                                         `;
-        //                                     }).join('')}
-        //                                 </div>
-        //                             </div>
-        //                         </div>
-        //                     </div>
-        //                 `;
-        //             });
-
-        //             accordionHtml += `</div>`;
-        //             accordionWrapper.append(accordionHtml);
-        //             console.log(selectedIsicData)
-        //                     // ทำการเช็คค่า checkbox หลังจาก UI สร้างเสร็จ
-        //             selectedIsicData.forEach(function(isic) {
-        //                 var panelId = `panel_${isic.isic_id}`;
-        //                 $(`#isic_${isic.isic_id}`).prop('checked', true);  // เช็ค ISIC checkbox
-
-        //                 isic.categories.forEach(function(category) {
-        //                     // เช็ค checkbox ของ category
-        //                     $(`#${panelId} .category_check[data-id="${category.category_id}"]`).prop('checked', category.is_checked);
-        //                     category.subcategories.forEach(function(subcategory) {
-        //                         // เช็ค checkbox ของ subcategory
-        //                         $(`#subcategory_${subcategory.subcategory_id}`).prop('checked', subcategory.is_checked);
-        //                     });
-        //                 });
-        //             });
-
-        //                 $(document).on('click', '#button_add_cb_scope_isic_isic', function() {
-        //                     $('.panel').each(function() {
-        //                         var panelId = $(this).attr('id');
-        //                         var isicId = $(this).data('id'); // panel มี data-isic-id เป็น isic_code
-
-        //                         var isIsicChecked = $(`#${panelId} .isic_check`).prop('checked');
-        //                         if (isIsicChecked) {
-        //                             // กรองข้อมูลจาก result ที่มี isic_id ตรงกับ isicId ที่เลือก
-        //                             var isic = result.find(item => item.id == isicId); // กรอง isic ตาม isic_id ที่ตรง
-        //                             if (isic) {
-        //                                 // สร้างข้อมูลสำหรับ JSON
-        //                                 var isicData = {
-        //                                     isic_id: isic.id,
-        //                                     categories: isic.categories.map(category => {
-        //                                         return {
-        //                                             category_id: category.id,
-        //                                             subcategories: category.subcategories.map(subcategory => {
-        //                                                 return {
-        //                                                     subcategory_id: subcategory.id,
-        //                                                     is_checked: $(`#subcategory_${subcategory.id}`).prop('checked') // เช็คว่า subcategory ถูกเลือกหรือไม่
-        //                                                 };
-        //                                             }),
-        //                                             is_checked: $(`#category_${category.id}`).prop('checked') // เช็คว่า category ถูกเลือกหรือไม่
-        //                                         };
-        //                                     })
-        //                                 };
-        //                                 selectedIsicData.push(isicData);
-        //                             }
-        //                         }
-        //                     });
-        //                     console.log(JSON.stringify(selectedIsicData, null, 2));
-        //                     $('#modal-add-cb-scope-isic-isic').modal('hide');
-
-        //                 });
-        //         }
-        //     });
-
-        //     $('#modal-add-cb-scope-isic-isic').modal('show');
-        // }
-
-        // function addCbScopeBcmsModel()
-        // {
-        //     const _token = $('input[name="_token"]').val();
-        //     console.log(selectedModel,_token)
-
-        //     $.ajax({
-        //         url: "{{route('applicant_cb.get_cb_bcms_scope')}}",
-        //         method: "POST",
-        //         data: {
-        //             selectedModel: selectedModel,
-        //             _token: _token
-        //         },
-        //         success: function(result) {
-        //             console.log(result);
-
-        //             let tableHtml = `
-        //                 <table class="table table-bordered">
-        //                     <thead>
-        //                         <tr>
-        //                             <th>เลือก</th>
-        //                             <th>หมวดหมู่</th>
-        //                             <th>กิจกรรม</th>
-        //                         </tr>
-        //                     </thead>
-        //                     <tbody>
-        //             `;
-
-        //             result.forEach(item => {
-        //                 tableHtml += `
-        //                     <tr>
-        //                         <td style="text-align:center">
-        //                             <input id="bcms_${item.id}" class="bcms_check" type="checkbox" name="bcms_checkbox[]" 
-        //                                 value="${item.id}" 
-        //                                 data-id="${item.id}" 
-        //                                 data-category="${item.category}" 
-        //                                 data-activity_th="${item.activity_th}">
-        //                         </td>
-        //                         <td style="text-align:center">${item.category}</td>
-        //                         <td>${item.activity_th}</td>
-        //                     </tr>
-        //                 `;
-        //             });
-        //             tableHtml += `</tbody></table>`;
-        //             $("#cb_scope_bcms_wrapper").html(tableHtml);
-
-        //             if (selectedBcmsData.length > 0) {
-        //                 selectedBcmsData.forEach(function(bcms) {
-        //                     $(`#bcms_${bcms.id}`).prop("checked", true);
-        //                 });
-        //             }
-
-        //             $(document).on('click', '#button_add_cb_scope_bcms', function() {
-                          
-        //                 $(".bcms_check:checked").each(function () {
-        //                     selectedBcmsData.push({
-        //                         id: $(this).data("id")
-        //                     });
-        //                 });
-        //                 console.log(selectedBcmsData);
-        //                 $('#modal-add-cb-scope-bcms').modal('hide');
-        //             });
-        //         }
-        //     });
-
-
-        //     $('#modal-add-cb-scope-bcms').modal('show');
-        // }
-
-        function addCbScopeBcmsModel() {
+        function addCbScopeBcmsModel()
+        {
             const _token = $('input[name="_token"]').val();
-            console.log(selectedModel, _token);
+            console.log(selectedModel,_token)
 
             $.ajax({
                 url: "{{route('applicant_cb.get_cb_bcms_scope')}}",
@@ -1010,39 +710,25 @@
                     tableHtml += `</tbody></table>`;
                     $("#cb_scope_bcms_wrapper").html(tableHtml);
 
-                    // โหลดข้อมูลเดิมจาก selectedBcmsData
                     if (selectedBcmsData.length > 0) {
                         selectedBcmsData.forEach(function(bcms) {
                             $(`#bcms_${bcms.id}`).prop("checked", true);
                         });
                     }
 
-                    // ฟังก์ชันอัพเดท selectedBcmsData
-                    function updateSelectedBcmsData() {
-                        selectedBcmsData = []; // เคลียร์ข้อมูลเก่า
-
-                        $(".bcms_check:checked").each(function() {
-                            var $this = $(this);
+                    $(document).on('click', '#button_add_cb_scope_bcms', function() {
+                          
+                        $(".bcms_check:checked").each(function () {
                             selectedBcmsData.push({
-                                id: $this.data("id")
+                                id: $(this).data("id")
                             });
                         });
-                    }
-
-                    // Event listener สำหรับการเปลี่ยนแปลง checkbox
-                    $(document).on('change', '.bcms_check', function() {
-                        updateSelectedBcmsData();
-                        console.log(JSON.stringify(selectedBcmsData, null, 2));
-                    });
-
-                    // เมื่อกดบันทึก
-                    $(document).on('click', '#button_add_cb_scope_bcms', function() {
-                        updateSelectedBcmsData(); // อัพเดทข้อมูลล่าสุด
-                        console.log(JSON.stringify(selectedBcmsData, null, 2));
+                        console.log(selectedBcmsData);
                         $('#modal-add-cb-scope-bcms').modal('hide');
                     });
                 }
             });
+
 
             $('#modal-add-cb-scope-bcms').modal('show');
         }

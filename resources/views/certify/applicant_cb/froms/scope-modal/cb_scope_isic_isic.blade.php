@@ -26,7 +26,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success pull-right ml-2" id="button_add_cb_scope_isic_isic">
-                    <span aria-hidden="true">เพิ่ม</span>
+                    <span aria-hidden="true">เพิ่มขอบ่าย</span>
                 </button>
             </div>
         </div>
