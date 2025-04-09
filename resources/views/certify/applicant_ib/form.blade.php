@@ -62,8 +62,12 @@
 
 <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
 
-@include ('certify.applicant_ib/froms.infomation')
-@include ('certify.applicant_ib/froms.form_request')
+@if ($certi_ib == null || empty($certi_ib->doc_review_reject))
+    @include ('certify.applicant_ib/froms.infomation')
+    @include ('certify.applicant_ib/froms.form_request')
+@endif
+
+
 @include ('certify.applicant_ib/froms.form_modal_map')
 @include ('certify.applicant_ib/froms.form_evidence')
 
@@ -298,7 +302,63 @@
             return value !== '' && value !== null && value !== undefined;
         }
 
+        // function createTransactionInput()
+        // {
+        //     const filteredTransactions = transactions.map(transaction => ({
+        //         ib_main_category_scope_id: transaction.ib_main_category_scope_id,
+        //         ib_sub_category_scope_id: transaction.ib_sub_category_scope_id,
+        //         ib_scope_topic_id: transaction.ib_scope_topic_id,
+        //         ib_scope_detail_id: transaction.ib_scope_detail_id,
+        //         standard: transaction.standard,
+        //         standard_en: transaction.standard_en
+        //     }));
+
+        //     const transactionsJson = JSON.stringify(filteredTransactions);
+
+        //     // ลบ input เดิมที่มี name="transactions" ถ้ามี
+        //     $('#app_certi_form').find('input[name="transactions"]').remove();
+
+        //     // เพิ่ม input hidden สำหรับ transactions
+        //     $('#app_certi_form').append(`<input type="hidden" name="transactions" value='${transactionsJson.replace(/'/g, "'")}'>`);
+
+        // }
+
+        function createTransactionInput() {
+            const filteredTransactions = transactions.map(transaction => ({
+                ib_main_category_scope_id: transaction.ib_main_category_scope_id,
+                ib_sub_category_scope_id: transaction.ib_sub_category_scope_id,
+                ib_scope_topic_id: transaction.ib_scope_topic_id,
+                ib_scope_detail_id: transaction.ib_scope_detail_id,
+                standard: transaction.standard,
+                standard_en: transaction.standard_en
+            }));
+
+            const transactionsJson = JSON.stringify(filteredTransactions);
+
+            // ตรวจสอบว่ามีรายการใน transactionsJson หรือไม่
+            if (filteredTransactions.length === 0) {
+                alert("ไม่มีรายการขอบข่ายโปรดเพิ่มข้อมูลก่อนดำเนินการ");
+                return false; // คืนค่า false เพื่อบอกว่าไม่สำเร็จ
+            }
+
+            // ลบ input เดิมที่มี name="transactions" ถ้ามี
+            $('#app_certi_form').find('input[name="transactions"]').remove();
+
+            // เพิ่ม input hidden สำหรับ transactions
+            $('#app_certi_form').append(`<input type="hidden" name="transactions" value='${transactionsJson.replace(/'/g, "'")}'>`);
+            
+            return true; // คืนค่า true เพื่อบอกว่าสำเร็จ
+        }
+
         function submit_form(status) {
+            // console.log(transactions)
+
+            // createTransactionInput()
+            if (!createTransactionInput()) {
+                return; // ออกถ้า createTransactionInput คืนค่า false
+            }
+
+            // return;
             var  number =  1;
             var max_size = "{{ ini_get('post_max_size') }}";
             var res = max_size.replace("M", "");
@@ -337,6 +397,9 @@
 
         //ฉบับร่าง
         function  submit_form_draft(status){
+            if (!createTransactionInput()) {
+                return; // ออกถ้า createTransactionInput คืนค่า false
+            }
             var  number =  1;
             var max_size = "{{ ini_get('post_max_size') }}";
             var res = max_size.replace("M", "");

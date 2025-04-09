@@ -24,8 +24,9 @@ use App\Mail\IB\IBPayInTwoMail;
 
 use App\Models\Bcertify\Formula;
 use App\Mail\IB\IBApplicantMail; 
-use Illuminate\Support\Facades\DB;
+use App\Services\CreateIbScopePdf;
 
+use Illuminate\Support\Facades\DB;
 use App\Mail\IB\IBInspectiontMail; 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -34,13 +35,15 @@ use App\Mail\IB\IBSaveAssessmentMail;
 use Illuminate\Support\Facades\Storage;
 use App\Mail\IB\IBConFirmAuditorsMail;  
 use App\Mail\IB\IBRequestDocumentsMail; 
+
 use App\Models\Certificate\IbScopeTopic;
-
 use App\Models\Certificate\IbScopeDetail;
-use niklasravnsborg\LaravelPdf\Facades\Pdf;
 
+use niklasravnsborg\LaravelPdf\Facades\Pdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\Certify\ApplicantIB\CertiIb; 
+use App\Models\Certificate\IbDocReviewAuditor;
+use App\Models\Certificate\IbScopeTransaction;
 use App\Models\Certificate\IbSubCategoryScope;
 use App\Models\Certificate\IbMainCategoryScope;
 use App\Models\Certify\ApplicantIB\CertiIBCost; 
@@ -48,10 +51,10 @@ use App\Models\Certify\ApplicantIB\CertiIBExport;
 use App\Models\Certify\ApplicantIB\CertiIBReview;
 use App\Models\Certify\ApplicantIB\CertiIBFileAll;
 use App\Models\Certify\ApplicantIB\CertiIBReport; 
+
 use App\Models\Certify\ApplicantIB\CertiIBAuditors;
 use App\Models\Certify\ApplicantIB\CertiIBCostItem;
 use App\Models\Certify\ApplicantIB\CertiIbHistory; 
-
 use App\Models\Certify\ApplicantIB\CertiIBPayInTwo;
 use App\Models\Certify\ApplicantIB\CertiIBPayInOne; 
 use App\Models\Certify\ApplicantIB\CertiIBAttachAll; 
@@ -174,6 +177,27 @@ class ApplicantIBController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
+    public function storeIbScope($request,$certiIbId)
+    {
+        // แปลง JSON เป็น array
+        $transactions = json_decode($request->transactions, true);
+
+        // ลบ transactions เดิมทั้งหมดที่ผูกกับ certi_ib_id
+        IbScopeTransaction::where('certi_ib_id', $certiIbId)->delete();
+
+        // สร้าง transactions ใหม่ทั้งหมด
+        foreach ($transactions as $transaction) {
+            IbScopeTransaction::create([
+                'certi_ib_id' => $certiIbId,
+                'ib_main_category_scope_id' => $transaction['ib_main_category_scope_id'],
+                'ib_sub_category_scope_id' => $transaction['ib_sub_category_scope_id'],
+                'ib_scope_topic_id' => $transaction['ib_scope_topic_id'],
+                'ib_scope_detail_id' => $transaction['ib_scope_detail_id'],
+                'standard' => $transaction['standard'],
+                'standard_en' => $transaction['standard_en'],
+            ]);
+        }
+    }
 
     public function SaveCertiIb($request, $data_session , $token = null)
     {
@@ -208,7 +232,7 @@ class ApplicantIBController extends Controller
         }else{
             $requestApp['status'] = 0;
         }
-
+        $requestApp['doc_auditor_assignment'] = "1";
         $requestApp['name_unit']         = !empty($request->name_unit)?$request->name_unit:null;
         $requestApp['name_en_unit']      = !empty($request->name_en_unit)?$request->name_en_unit:null;
         $requestApp['name_short_unit']   = !empty($request->name_short_unit)?$request->name_short_unit:null;
@@ -262,6 +286,8 @@ class ApplicantIBController extends Controller
             $certi_ib->update($requestApp);
         }
 
+        $this->storeIbScope($request,$certi_ib->id);
+
         return $certi_ib;
     }
 
@@ -293,8 +319,11 @@ class ApplicantIBController extends Controller
         }
     } 
     
+
+
     public function store(Request $request)
     {
+        // dd($request->all());
         $model = str_slug('applicantibs','-');
         $data_session     =    HP::CheckSession();
         if(!empty($data_session)){
@@ -302,11 +331,10 @@ class ApplicantIBController extends Controller
 
                    
                 $requestData = $request->all();
-                
-                // dd($requestData);
 
                 // add ceti ib
                 $certi_ib = $this->SaveCertiIb($request, $data_session , null );
+                
 
                 //  2. การปฏิบัติของหน่วยงานตรวจสอบที่สอดคล้องตามข้อกำหนดฐานฐานเลขที่ มอก.17020 (Inspection body implementations which are conformed with TIS 17020)
                 if ( isset($requestData['repeater-section1'] ) ){
@@ -347,6 +375,10 @@ class ApplicantIBController extends Controller
                     $this->SaveFileSection($request, 'repeater-section8', 'attachs_sec8', 8 , $certi_ib );
                 }
 
+
+                $pdfService = new CreateIbScopePdf($certi_ib);
+                $pdfContent = $pdfService->generatePdf();
+
                 // dd($this->checkCertiIbExport($certi_ib));
                 // เงื่อนไขเช็คมีใบรับรอง 
                 $this->save_certiib_export_mapreq( $certi_ib );
@@ -362,6 +394,8 @@ class ApplicantIBController extends Controller
             return  redirect(HP::DomainTisiSso());  
         }
     }
+
+
 
     public function checkCertiIbExport($certi_ib)
     {
@@ -411,12 +445,14 @@ class ApplicantIBController extends Controller
 
 
             $tis_data = $data_session;
+            $methodType = "show";
             return view('certify.applicant_ib.show', compact('tis_data',
                                                              'previousUrl',
                                                              'certi_ib',
                                                              'formulas',
                                                              'certificate_exports',
-                                                             'certificate_no' 
+                                                             'certificate_no' ,
+                                                             'methodType'
                                                         ));
         }
         abort(403);
@@ -457,12 +493,23 @@ class ApplicantIBController extends Controller
             $app_certi_ib = DB::table('app_certi_ib')->where('tax_id',$data_session->tax_number)->select('id');
             $certificate_exports = DB::table('app_certi_ib_export')->whereIn('app_certi_ib_id',$app_certi_ib)->where('status',3)->pluck('certificate','id');
             $certificate_no = DB::table('app_certi_ib_export')->select('id')->whereIn('app_certi_ib_id',$app_certi_ib)->where('status',3)->get();
+            $methodType = "edit";
+            $ibScopeTransactions = IbScopeTransaction::where('certi_ib_id', $certi_ib->id)
+            ->with([
+                'ibMainCategoryScope',
+                'ibSubCategoryScope',
+                'ibScopeTopic',
+                'ibScopeDetail'
+            ])
+            ->get();
             return view('certify.applicant_ib.edit', compact('tis_data',
                                                              'previousUrl',
                                                              'certi_ib',
                                                              'formulas',
                                                              'certificate_exports',
-                                                             'certificate_no' 
+                                                             'certificate_no',
+                                                             'methodType',
+                                                             'ibScopeTransactions'
                                                              ));
         }
         abort(403);
@@ -486,62 +533,94 @@ class ApplicantIBController extends Controller
         if(!empty($data_session)){
             if(HP::CheckPermission('edit-'.$model)){
                 try {  
-                    
-                    $certi_ib = $this->SaveCertiIb($request, $data_session , $token );
 
+  
                     $requestData = $request->all();
 
-                    //  2. การปฏิบัติของหน่วยงานตรวจสอบที่สอดคล้องตามข้อกำหนดฐานฐานเลขที่ มอก.17020 (Inspection body implementations which are conformed with TIS 17020)
-                    if ( isset($requestData['repeater-section1'] ) ){
-                        $this->SaveFileSection($request, 'repeater-section1', 'attachs_sec1', 1 , $certi_ib );
-                    }
-    
-                    //  3. รายชื่อคุณวุฒิประสบการณ์และขอบข่ายความรับผิดชอบของเจ้าหน้าที่ (List of relevant personnel providing name, qualification, experience and responsibility)
-                    if ( isset($requestData['repeater-section2'] ) ){
-                        $this->SaveFileSection($request, 'repeater-section2', 'attachs_sec2', 2 , $certi_ib );
-                    }
-    
-                    // 4. ขอบข่ายที่ยื่นขอรับการรับรอง (Scope of Accreditation Sought) ไฟล์แนบ Word (doc,docx)
-                    if ( isset($requestData['repeater-section3'] ) ){
-                        $this->SaveFileSection($request, 'repeater-section3', 'attachs_sec3', 3 , $certi_ib );
-                    }
-    
-                    //  5. เครื่องมือ (Equipment) 
-                    if ( isset($requestData['repeater-section4'] ) ){
-                        $this->SaveFileSection($request, 'repeater-section4', 'attachs_sec4', 4 , $certi_ib );
-                    }
-    
-                    // 6. วัสดุอ้างอิง/มาตรบานอ้างอิง (Reference material / Reference TIS)
-                    if ( isset($requestData['repeater-section5'] ) ){
-                        $this->SaveFileSection($request, 'repeater-section5', 'attachs_sec5', 5 , $certi_ib );
-                    }
-    
-                    // 7. การเข้าร่วมการทดสอบความชำนาญ / การเปรียบเทียบผลระหว่างห้องปฏิบัติการ (Participation in Proficiency testing program / Interlaboratory comparison)
-                    if ( isset($requestData['repeater-section6'] ) ){
-                        $this->SaveFileSection($request, 'repeater-section6', 'attachs_sec6', 6 , $certi_ib );
-                    }
-    
-                    // 8. เอกสารอื่นๆ (Others)
-                    if ( isset($requestData['repeater-section7'] ) ){
-                        $this->SaveFileSection($request, 'repeater-section7', 'attachs_sec7', 7 , $certi_ib );
-                    }
-    
-                    if ( isset($requestData['repeater-section8'] ) ){
-                        $this->SaveFileSection($request, 'repeater-section8', 'attachs_sec8', 8 , $certi_ib );
-                    }
-                    // เงื่อนไขเช็คมีใบรับรอง 
-                    $this->save_certiib_export_mapreq( $certi_ib );
+                    $certi_ib =  CertiIb::where('token',$token)->first();
 
+                    if($certi_ib->require_scope_update != "1")
+                    {
+                       
+                        if($certi_ib->status == 9 && $certi_ib->doc_review_reject !== null)
+                        {
+                            // dd($certi_ib->status,$certi_ib->doc_review_reject);
+                            $this->docUpdate($request, $token);
+                            $certi_ib->update([
+                                'doc_review_reject' => null
+                            ]);
+                        }
+                        else
+                        {
+                            $certi_ib = $this->SaveCertiIb($request, $data_session , $token );
 
-                    $status = $certi_ib->status ?? 1;
+                            // dd($certi_ib);
+        
+                           
+        
+                            //  2. การปฏิบัติของหน่วยงานตรวจสอบที่สอดคล้องตามข้อกำหนดฐานฐานเลขที่ มอก.17020 (Inspection body implementations which are conformed with TIS 17020)
+                            if ( isset($requestData['repeater-section1'] ) ){
+                                $this->SaveFileSection($request, 'repeater-section1', 'attachs_sec1', 1 , $certi_ib );
+                            }
+            
+                            //  3. รายชื่อคุณวุฒิประสบการณ์และขอบข่ายความรับผิดชอบของเจ้าหน้าที่ (List of relevant personnel providing name, qualification, experience and responsibility)
+                            if ( isset($requestData['repeater-section2'] ) ){
+                                $this->SaveFileSection($request, 'repeater-section2', 'attachs_sec2', 2 , $certi_ib );
+                            }
+            
+                            // 4. ขอบข่ายที่ยื่นขอรับการรับรอง (Scope of Accreditation Sought) ไฟล์แนบ Word (doc,docx)
+                            if ( isset($requestData['repeater-section3'] ) ){
+                                $this->SaveFileSection($request, 'repeater-section3', 'attachs_sec3', 3 , $certi_ib );
+                            }
+            
+                            //  5. เครื่องมือ (Equipment) 
+                            if ( isset($requestData['repeater-section4'] ) ){
+                                $this->SaveFileSection($request, 'repeater-section4', 'attachs_sec4', 4 , $certi_ib );
+                            }
+            
+                            // 6. วัสดุอ้างอิง/มาตรบานอ้างอิง (Reference material / Reference TIS)
+                            if ( isset($requestData['repeater-section5'] ) ){
+                                $this->SaveFileSection($request, 'repeater-section5', 'attachs_sec5', 5 , $certi_ib );
+                            }
+            
+                            // 7. การเข้าร่วมการทดสอบความชำนาญ / การเปรียบเทียบผลระหว่างห้องปฏิบัติการ (Participation in Proficiency testing program / Interlaboratory comparison)
+                            if ( isset($requestData['repeater-section6'] ) ){
+                                $this->SaveFileSection($request, 'repeater-section6', 'attachs_sec6', 6 , $certi_ib );
+                            }
+            
+                            // 8. เอกสารอื่นๆ (Others)
+                            if ( isset($requestData['repeater-section7'] ) ){
+                                $this->SaveFileSection($request, 'repeater-section7', 'attachs_sec7', 7 , $certi_ib );
+                            }
+            
+                            if ( isset($requestData['repeater-section8'] ) ){
+                                $this->SaveFileSection($request, 'repeater-section8', 'attachs_sec8', 8 , $certi_ib );
+                            }
+                            // เงื่อนไขเช็คมีใบรับรอง 
+                            $this->save_certiib_export_mapreq( $certi_ib );
+        
+                            $pdfService = new CreateIbScopePdf($certi_ib);
+                            $pdfContent = $pdfService->generatePdf();
+        
+        
+                            $status = $certi_ib->status ?? 1;
+        
+                            if($status == 3){
+                                $this->SET_EMAIL_Request_Documents($certi_ib);
+                            }else{
+                                if($certi_ib->status == 1){
+                                    $this->SET_EMAIL($certi_ib,$status);
+                                }   
+                            }
 
-                    if($status == 3){
-                        $this->SET_EMAIL_Request_Documents($certi_ib);
-                    }else{
-                        if($certi_ib->status == 1){
-                            $this->SET_EMAIL($certi_ib,$status);
-                        }   
+                        }
                     }
+                    else
+                    {
+                        dd('แก้ไขขอบข่าย');
+                    }
+                    
+                
 
                     return redirect('certify/applicant-ib')->with('flash_message', 'แก้ไข applicantIB เรียบร้อยแล้ว!');
 
@@ -555,6 +634,62 @@ class ApplicantIBController extends Controller
             return  redirect(HP::DomainTisiSso());  
         }
 
+    }
+
+    public function docUpdate($request, $token)
+    {
+        // dd('doc update');
+        $certi_ib =  CertiIb::where('token',$token)->first();
+        
+        //  2. การปฏิบัติของหน่วยงานตรวจสอบที่สอดคล้องตามข้อกำหนดฐานฐานเลขที่ มอก.17020 (Inspection body implementations which are conformed with TIS 17020)
+        if ( isset($requestData['repeater-section1'] ) ){
+            $this->SaveFileSection($request, 'repeater-section1', 'attachs_sec1', 1 , $certi_ib );
+        }
+
+        //  3. รายชื่อคุณวุฒิประสบการณ์และขอบข่ายความรับผิดชอบของเจ้าหน้าที่ (List of relevant personnel providing name, qualification, experience and responsibility)
+        if ( isset($requestData['repeater-section2'] ) ){
+            $this->SaveFileSection($request, 'repeater-section2', 'attachs_sec2', 2 , $certi_ib );
+        }
+
+        // 4. ขอบข่ายที่ยื่นขอรับการรับรอง (Scope of Accreditation Sought) ไฟล์แนบ Word (doc,docx)
+        if ( isset($requestData['repeater-section3'] ) ){
+            $this->SaveFileSection($request, 'repeater-section3', 'attachs_sec3', 3 , $certi_ib );
+        }
+
+        //  5. เครื่องมือ (Equipment) 
+        if ( isset($requestData['repeater-section4'] ) ){
+            $this->SaveFileSection($request, 'repeater-section4', 'attachs_sec4', 4 , $certi_ib );
+        }
+
+        // 6. วัสดุอ้างอิง/มาตรบานอ้างอิง (Reference material / Reference TIS)
+        if ( isset($requestData['repeater-section5'] ) ){
+            $this->SaveFileSection($request, 'repeater-section5', 'attachs_sec5', 5 , $certi_ib );
+        }
+
+        // 7. การเข้าร่วมการทดสอบความชำนาญ / การเปรียบเทียบผลระหว่างห้องปฏิบัติการ (Participation in Proficiency testing program / Interlaboratory comparison)
+        if ( isset($requestData['repeater-section6'] ) ){
+            $this->SaveFileSection($request, 'repeater-section6', 'attachs_sec6', 6 , $certi_ib );
+        }
+
+        // 8. เอกสารอื่นๆ (Others)
+        if ( isset($requestData['repeater-section7'] ) ){
+            $this->SaveFileSection($request, 'repeater-section7', 'attachs_sec7', 7 , $certi_ib );
+        }
+
+        if ( isset($requestData['repeater-section8'] ) ){
+            $this->SaveFileSection($request, 'repeater-section8', 'attachs_sec8', 8 , $certi_ib );
+        }
+
+
+        $certi_ib->update([
+            'doc_review_reject' => null
+        ]);
+
+        $pdfService = new CreateIbScopePdf($certi_ib);
+        $pdfContent = $pdfService->generatePdf();
+
+        return redirect('certify/applicant-ib')->with('flash_message', 'แก้ไข applicantIB เรียบร้อยแล้ว!');
+        
     }
 
 
@@ -1251,92 +1386,93 @@ class ApplicantIBController extends Controller
         $certi_ib =  CertiIb::findOrFail($assessment->app_certi_ib_id);                 
         return view('certify/applicant_ib/form_status.form_status16', compact('previousUrl','certi_ib','assessment'));
       }
-      public function UpdateAssessment(Request $request, $id){
-   try {  
-        $assessment = CertiIBSaveAssessment::findOrFail($id);
-        $certi_ib = CertiIb::findOrFail($assessment->app_certi_ib_id); 
-        $tb = new CertiIBSaveAssessment;
-        
-        $assessment->update(['degree'=>2]);  
-        $requestData = $request->all();
-        
-         if(isset($requestData["detail"])){
-            $detail = (array)$requestData["detail"];
-            foreach ($detail['id'] as $key => $item) {
-                    $bug = CertiIBSaveAssessmentBug::where('id',$item)->first();
-                    $bug->details = $detail["details"][$key] ?? $bug->details;
-                    $assessment->check_file = 'false';  
-                if($request->attachs && $request->hasFile('attachs')){
-                    $bug->attachs            =  array_key_exists($key, $request->attachs) ?  $this->storeFile($request->attachs[$key],$certi_ib->app_no) : @$bug->attachs;
-                    $bug->attach_client_name =  array_key_exists($key, $request->attachs) ?  HP::ConvertCertifyFileName($request->attachs[$key]->getClientOriginalName()) : @$bug->attach_client_name;
-                    $assessment->check_file = 'true';
-                 }
-                    $bug->save();
-            }
-         }
-          $CertiIbHistory = CertiIbHistory::where('table_name',$tb->getTable())
-                                                             ->where('ref_id',$id)
-                                                             ->where('system',7)
-                                                              ->orderby('id','desc')
-                                                             ->first();  
-
-            $bug = CertiIBSaveAssessmentBug::select('report','remark','no','type','reporter_id','details','status','comment','file_status','file_comment','attachs','attach_client_name')
-                                            ->where('assessment_id',$id)
-                                            ->get()
-                                            ->toArray();                             
-            if(!is_null($CertiIbHistory)){
-                    $CertiIbHistory->update([
-                                                'details_two'=>  (count($bug) > 0) ? json_encode($bug) : null,
-                                                'updated_by' =>  auth()->user()->getKey() ,
-                                                'date'       => date('Y-m-d')
-                                             ]);
-             }
-
-
-             if($certi_ib && !is_null($certi_ib->email) && count($certi_ib->DataEmailDirectorIB) > 0 ){
-                   $config = HP::getConfig();
-                   $url    =   !empty($config->url_center) ? $config->url_center : url('');    
-                   
-                   $data_app = ['certi_ib'      => $certi_ib,
-                                'email'         => $certi_ib->email,
-                                'assessment'    =>  $assessment,
-                                'url'           =>  $url.'/certify/check_certificate-ib/'.$certi_ib->token ?? '-',
-                                'email_cc'      =>  count($certi_ib->DataEmailDirectorIBCC) > 0  ? $certi_ib->DataEmailDirectorIBCC : 'ib@tisi.mail.go.th'
-                              ];
-        
-                    $email_cc =    (count($certi_ib->DataEmailDirectorIBCC) > 0 ) ? implode(',', $certi_ib->DataEmailDirectorIBCC): 'ib@tisi.mail.go.th' ;
-    
-                    $log_email =  HP::getInsertCertifyLogEmail($certi_ib->app_no,
-                                                            $certi_ib->id,
-                                                            (new CertiIb)->getTable(),
-                                                            $assessment->id,
-                                                            (new CertiIBSaveAssessment)->getTable(),
-                                                            2,
-                                                            'แจ้งแนวทางแก้ไข/ส่งหลักฐานการแก้ไขข้อบกพร่อง',
-                                                            view('mail.IB.assessment', $data_app),
-                                                            $certi_ib->created_by,
-                                                            $certi_ib->agent_id,
-                                                            null,
-                                                            $certi_ib->email,
-                                                            implode(',',(array)$certi_ib->DataEmailDirectorIB),
-                                                            $email_cc,
-                                                            null,
-                                                            null
-                                                         );
-        
-                    $html = new IBSaveAssessmentMail($data_app);
-                    $mail =  Mail::to($certi_ib->DataEmailDirectorIB)->send($html);
+    public function UpdateAssessment(Request $request, $id)
+    {
+        try {  
+                $assessment = CertiIBSaveAssessment::findOrFail($id);
+                $certi_ib = CertiIb::findOrFail($assessment->app_certi_ib_id); 
+                $tb = new CertiIBSaveAssessment;
                 
-                    if(is_null($mail) && !empty($log_email)){
-                        HP::getUpdateCertifyLogEmail($log_email->id);
-                    }             
+                $assessment->update(['degree'=>2]);  
+                $requestData = $request->all();
+                
+                if(isset($requestData["detail"])){
+                    $detail = (array)$requestData["detail"];
+                    foreach ($detail['id'] as $key => $item) {
+                            $bug = CertiIBSaveAssessmentBug::where('id',$item)->first();
+                            $bug->details = $detail["details"][$key] ?? $bug->details;
+                            $assessment->check_file = 'false';  
+                        if($request->attachs && $request->hasFile('attachs')){
+                            $bug->attachs            =  array_key_exists($key, $request->attachs) ?  $this->storeFile($request->attachs[$key],$certi_ib->app_no) : @$bug->attachs;
+                            $bug->attach_client_name =  array_key_exists($key, $request->attachs) ?  HP::ConvertCertifyFileName($request->attachs[$key]->getClientOriginalName()) : @$bug->attach_client_name;
+                            $assessment->check_file = 'true';
+                        }
+                            $bug->save();
+                    }
+                }
+                $CertiIbHistory = CertiIbHistory::where('table_name',$tb->getTable())
+                                                                    ->where('ref_id',$id)
+                                                                    ->where('system',7)
+                                                                    ->orderby('id','desc')
+                                                                    ->first();  
 
-              }
-             
-          return redirect('certify/applicant-ib')->with('message', 'เรียบร้อยแล้ว!');
-    } catch (\Exception $e) {
-        return redirect('certify/applicant-ib')->with('message_error', 'เกิดข้อผิดพลาดกรุณาบันทึกใหม่');
-    }   
+                    $bug = CertiIBSaveAssessmentBug::select('report','remark','no','type','reporter_id','details','status','comment','file_status','file_comment','attachs','attach_client_name')
+                                                    ->where('assessment_id',$id)
+                                                    ->get()
+                                                    ->toArray();                             
+                    if(!is_null($CertiIbHistory)){
+                            $CertiIbHistory->update([
+                                                        'details_two'=>  (count($bug) > 0) ? json_encode($bug) : null,
+                                                        'updated_by' =>  auth()->user()->getKey() ,
+                                                        'date'       => date('Y-m-d')
+                                                    ]);
+                    }
+
+
+                    if($certi_ib && !is_null($certi_ib->email) && count($certi_ib->DataEmailDirectorIB) > 0 ){
+                        $config = HP::getConfig();
+                        $url    =   !empty($config->url_center) ? $config->url_center : url('');    
+                        
+                        $data_app = ['certi_ib'      => $certi_ib,
+                                        'email'         => $certi_ib->email,
+                                        'assessment'    =>  $assessment,
+                                        'url'           =>  $url.'/certify/check_certificate-ib/'.$certi_ib->token ?? '-',
+                                        'email_cc'      =>  count($certi_ib->DataEmailDirectorIBCC) > 0  ? $certi_ib->DataEmailDirectorIBCC : 'ib@tisi.mail.go.th'
+                                    ];
+                
+                            $email_cc =    (count($certi_ib->DataEmailDirectorIBCC) > 0 ) ? implode(',', $certi_ib->DataEmailDirectorIBCC): 'ib@tisi.mail.go.th' ;
+            
+                            $log_email =  HP::getInsertCertifyLogEmail($certi_ib->app_no,
+                                                                    $certi_ib->id,
+                                                                    (new CertiIb)->getTable(),
+                                                                    $assessment->id,
+                                                                    (new CertiIBSaveAssessment)->getTable(),
+                                                                    2,
+                                                                    'แจ้งแนวทางแก้ไข/ส่งหลักฐานการแก้ไขข้อบกพร่อง',
+                                                                    view('mail.IB.assessment', $data_app),
+                                                                    $certi_ib->created_by,
+                                                                    $certi_ib->agent_id,
+                                                                    null,
+                                                                    $certi_ib->email,
+                                                                    implode(',',(array)$certi_ib->DataEmailDirectorIB),
+                                                                    $email_cc,
+                                                                    null,
+                                                                    null
+                                                                );
+                
+                            $html = new IBSaveAssessmentMail($data_app);
+                            $mail =  Mail::to($certi_ib->DataEmailDirectorIB)->send($html);
+                        
+                            if(is_null($mail) && !empty($log_email)){
+                                HP::getUpdateCertifyLogEmail($log_email->id);
+                            }             
+
+                    }
+                    
+                return redirect('certify/applicant-ib')->with('message', 'เรียบร้อยแล้ว!');
+            } catch (\Exception $e) {
+                return redirect('certify/applicant-ib')->with('message_error', 'เกิดข้อผิดพลาดกรุณาบันทึกใหม่');
+            }   
 
      }
       
@@ -2072,6 +2208,34 @@ class ApplicantIBController extends Controller
        return response()->json([
            'ibScopeDetails' => $ibScopeDetails,
        ]);
+   }
+
+   public function updateDocReviewTeam(Request $request)
+   {
+    //    dd($request->all());
+       $certiIbId = $request->certiIbId;
+       $ibDocReviewAuditor = IbDocReviewAuditor::where('app_certi_ib_id', $certiIbId)->first();
+       $ibDocReviewAuditor->update([
+           'status' => $request->agreeValue,
+           'remark_text' => $request->remarkText,
+       ]);
+       
+   }
+
+   public function getIbDocReviewAuditor(Request $request)
+   {
+       $ibDocReviewAuditor = IbDocReviewAuditor::where('app_certi_ib_id',$request->certiIbId)->first();
+       return response()->json([
+           'ibDocReviewAuditors' => json_decode($ibDocReviewAuditor->auditors, true),
+       ]);
+   }
+   public function ConfirmBug(Request $request)
+   {
+     // dd($request->all());
+     $assessment = CertiIBSaveAssessment::find($request->assessment_id)->update([
+         'accept_fault' => 1
+     ]);
+     return response()->json($assessment);
    }
 
 }

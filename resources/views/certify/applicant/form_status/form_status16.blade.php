@@ -398,7 +398,6 @@
                 <label class="col-md-3 text-right"><span class="text-danger">*</span> รายงานการตรวจประเมิน(รายงานที่1): </label>
                 <div class="col-md-6">
                     
-                
                         <p>
                             <a href="{{url('certify/check/file_client/'.$assessment->file.'/'.( !empty($assessment->file_client_name) ? $assessment->file_client_name : 'null' ))}}" 
                                 title=" {{ !empty($assessment->file_client_name) ? $assessment->file_client_name : basename($assessment->file)}}"   target="_blank">

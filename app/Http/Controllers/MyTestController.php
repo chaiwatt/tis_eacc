@@ -16,6 +16,7 @@ use Smalot\PdfParser\Parser;
 use App\Models\Basic\District;
 use App\Models\Bcertify\Signer;
 use App\Mail\Lab\LabScopeReview;
+use App\Services\CreateIbScopePdf;
 use Illuminate\Support\Facades\DB;
 use App\Services\CreateLabScopePdf;
 use Illuminate\Support\Facades\Mail;
@@ -27,6 +28,7 @@ use App\Models\Bcertify\CalibrationGroup;
 use App\Models\Bcertify\CalibrationBranch;
 use App\Models\Certify\Applicant\CertiLab;
 use App\Models\Certify\ApplicantCB\CertiCb;
+use App\Models\Certify\ApplicantIB\CertiIb;
 use App\Models\Certificate\TrackingAssessment;
 use App\Models\Certificate\TrackingInspection;
 use App\Models\Basic\ConfigRoles as config_roles;
@@ -9171,6 +9173,25 @@ class MyTestController extends Controller
     // $pdfContent = $pdfService->generatePdf();
   }
 
+  public function ibSopePdf()
+  {
+
+    // $cbScopeIsicTransactions = CbScopeIsicTransaction::where('certi_cb_id',241)->get();
+
+    // dd($cbScopeIsicTransactions);
+
+    $certiCb = CertiIb::find(133);
+    $pdfService = new CreateIbScopePdf($certiCb);
+    $pdfContent = $pdfService->generatePdf();
+
+    // $certiCb = CertiCb::find(228);
+    // $pdfService = new CreateCbScopeBcmsPdf($certiCb);
+    // $pdfContent = $pdfService->generatePdf();
+  }
+
+
+
+  
 
 
 }

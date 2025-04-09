@@ -15,8 +15,8 @@ class CreateIbMainCategoryScopesTable extends Migration
     {
         Schema::create('ib_main_category_scopes', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->nullable();
-            $table->string('name_en')->nullable();
+            $table->text('name')->nullable();
+            $table->text('name_en')->nullable();
             $table->timestamps();
         });
     }

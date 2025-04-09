@@ -30,18 +30,19 @@
             
             <span class="text-warning">อยู่ระหว่างดำเนินการ...</span>
     @endif
+
       <br>
       @if(count($certi->CertiCBPayInOneMany) > 0 )
-      @php 
-            $payin1_btn =  '';
-        if($certi->CertiCBPayInOneStatus == "state3"){
-            $payin1_btn = 'btn-info';
-        }elseif($certi->CertiCBPayInOneStatus == "state1"){
-            $payin1_btn =  'btn-danger';
-        }elseif($certi->CertiCBPayInOneStatus == "state2"){
-            $payin1_btn = 'btn-success';
-        }
-    @endphp
+        @php 
+                $payin1_btn =  '';
+            if($certi->CertiCBPayInOneStatus == "state3"){
+                $payin1_btn = 'btn-info';
+            }elseif($certi->CertiCBPayInOneStatus == "state1"){
+                $payin1_btn =  'btn-danger';
+            }elseif($certi->CertiCBPayInOneStatus == "state2"){
+                $payin1_btn = 'btn-success';
+            }
+        @endphp
       <div class="btn-group  form-group">
         <div class="btn-group">
               <button type="button" class="btn {{$payin1_btn}} dropdown-toggle" data-toggle="dropdown" style="width:300px;">

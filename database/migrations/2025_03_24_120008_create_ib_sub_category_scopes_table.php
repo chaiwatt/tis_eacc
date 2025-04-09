@@ -17,8 +17,8 @@ class CreateIbSubCategoryScopesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('ib_main_category_scope_id')->nullable(); 
             $table->foreign('ib_main_category_scope_id')->references('id')->on('ib_main_category_scopes')->onDelete('cascade');
-            $table->string('name')->nullable();
-            $table->string('name_en')->nullable();
+            $table->text('name')->nullable();
+            $table->text('name_en')->nullable();
             $table->timestamps();
         });
     }

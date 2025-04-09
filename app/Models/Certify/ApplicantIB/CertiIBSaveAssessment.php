@@ -34,7 +34,7 @@ class CertiIBSaveAssessment extends Model
      *
      * @var array
      */
-    protected $fillable = ['app_certi_ib_id','auditors_id', 'name','laboratory_name','report_date','bug_report','status','degree','details','created_by', 'updated_by'];
+    protected $fillable = ['app_certi_ib_id','auditors_id', 'name','laboratory_name','report_date','bug_report','status','degree','details','created_by', 'updated_by','date_scope_edit','submit_type','expert_token','accept_fault','notice_duration','notice_confirm_date'];
    
  
     public function UserTo()

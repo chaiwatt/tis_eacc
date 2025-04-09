@@ -2,13 +2,35 @@
 @push('css')
 <link href="{{asset('plugins/components/icheck/skins/all.css')}}" rel="stylesheet" type="text/css" />
 <link href="{{asset('plugins/components/bootstrap-datepicker-thai/css/datepicker.css')}}" rel="stylesheet" type="text/css" />
+<style>
+    textarea.form-control {
+        border-radius: 0 !important;
+        border-top: none !important;
+        border-bottom: none !important;
+        resize: none;
+        overflow: hidden; /* ซ่อน scrollbar */
+    }
+    .no-hover-animate tbody tr:hover {
+        background-color: inherit !important; /* ปิดการเปลี่ยนสี background */
+        transition: none !important; /* ปิดเอฟเฟกต์การเปลี่ยนแปลง */
+    }
+    
+    /* กำหนดขนาดความกว้างของ SweetAlert2 */
+    .custom-swal-popup {
+        width: 500px !important;  /* ปรับความกว้างตามต้องการ */
+    }
+    textarea.non-editable {
+        pointer-events: none; /* ทำให้ไม่สามารถคลิกหรือแก้ไขได้ */
+        opacity: 0.6; /* กำหนดความทึบของ textarea */
+    }
+</style>
 @endpush
 @section('content')
  <div class="container-fluid">
      <div class="row">
         <div class="col-md-12">
            <div class="white-box">
-           <h3 class="box-title pull-left">ใบรับรองระบบงาน (IB) </h3>
+           <h3 class="box-title pull-left">ใบรับรองระบบงาน (IB) mark</h3>
 
                 <a class="btn btn-danger text-white pull-right" href="{{url('certify/applicant-ib')}}">
                         <i class="icon-arrow-left-circle"></i> กลับ
@@ -42,7 +64,7 @@
         $details_two = json_decode($item1->details_two);
     @endphp 
       @if(!empty($details_two))
-    <table class="table color-bordered-table primary-bordered-table table-bordered">
+    <table class="table color-bordered-table primary-bordered-table table-bordered no-hover-animate">
         <thead>
             <tr>
                 <th class="text-center" width="2%">ลำดับ</th>
@@ -195,7 +217,7 @@
 </div>
 
  
-
+<input type="hidden" id="assessment_id" value="{{$assessment->id}}">
 
  {!! Form::open(['url' => 'certify/applicant-ib/assessment/update/'.$assessment->id,
                 'class' => 'form-horizontal form_loading',
@@ -206,10 +228,15 @@
  <div class="row form-group">
     <div class="col-md-12">
        <div class="white-box" style="border: 2px solid #e5ebec;">
-  <legend><h3>   แก้ไขข้อบกพร่อง/ข้อสังเกต   </h3></legend>
+  <legend><h3>   แก้ไขข้อบกพร่อง/ข้อสังเกต 
+    @if ($assessment->accept_fault == null)
+        <span class="text-warning">(โปรดยอมรับข้อบกพร่อง)</span>
+    @elseif ($assessment->submit_type != 'confirm')
+        <span class="text-warning">(กำลังดำเนินการ)</span>
+    @endif</h3></legend>
 
 <div class="container-fluid">
-        <table class="table color-bordered-table primary-bordered-table table-bordered">
+        <table class="table color-bordered-table primary-bordered-table table-bordered no-hover-animate">
         <thead>
             <tr>
                 <th class="text-center" width="2%">ลำดับ</th>
@@ -224,12 +251,16 @@
             @endphp
             <tr>
                 <td class="text-center">{{ $key+1 }}</td>
-                <td>
+                <td style="padding: 0px">
                     {!! Form::hidden('detail[id][]',!empty($item->id)?$item->id:null, ['class' => 'form-control '])  !!}
                     {{ $item->remark ?? null }}
                </td>
-                <td>
+                {{-- <td>
                     {!! Form::textarea('detail[details][]',!empty($item->details)?$item->details:null, ['class' => 'form-control', 'rows' => 3,'required'=>true]) !!} 
+                </td> --}}
+                <td style="padding: 0px">
+                    
+                    <textarea name="detail[details][]" class="form-control auto-expand {{ $assessment->accept_fault == null || $assessment->submit_type != 'confirm' ? 'non-editable' : '' }}"  rows="5" required>{{ !empty($item->details) ? $item->details : '' }}</textarea>
                 </td>
             </tr>
            @endforeach 
@@ -247,7 +278,7 @@
       <legend><h4>บันทึกการแก้ไขข้อบกพร่อง / ข้อสังเกต</h4></legend>
             @if(count($assessment->CertiIBBugMany) > 0)
 
-                    <table class="table color-bordered-table primary-bordered-table">
+                    <table class="table color-bordered-table primary-bordered-table no-hover-animate">
                         <thead>
                             <tr>
                                 <th class="text-center" width="2%">ลำดับ</th>
@@ -268,7 +299,8 @@
                                 </td>
                                 <td>
                                     {!! Form::hidden('detail[id][]',!empty($item->id)?$item->id:null, ['class' => 'form-control '])  !!}
-                                    {!! Form::text('notice[]', $item->remark ?? null,  ['class' => 'form-control','disabled'=>true])!!}
+                                    {{-- {!! Form::text('notice[]', $item->remark ?? null,  ['class' => 'form-control','disabled'=>true])!!} --}}
+                                    <textarea name="notice[]" class="form-control non-editable" style="border: none !important" >{{ $item->remark ?? null }}</textarea>
                                 </td>
                                 {{-- <td>
                                     {!! Form::text('type[]',   array_key_exists($item->type,$type) ? $type[$item->type] :  null,  ['class' => 'form-control','disabled'=>true])!!}
@@ -319,7 +351,8 @@
                                                   </label> 
                                                 @endif
                                         @else 
-                                             {!! Form::textarea('detail[details]['.$key.']',null , [ 'class' => 'form-control','rows' => 1,'cols'=>'40','required'=>true]) !!}
+                                             {{-- {!! Form::textarea('detail[details]['.$key.']',null , [ 'class' => 'form-control','rows' => 1,'cols'=>'40','required'=>true]) !!} --}}
+                                             <textarea name="detail[details][{{$key}}]" class="form-control auto-expand" rows="5" required></textarea>
                                         @endif
                                 </td>
                              </tr>
@@ -337,15 +370,49 @@
 
 @if(in_array($assessment->degree,[1,3,4,6]))
 <div class="row">
+    @if(isset($assessment)  && !is_null($assessment->FileAttachAssessment1To)) 
+        <div class="form-group" style="margin-top: 20px;margin-bottom:50px">
+            <div class="col-md-12">
+                <label class="col-md-3 text-right"><span class="text-danger">*</span> รายงานการตรวจประเมิน(รายงานที่1): </label>
+                <div class="col-md-6">
+                    <a href="{{url('certify/check/file_ib_client/'.$assessment->FileAttachAssessment1To->file.'/'.( !empty($assessment->FileAttachAssessment1To->file_client_name) ? $assessment->FileAttachAssessment1To->file_client_name : 'null' ))}}" 
+                        title="{{ !empty($assessment->FileAttachAssessment1To->file_client_name) ? $assessment->FileAttachAssessment1To->file_client_name :  basename($assessment->FileAttachAssessment1To->file) }}" target="_blank">
+                        {!! HP::FileExtension($assessment->FileAttachAssessment1To->file)  ?? '' !!} {{$assessment->FileAttachAssessment1To->file_client_name}}
+                    </a>
+                </div>
+            </div>
+        </div>
+    @endif
     <div class="form-group">
-        <div class="col-md-offset-5 col-md-6">
+        {{-- <div class="col-md-offset-5 col-md-6">
                 <button class="btn btn-primary" type="submit"  onclick="submit_form();return false">
                 <i class="fa fa-paper-plane"></i> บันทึก
                 </button>
                     <a class="btn btn-default" href="{{url('/certify/applicant')}}">
                         <i class="fa fa-rotate-left"></i> ยกเลิก
                     </a>
-        </div>
+        </div> --}}
+
+        <div class="col-md-offset-5 col-md-6">
+                
+            @if ($assessment->accept_fault == '1' && $assessment->submit_type == 'confirm')
+                <button class="btn btn-primary" type="submit"  onclick="submit_form();return false">
+                    <i class="fa fa-paper-plane"></i> บันทึก
+                </button>
+                <a class="btn btn-default" href="{{app('url')->previous()}}">
+                    <i class="fa fa-rotate-left"></i> ยกเลิก
+                </a>
+            @elseif($assessment->accept_fault == null)    
+                <button type="button" class="btn btn-warning" id="accept_fault">
+                    <i class="fa fa-paper-plane"></i> ยอมรับข้อบกพร่อง
+                </button>
+                <a class="btn btn-default" href="{{app('url')->previous()}}">
+                    <i class="fa fa-rotate-left"></i> ยกเลิก
+                </a>
+            @endif
+            
+          
+    </div>
     </div>
 </div> 
 
@@ -382,6 +449,44 @@ jQuery(document).ready(function() {
     $('.check-readonly').prop('disabled', true); 
     $('.check-readonly').parent().removeClass('disabled');
     $('.check-readonly').parent().css({"background-color": "rgb(238, 238, 238);","border-radius":"50%"});
+
+    $('.auto-expand').each(function () {
+                autoExpand(this);
+                syncRowHeight(this);
+            });
+
+        // ฟังก์ชันปรับขนาด textarea
+        function autoExpand(textarea) {
+            textarea.style.height = 'auto'; // รีเซ็ตความสูง
+            textarea.style.height = textarea.scrollHeight + 'px'; // กำหนดความสูงตามเนื้อหา
+        }
+
+        // ฟังก์ชันปรับขนาด textarea ทุกตัวในแถวเดียวกัน
+        function syncRowHeight(textarea) {
+            let $row = $(textarea).closest('tr'); // หา tr ที่ textarea อยู่
+            let maxHeight = 0;
+
+            // วนลูปหา maxHeight ใน textarea ทุกตัวในแถว
+            $row.find('.auto-expand').each(function () {
+                this.style.height = 'auto'; // รีเซ็ตความสูงก่อนคำนวณ
+                let currentHeight = this.scrollHeight;
+                if (currentHeight > maxHeight) {
+                    maxHeight = currentHeight;
+                }
+            });
+
+            // กำหนดความสูงให้ textarea ทุกตัวในแถวเท่ากัน
+            $row.find('.auto-expand').each(function () {
+                this.style.height = maxHeight + 'px';
+            });
+        }
+
+        // ดักจับ event input
+        $(document).on('input', '.auto-expand', function () {
+            autoExpand(this); // ปรับ textarea ที่มีการเปลี่ยนแปลง
+            syncRowHeight(this); // ปรับ textarea ทั้งแถว
+        });
+
 
 //เพิ่มไฟล์แนบ
 $(".attach-add").unbind();
@@ -449,6 +554,79 @@ $(".attach-add").unbind();
             }
         })
    }
+
+
+
+   
+   $(document).on('click', '#accept_fault', function(e) 
+   {
+            e.preventDefault();
+
+            // รับค่าจากฟอร์ม
+            const _token = $('input[name="_token"]').val();
+
+            var assessment_id = $('#assessment_id').val();
+  
+
+            // สร้าง overlay
+            showOverlay();
+
+            // เรียก AJAX
+            $.ajax({
+                url: "{{route('applicant-ib.assessment.confirm-bug')}}",
+                method: "POST",
+                data: {
+                    _token: _token,
+                    assessment_id:assessment_id,
+                },
+                success: function(result) {
+                    console.log(result);
+                    location.reload(); // รีโหลดหน้าเว็บหลังจากสำเร็จ
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
+                },
+                complete: function() {
+                    // ลบ overlay เมื่อคำขอเสร็จสิ้น
+                    hideOverlay();
+                }
+            });
+        });
+
+
+    function showOverlay() {
+        // ตรวจสอบว่ามี overlay อยู่หรือยัง
+        if ($('#loading-overlay').length === 0) {
+            $('body').append(`
+                <div id="loading-overlay" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(255, 255, 255, 0.4);
+                    z-index: 1050;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: black;
+                    font-size: 65px;
+                    font-family: 'Kanit', sans-serif;
+                ">
+                    กำลังบันทึก กรุณารอสักครู่...
+                </div>
+            `);
+        }
+    }
+
+
+    // ฟังก์ชันสำหรับลบ overlay
+    function hideOverlay() {
+        $('#loading-overlay').remove();
+    }
+
+
 </script>
 <script type="text/javascript">
     $(document).ready(function() {

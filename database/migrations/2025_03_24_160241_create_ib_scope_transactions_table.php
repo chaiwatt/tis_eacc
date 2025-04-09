@@ -20,6 +20,9 @@ class CreateIbScopeTransactionsTable extends Migration
             $table->unsignedInteger('ib_sub_category_scope_id')->nullable(); 
             $table->unsignedInteger('ib_scope_topic_id')->nullable(); 
             $table->unsignedInteger('ib_scope_detail_id')->nullable(); 
+            $table->text('standard')->nullable();
+            $table->text('standard_en')->nullable();
+
             $table->timestamps();
         });
     }

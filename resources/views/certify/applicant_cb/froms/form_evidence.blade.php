@@ -163,8 +163,7 @@
 <button type="button" class="btn btn-info" id="button_store_cb_scope_bcms">Save Bcms scope</button>
 <button type="button" class="btn btn-info" id="button_load_bcms">Load Bcms scope</button>
 
-{{-- @if ($certi_cb !== null)
-    @if ($certi_cb->doc_review_reject == null) --}}
+
     @if ($certi_cb == null || empty($certi_cb->doc_review_reject))
         <fieldset class="white-box">
             <legend>

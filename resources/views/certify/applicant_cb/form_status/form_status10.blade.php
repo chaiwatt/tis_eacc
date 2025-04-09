@@ -7,7 +7,7 @@
      <div class="row">
         <div class="col-md-12">
            <div class="white-box"> 
-           <h3 class="box-title pull-left">ใบรับรองระบบงาน (CB) 
+           <h3 class="box-title pull-left">ใบรับรองระบบงาน (CB) mark
             @if ($certi_cb->CertiAuditors->count() > $certi_cb->fullyApprovedAuditorNoCancels->count())
             <span class="text-danger">(รอดำเนินการ {{$certi_cb->CertiAuditors->count() - $certi_cb->fullyApprovedAuditorNoCancels->count()}} คณะ)</span> 
             @endif
@@ -351,7 +351,8 @@ $attachs_file = json_decode($log->attachs_file);
  </div> 
              
 <input type="hidden" name="previousUrl" id="previousUrl" value="{{ $previousUrl ?? null}}">
- <div class="form-group">
+@if (count($approvedAuditors) != 0)
+<div class="form-group">
     <div class="col-md-offset-4 col-md-4">
         <button class="btn btn-primary" type="submit"  onclick="submit_form();return false;">
             <i class="fa fa-paper-plane"></i>  บันทึก
@@ -361,6 +362,8 @@ $attachs_file = json_decode($log->attachs_file);
         </a>
     </div>
 </div>
+@endif
+
  
  @else 
  <a  href="{{ url("$previousUrl") }}">

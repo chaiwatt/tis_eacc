@@ -316,7 +316,7 @@
             <div class="form-group {{ $errors->has('ib_latitude') ? 'has-error' : ''}}">
                 {!! HTML::decode(Form::label('ib_latitude', 'พิกัดที่ตั้ง (ละติจูด)'.':'.'<br/><span class=" font_size">(latitude)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
                 <div class="col-md-7">
-                    <input type="text" name="ib_latitude" id="ib_latitude" class="form-control input_address" value="{!! !empty($certi_ib->ib_latitude)?$certi_ib->ib_latitude: null !!}" required>
+                    <input type="text" name="ib_latitude" id="ib_latitude" class="form-control input_address" value="{!! !empty($certi_ib->ib_latitude)?$certi_ib->ib_latitude: null !!}" >
                     {!! $errors->first('ib_latitude', '<p class="help-block">:message</p>') !!}
                 </div>
             </div>
@@ -325,7 +325,7 @@
             <div class="form-group {{ $errors->has('ib_longitude') ? 'has-error' : ''}}">
                 {!! HTML::decode(Form::label('ib_longitude', 'พิกัดที่ตั้ง (ลองจิจูด)'.':'.'<br/><span class=" font_size">(longitude)</span>',['class' => 'col-md-5 control-label label-height'])) !!}
                 <div class="col-md-7">
-                    <input type="text" name="ib_longitude" id="ib_longitude" class="form-control input_address" value="{!! !empty($certi_ib->ib_longitude)?$certi_ib->ib_longitude: null !!}" required>
+                    <input type="text" name="ib_longitude" id="ib_longitude" class="form-control input_address" value="{!! !empty($certi_ib->ib_longitude)?$certi_ib->ib_longitude: null !!}" >
                     {!! $errors->first('ib_longitude', '<p class="help-block">:message</p>') !!}
                 </div>
             </div>

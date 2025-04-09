@@ -795,7 +795,6 @@ class ApplicantCBController extends Controller
 
         $selectedModel = $request->selectedModel;
         
-        // dd($cbScopeJson,$selectedModel);
 
 
         $certi_cb =  CertiCb::where('token',$token)->first();
@@ -864,24 +863,6 @@ class ApplicantCBController extends Controller
 
     }
 
-    //     public function update(Request $request, $token)
-    // {
-    //     $certi_cb =  CertiCb::where('token',$token)->first();
-    //     // dd($certi_cb->status);
-    //     if($certi_cb->status == 9 && $certi_cb->doc_review_reject !== null)
-    //     {
-    //         $this->docUpdate($request, $token);
-    //         $certi_cb->update([
-    //             'doc_review_reject' => null
-    //         ]);
-    //     }else{
-    //         $this->normalUpdate($request, $token);
-    //     }
-
-    //     return redirect('certify/applicant-cb')->with('message', 'แก้ไขเรียบร้อยแล้ว!');
-      
-
-    // }
 
     public function normalUpdate($request, $token)
     {
@@ -2716,5 +2697,15 @@ class ApplicantCBController extends Controller
           'accept_fault' => 1
       ]);
       return response()->json($notice);
+    }
+
+    public function getCbDocReviewAuditor(Request $request)
+    {
+        
+        $cbDocReviewAuditor = CbDocReviewAuditor::where('app_certi_cb_id',$request->certiCbId)->first();
+        // dd($cbDocReviewAuditor);
+        return response()->json([
+            'cbDocReviewAuditors' => json_decode($cbDocReviewAuditor->auditors, true),
+        ]);
     }
 }

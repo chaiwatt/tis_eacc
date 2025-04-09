@@ -9,7 +9,7 @@ use App\Models\Certificate\IbSubCategoryScope;
 class IbScopeTopic extends Model
 {
     protected $table = 'ib_scope_topics';
-    protected $fillable = ['name','name_en', 'ib_sub_category_scope_id'];
+    protected $fillable = ['name','name_en', 'ib_sub_category_scope_id','standard','standard_en'];
 
     // Relationship: Topic อยู่ใน Sub Category เดียว
     public function subCategoryScope()

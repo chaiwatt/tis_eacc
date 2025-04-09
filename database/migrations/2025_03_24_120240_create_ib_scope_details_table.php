@@ -17,8 +17,8 @@ class CreateIbScopeDetailsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('ib_scope_topic_id')->nullable(); 
             $table->foreign('ib_scope_topic_id')->references('id')->on('ib_scope_topics')->onDelete('cascade');
-            $table->string('name')->nullable();
-            $table->string('name_en')->nullable();
+            $table->text('name')->nullable();
+            $table->text('name_en')->nullable();
             $table->timestamps();
         });
     }

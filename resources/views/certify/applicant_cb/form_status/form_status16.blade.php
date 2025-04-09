@@ -30,7 +30,7 @@
      <div class="row">
         <div class="col-md-12">
            <div class="white-box">
-           <h3 class="box-title pull-left">ใบรับรองระบบงาน (CB)  landing</h3>
+           <h3 class="box-title pull-left">ใบรับรองระบบงาน (CB) aha</h3>
 
                 <a class="btn btn-danger text-white pull-right" href="{{url('certify/applicant-cb')}}">
                         <i class="icon-arrow-left-circle"></i> กลับ
@@ -269,11 +269,12 @@
             <tr>
                 <td class="text-center" style="padding: 0px">{{ $key+1 }}</td>
                 <td style="padding: 0px">
+                    
                     {!! Form::hidden('detail[id][]',!empty($item->id)?$item->id:null, ['class' => 'form-control '])  !!}
                     {{ $item->remark ?? null }}
                </td>
                 <td style="padding: 0px">
-                    <textarea name="detail[details][]"  class="form-control auto-expand {{ $assessment->accept_fault == null || $assessment->submit_type != 'confirm' ? 'non-editable' : '' }}"  rows="5"  required> {{ !empty($item->details) ? $item->details : '' }}</textarea>
+                    <textarea name="detail[details][]"  class="form-control auto-expand {{ $assessment->accept_fault == null || $assessment->submit_type != 'confirm' ? 'non-editable' : '' }}"  rows="5"  required>{{ !empty($item->details) ? $item->details : '' }}</textarea>
 
 
                 </td>
@@ -381,7 +382,10 @@
 </div>
 @endif
 </div>
-
+{{-- {{$assessment->degree}} --}}
+{{-- @php
+    dd($assessment)
+@endphp --}}
 @if(in_array($assessment->degree,[1,3,4,6]))
 {{-- <div class="row">
     <div class="form-group">
@@ -396,6 +400,19 @@
     </div>
 </div>  --}}
 <div class="row">
+    @if(isset($assessment)  && !is_null($assessment->FileAttachAssessment1To)) 
+        <div class="form-group" style="margin-top: 20px;margin-bottom:50px">
+            <div class="col-md-12">
+                <label class="col-md-3 text-right"><span class="text-danger">*</span> รายงานการตรวจประเมิน(รายงานที่1): </label>
+                <div class="col-md-6">
+                    <a href="{{url('certify/check/file_cb_client/'.$assessment->FileAttachAssessment1To->file.'/'.( !empty($assessment->FileAttachAssessment1To->file_client_name) ? $assessment->FileAttachAssessment1To->file_client_name : 'null' ))}}" 
+                        title="{{ !empty($assessment->FileAttachAssessment1To->file_client_name) ? $assessment->FileAttachAssessment1To->file_client_name :  basename($assessment->FileAttachAssessment1To->file) }}" target="_blank">
+                        {!! HP::FileExtension($assessment->FileAttachAssessment1To->file)  ?? '' !!}
+                    </a>
+                </div>
+            </div>
+        </div>
+    @endif
     <div class="form-group">
         <div class="col-md-offset-5 col-md-6">
                 

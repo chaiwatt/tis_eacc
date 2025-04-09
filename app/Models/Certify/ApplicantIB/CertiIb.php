@@ -16,6 +16,7 @@ use Kyslik\ColumnSortable\Sortable;
 use App\Models\Sso\User AS SSO_User;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Certificate\IbDocReviewAuditor;
 use App\Models\Certify\ApplicantIB\CertiIBExport;
 use App\Models\Certify\CertiEmailLt;  //E-mail ลท.
 
@@ -89,8 +90,21 @@ class CertiIb extends Model
                              'ib_province_eng',
                              'ib_amphur_eng',
                              'ib_district_eng',
-                             'ib_postcode_eng'
+                             'ib_postcode_eng',
+                             'doc_auditor_assignment',
+                             'doc_review_update',
+                             'doc_review_reject',
+                             'doc_review_reject_message',
+                             'require_scope_update',
+                             'scope_view_signer_id',
+                             'scope_view_status',
                             ];
+
+    // TEXT  หน่วยตรวจประเภท
+    public function getTypeUnitTitleAttribute() {
+        $datas = ['1'=>'A','2'=>'B','3'=>'C'];
+          return array_key_exists($this->type_unit,$datas) ? $datas[$this->type_unit] : '';
+      }
 
    public function EsurvTrader()
  {
@@ -133,6 +147,30 @@ class CertiIb extends Model
  {
      return $this->hasMany(CertiIBAuditors::class, 'app_certi_ib_id')->whereNull('status');
  }
+
+ public function fullyApprovedAuditorNoCancels()
+ {
+     return $this->CertiAuditors()
+      ->whereNull('status_cancel')
+      ->whereDoesntHave('messageRecordTransactions', function ($query) {
+          $query->where('approval', 0);
+      });
+ }
+
+ public function fullyApprovedAuditors()
+ {
+     return $this->CertiAuditors()->whereDoesntHave('messageRecordTransactions', function ($query) {
+         $query->where('approval', 0);
+     });
+ }
+
+    // แต่งตั้งคณะผู้ตรวจประเมิน
+    public function CertiAuditors()
+    {
+        return $this->hasMany(CertiIBAuditors::class, 'app_certi_ib_id');
+    }
+ 
+
    // แจ้งรายละเอียดค่าตรวจประเมิน
    public function CertiIBPayInOneTo()
    {
@@ -614,6 +652,11 @@ class CertiIb extends Model
     public function getAcceptDateShowAttribute()
     {
         return !empty($this->save_date)?HP::DateThai($this->save_date):'-';
+    }
+
+    public function ibDocReviewAuditor()
+    {
+        return $this->hasOne(IbDocReviewAuditor::class, 'app_certi_ib_id');
     }
 
 }

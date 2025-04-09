@@ -62,6 +62,9 @@ Route::get('/mail-to-scope-viewer','MyTestController@mailToScopeViewer');
 Route::get('/is-request-belong','MyTestController@isRequestBelong');
 Route::get('/get-attached-file-from-request','MyTestController@getAttachedFileFromRequest');
 Route::get('/cb-isic-sope-pdf','MyTestController@cbIsicSopePdf');
+Route::get('/ib-sope-pdf','MyTestController@ibSopePdf');
+
+
 
 
 //
@@ -816,6 +819,7 @@ Route::group(['prefix'=>'certify'],function (){ // ระบบยื่นค�
     Route::post('/applicant-cb/demo-store-cb-bcms-scope','Certify\ApplicantCBController@demoStoreBcmsScope')->name('applicant_cb.demo_store_cb_bcms_scope');
     Route::post('/applicant-cb/get-select-cb-bcms-transaction','Certify\ApplicantCBController@getCbScopeBcmsTransaction')->name('applicant_cb.get_cb_bcms_scope_transaction');
     Route::post('/applicant-cb/update-doc-review-team','Certify\ApplicantCBController@updateDocReviewTeam')->name('applicant_cb.update_doc_review_team');
+    Route::post('/applicant-cb/get-cb-doc-review-auditor','Certify\ApplicantCBController@getCbDocReviewAuditor')->name('applicant_cb.ge_cb_doc_review_auditor');
     //log
     Route::get('/applicant-cb/Log-CB/{token?}','Certify\ApplicantCBController@DataLogCB');
 
@@ -858,6 +862,10 @@ Route::group(['prefix'=>'certify'],function (){ // ระบบยื่นค�
     //การประมาณค่าใช้จ่าย  (IB)
     Route::get('/applicant-ib/cost/{token?}','Certify\ApplicantIBController@EditCost');
     Route::post('/applicant-ib/update/status/cost','Certify\ApplicantIBController@updateStatusCost');
+
+    Route::post('/applicant-ib/update-doc-review-team','Certify\ApplicantIBController@updateDocReviewTeam')->name('applicant_ib.update_doc_review_team');
+    Route::post('/applicant-ib/get-ib-doc-review-auditor','Certify\ApplicantIBController@getIbDocReviewAuditor')->name('applicant_ib.ge_ib_doc_review_auditor');
+
     //ขอความเห็นแต่งคณะผู้ตรวจประเมิน  (IB)
     Route::get('/applicant-ib/auditor/{token?}','Certify\ApplicantIBController@EditAuditor');
     Route::post('/applicant-ib/update/status/auditor/{token?}','Certify\ApplicantIBController@updateAuditor');
@@ -870,6 +878,7 @@ Route::group(['prefix'=>'certify'],function (){ // ระบบยื่นค�
     // แก้ไขข้อบกพร่อง/ข้อสังเกต    (IB)
     Route::get('/applicant-ib/assessment/{id?}/{token?}','Certify\ApplicantIBController@EditAssessment');
     Route::post('/applicant-ib/assessment/update/{id?}','Certify\ApplicantIBController@UpdateAssessment');
+    Route::post('/applicant-ib/assessment/confirm-bug','Certify\ApplicantIBController@ConfirmBug')->name('applicant-ib.assessment.confirm-bug');
 
     Route::post('/applicant-ib/update_report/{id?}','Certify\ApplicantIBController@UpdateReport');
 

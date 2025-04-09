@@ -64,7 +64,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="white-box">
-                    <h3 class="box-title pull-left">คำขอรับบริการหน่วยตรวจ (IB)</h3>
+                    <h3 class="box-title pull-left">คำขอรับบริการหน่วยตรวจ (IB) home</h3>
 
                     <div class="pull-right">
  
@@ -190,9 +190,116 @@
                                                 <a class="btn  btn-sm" style="background-color: rgb(235, 235, 235)" href="{{url('certify/applicant-ib/cost/'.$item->token)}}">
                                                     <i class="mdi mdi-magnify"></i>  {{ $data_status  }}
                                                 </a>
+
+                                                @elseif($item->status == 9) <!-- ขอความเห็นผู้ตรวจประเมินเอกสาร  -->
+                                
+
+                                                @if ($item->ibDocReviewAuditor != null)
+                                                            
+                                                    @if ($item->ibDocReviewAuditor->status == 0)
+                                                        {{-- <button style="border: none" data-toggle="modal"  data-target="#TakeAction{{$loop->iteration}}" data-id="{{ $item->token }}"  > --}}
+                                                        <button type="button" style="border: none" data-ib_id="{{ $item->id }}" data-id="{{ $item->token }}" id="show_ib_doc_review_auditor" >
+                                                            <i class="mdi mdi-magnify"></i>เห็นชอบการแต่งตั้งคณะผู้ตรวจประเมินเอกสาร
+                                                        </button>
+
+                                                        <div class="modal fade text-left" id="ib_doc_review_auditor_modal" tabindex="-1" role="dialog" >
+                                                            <div class="modal-dialog " style="width:900px !important">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h4 class="modal-title" id="exampleModalLabel1"> เห็นชอบการแต่งตั้งคณะผู้ตรวจเอกสาร
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                                        </h4>
+                                                                    </div>
+                                                                    <div class="modal-body"> 
+                                                                        @php 
+                                                                            $auditors_btn =  '';
+                                                                            if($item->CertiAuditorsStatus == "statusInfo"){
+                                                                                $auditors_btn = 'btn-info';
+                                                                            }elseif($item->CertiAuditorsStatus == "statusSuccess"){
+                                                                                $auditors_btn =  'btn-success';
+                                                                            }else{
+                                                                                $auditors_btn = 'btn-danger';
+                                                                            }
+                                                                        @endphp
+                                                        
+                                                                        <table  class="table color-bordered-table primary-bordered-table" id="ib_doc_review_auditor_wrapper">
+                                                                            <thead>
+                                                                                    <tr>
+                                                                                        <th width="10%" >ลำดับ</th>
+                                                                                        <th width="45%">ชื่อผู้ตรวจประเมิน</th>
+                                                                                        <th width="45%">หน่วยงาน</th>
+                                                                                    </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                    
+                                                        
+                                                                            
+                                                                            </tbody>
+                                                                        </table>
+                                                                        
+                                                                        <div class="form-group">
+                                                                            <input type="hidden" value="{{$item->id}}" id="certi_ib_id">
+                                                                            <div class="col-md-3">
+                                                                                <input type="radio" name="agree" value="1" id="agree" checked>
+                                                                                <label for="agree" class="control-label">เห็นชอบ</label>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <input type="radio" name="agree" value="2" id="not_agree">
+                                                                                <label for="not_agree" class="control-label">ไม่เห็นชอบ</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        
+                                                                        <div class="form-group" style="margin-top: 25px">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12" id="text-area-wrapper" style="display: none;">
+                                                                                    <label> หมายเหตุ : </label>
+                                                                                    <textarea class="form-control" name="remark_map" id="remark" rows="4" ></textarea>
+                                                                                </div>
+                                                                                <div class="col-sm-12" >
+                                                                                    <button type="button" data-ib_id="{{$item->id}}" class="btn btn-info waves-effect waves-light " style="margin-top:15px; float:right" id="agree_doc_review_tream">
+                                                                                        บันทึก
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                        
+                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+
+
+                                                        {{-- @include ('certify.applicant_cb.modal.modalstatus9',['id'=> $loop->iteration,'token'=> $item->token,'auditors' => $item->CertiAuditorsMany,'certi' => $item ]) --}}
+                                                    @elseif($item->ibDocReviewAuditor->status == 2 )
+                                                        ไม่เห็นชอบการแต่งตั้งคณะผู้ตรวจประเมินเอกสาร
+                                                    @endif
+                                                @endif
+
+                                   
+                                                {{-- {{$item->ibDocReviewAuditor->status}} --}}
+                                              @if ($item->doc_review_reject != null && $item->ibDocReviewAuditor->status == 1)
+                                                            
+                                                <button style="border: none" data-toggle="modal"  data-target="#TakeAction{{$loop->iteration}}" data-id="{{ $item->token }}"  >
+                                                        <i class="mdi mdi-magnify"></i>แก้ไขเอกสาร
+                                                    </button>
+                                                    @include ('certify.applicant_ib.modal.modalstatus9_1',['id'=> $loop->iteration,'token'=> $item->token,'auditors' => $item->CertiAuditorsMany,'certi' => $item ])
+    
+
+                                                    {{-- @if( HP::CheckPermission('edit-'.str_slug('applicantcbs')))
+                                                        <a  type="button" style="border: none"  href="{{ url('/certify/applicant-ib/' . $item->token . '/edit') }}"
+                                                            title="Edit ApplicantCB" class="btn btn-default btn-sm">
+                                                            <i class="mdi mdi-magnify"></i>แก้ไขเอกสาร
+                                                        </a>
+                                                    @endif --}}
+                                                @endif
+
+
+
                                             @elseif($item->status == 10 || $item->status == 11) <!-- อยู่ระหว่างดำเนินการ  -->
                                                 <button style="border: none" data-toggle="modal"  data-target="#TakeAction{{$loop->iteration}}"  data-id="{{ $item->token }}"  >
-                                                    <i class="mdi mdi-magnify"></i>     อยู่ระหว่างดำเนินการ
+                                                    <i class="mdi mdi-magnify"></i> เห็นชอบการแต่งตั้งคณะผู้ตรวจประเมิน
                                                 </button>
                                                 @include ('certify.applicant_ib.modal.modalstatus10',['id'=> $loop->iteration,
                                                                                                        'token'=> $item->token,
@@ -449,5 +556,91 @@
                        }
                    })
            }
+
+
+    $('input[name="agree"]').change(function() {
+        if ($('#not_agree').is(':checked')) {
+                    $('#text-area-wrapper').show(); // แสดงทันที
+                } else {
+                    $('#text-area-wrapper').hide(); // ซ่อนทันที
+                    $("#remark").val("");
+                }
+    });
+
+    $('#agree_doc_review_tream').click(function(){
+        
+        const _token = $('input[name="_token"]').val();
+        let certiIbId = $(this).data('ib_id');
+        
+        // ดึงค่าของ radio ที่ถูกเลือก
+        let agreeValue = $("input[name='agree']:checked").val();
+
+        // ดึงค่าของ textarea
+        let remarkText = $("#remark").val();
+
+
+        $.ajax({
+        url: "{{route('applicant_ib.update_doc_review_team')}}",
+        // url: "/certify/applicant/api/test_parameter",
+        method: "POST",
+        data: {
+            certiIbId: certiIbId,
+            agreeValue: agreeValue,
+            remarkText: remarkText,
+            _token: _token
+        },
+        success: function(result) {
+            location.reload();
+
+        }
+        });
+   
+    });
+
+    $('#show_ib_doc_review_auditor').click(function(){
+        
+        const _token = $('input[name="_token"]').val();
+        let certiIbId = $(this).data('ib_id');
+
+        $.ajax({
+            url: "{{route('applicant_ib.ge_ib_doc_review_auditor')}}",
+            method: "POST",
+            data: {
+                certiIbId: certiIbId,
+                _token: _token
+            },
+            success: function(result) {
+                console.log(result);
+                // location.reload();
+                let auditors = result.ibDocReviewAuditors;
+                let tbody = $('#ib_doc_review_auditor_wrapper tbody');
+                tbody.empty(); // Clear existing rows
+
+                let count = 1; // Initialize row counter
+                auditors.forEach(function(auditor) {
+                    auditor.temp_users.forEach(function(user, index) {
+                        let department = auditor.temp_departments[index] !== 'ไม่มีรายละเอียดหน่วยงานโปรดแก้ไข' 
+                            ? auditor.temp_departments[index] 
+                            : '';
+
+                        let row = `
+                            <tr>
+                                <td>${count}</td>
+                                <td>${user}</td>
+                                <td>${department}</td>
+                            </tr>
+                        `;
+                        tbody.append(row);
+                        count++;
+                    });
+                });
+                $('#ib_doc_review_auditor_modal').modal('show');
+
+            }
+        });
+
+   
+    });
+
    </script>
 @endpush

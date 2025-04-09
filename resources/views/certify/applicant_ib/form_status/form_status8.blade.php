@@ -8,7 +8,7 @@
      <div class="row">
         <div class="col-md-12">
            <div class="white-box">
-           <h3 class="box-title pull-left">ใบรับรองระบบงาน (IB)  </h3>
+           <h3 class="box-title pull-left">ใบรับรองระบบงาน (IB) landing </h3>
 
                 <a class="btn btn-danger text-white pull-right" href="{{url('certify/applicant-ib')}}">
                         <i class="icon-arrow-left-circle"></i> กลับ
@@ -305,7 +305,7 @@
              </div>
 
 
-             <div class="row">
+             <div class="row" hidden>
                  <div class="col-md-3 text-right">
                      <p class="text-nowrap">เห็นชอบกับ Scope  </p>
                  </div>

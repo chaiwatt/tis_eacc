@@ -19,10 +19,25 @@
         $auditors_btn = 'btn-danger';
     }
 @endphp
-      <a class="btn  btn-sm  form-group {{  $auditors_btn  }}" 
+
+
+
+      {{-- <a class="btn  btn-sm  form-group {{  $auditors_btn  }}" 
            href="{{url('certify/applicant-ib/auditor/'.$token)}}" style="width:300px;">
             เห็นชอบการแต่งตั้งคณะผู้ตรวจประเมิน
-     </a>
+     </a> --}}
+
+     @if($certi->fullyApprovedAuditorNoCancels->count() > 0) 
+        <a class="btn  btn-sm  form-group {{  $auditors_btn  }}" 
+            href="{{url('certify/applicant-ib/auditor/'.$token)}}" style="width:300px;">
+            เห็นชอบการแต่งตั้งคณะผู้ตรวจประเมิน
+        </a>
+        @else
+            
+            <span class="text-warning">อยู่ระหว่างดำเนินการ...</span>
+    @endif
+
+
       <br>
       @if(count($certi->CertiIBPayInOneMany) > 0 )
       @php 
@@ -69,18 +84,18 @@
         <br>
 
         @if(count($certi->CertiIBSaveAssessments) > 0 )
- @php 
-     $assessment_btn =  '';
-  if($certi->CertiIBSaveAssessmentStatus == "statusInfo" || $certi->CertiIBSaveAssessmentStatus == "statuPrimary"){
-    $assessment_btn = 'btn-info';
-  }elseif($certi->CertiIBSaveAssessmentStatus == "statusSuccess"){
-     $assessment_btn = 'btn-success';
- }elseif($certi->CertiIBSaveAssessmentStatus == "statusDanger"){
-    $assessment_btn =  'btn-danger';
- }else{
-     $assessment_btn =  'btn-warning';
- }
-@endphp 
+            @php 
+                $assessment_btn =  '';
+            if($certi->CertiIBSaveAssessmentStatus == "statusInfo" || $certi->CertiIBSaveAssessmentStatus == "statuPrimary"){
+                $assessment_btn = 'btn-info';
+            }elseif($certi->CertiIBSaveAssessmentStatus == "statusSuccess"){
+                $assessment_btn = 'btn-success';
+            }elseif($certi->CertiIBSaveAssessmentStatus == "statusDanger"){
+                $assessment_btn =  'btn-danger';
+            }else{
+                $assessment_btn =  'btn-warning';
+            }
+            @endphp 
         <div class="btn-group  form-group">
           <div class="btn-group">
                 <button type="button" class="btn {{$assessment_btn}} btn-succesdropdown-toggle" data-toggle="dropdown" style="width:300px;">
@@ -122,31 +137,37 @@
  
  
     {{-- </div> --}}
-    <legend><h3>คณะผู้ตรวจประเมิน </h3></legend>
-    @if(count($auditors) > 0) 
-    <div class="row">
-        <div class="col-md-12">
-         <table class="table table-bordered">
-            <thead class="bg-primary">
-                <tr>
-                    <th class="text-center text-white" width="2%">ลำดับ</th>
-                    <th class="text-center text-white" width="50%">คณะผู้ตรวจประเมิน</th>
-                    <th class="text-center text-white" width="48%">สถานะ</th>
-                </tr>
-            </thead>
-             <tbody>
-                @foreach($auditors as $key => $item)
-                <tr>
-                    <td class="text-center">{{$key+1}}</td>
-                    <td>{{ $item->auditor ?? null }}</td>
-                    <td>{{ $item->CertiIBAuditorsStepTo->title ?? null }}</td>
-                </tr>
-                 @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
+
+    
+    @if($certi->fullyApprovedAuditors->count() > 0) 
+        <legend><h3>คณะผู้ตรวจประเมิน </h3></legend>
+        @if(count($auditors) > 0) 
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-bordered">
+                        <thead class="bg-primary">
+                            <tr>
+                                <th class="text-center text-white" width="2%">ลำดับ</th>
+                                <th class="text-center text-white" width="50%">คณะผู้ตรวจประเมิน</th>
+                                <th class="text-center text-white" width="48%">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($auditors as $key => $item)
+                            <tr>
+                                <td class="text-center">{{$key+1}}</td>
+                                <td>{{ $item->auditor ?? null }}</td>
+                                <td>{{ $item->CertiIBAuditorsStepTo->title ?? null }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        @endif
     @endif
+
 </div>
  
         </div>
