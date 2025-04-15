@@ -8,7 +8,7 @@
      <div class="row">
         <div class="col-md-12">
            <div class="white-box">
-           <h3 class="box-title pull-left">ใบรับรองระบบงาน (IB)  </h3>
+           <h3 class="box-title pull-left">ใบรับรองระบบงาน (IB)  mark</h3>
 
                 <a class="btn btn-danger text-white pull-right" href="{{url('certify/applicant-ib')}}">
                         <i class="icon-arrow-left-circle"></i> กลับ
@@ -178,13 +178,23 @@
         <div class="col-md-6">
             <label class="col-md-6 text-right"> รายงานการตรวจประเมิน : </label>
             <div class="col-md-6">
-                @if(!is_null($item1->details_three))
+                {{-- @if(!is_null($item1->details_three))
                    <p>
                     <a href="{{url('certify/check/file_ib_client/'.$item1->details_three.'/'.( !empty($item1->file_client_name) ? $item1->file_client_name :  basename($item1->details_three) ))}}" 
                         title="{{ !empty($item1->file_client_name) ? $item1->file_client_name :  basename($item1->details_three) }}" target="_blank">
                          {!! HP::FileExtension($item1->details_three)  ?? '' !!}
                      </a>
-                 </p>
+                    </p>
+                @endif --}}
+                {{-- @php
+                    dd($assessment);
+                @endphp --}}
+                @if(isset($assessment)  && !is_null($assessment->FileAttachAssessment1To)) 
+                    <a href="{{url('certify/check/file_ib_client/'.$assessment->FileAttachAssessment1To->file.'/'.( !empty($assessment->FileAttachAssessment1To->file_client_name) ? $assessment->FileAttachAssessment1To->file_client_name : 'null' ))}}" 
+                        title="{{ !empty($assessment->FileAttachAssessment1To->file_client_name) ? $assessment->FileAttachAssessment1To->file_client_name :  basename($assessment->FileAttachAssessment1To->file) }}" target="_blank">
+                        {!! HP::FileExtension($assessment->FileAttachAssessment1To->file)  ?? '' !!}
+                    </a> 
+                
                 @endif
             </div>
         </div>
@@ -227,20 +237,30 @@
     @if(!is_null($item1->attachs))
     <div class="col-md-6">
         <label class="col-md-7 text-right"> สรุปรายงานการตรวจทุกครั้ง : </label>
-        <div class="col-md-5">
-                 @php
-                      $attachs = json_decode($item1->attachs);
-                @endphp
-                @if(!is_null($attachs))
+        {{-- <div class="col-md-5">
+            @php
+                $attachs = json_decode($item1->attachs);
+            @endphp
+            @if(!is_null($attachs))
                 @foreach ($attachs as $item3)
-                    {{-- <p> --}}
-                        <a href="{{url('certify/check/file_ib_client/'.$item3->file.'/'.( !empty($item3->file_client_name) ? $item3->file_client_name :  basename($item3->file) ))}}" 
-                            title="{{ !empty($item3->file_client_name) ? $item3->file_client_name :  basename($item3->file) }}" target="_blank">
-                            {!! HP::FileExtension($item3->file)  ?? '' !!}
-                        </a>
-                    {{-- </p> --}}
+                    <a href="{{url('certify/check/file_ib_client/'.$item3->file.'/'.( !empty($item3->file_client_name) ? $item3->file_client_name :  basename($item3->file) ))}}" 
+                        title="{{ !empty($item3->file_client_name) ? $item3->file_client_name :  basename($item3->file) }}" target="_blank">
+                        {!! HP::FileExtension($item3->file)  ?? '' !!}
+                    </a>
                 @endforeach
-                @endif
+            @endif
+        </div> --}}
+        <div class="col-md-5">
+            @php
+                $attachs = json_decode($item1->attachs);
+                $lastAttach = !is_null($attachs) ? collect($attachs)->last() : null;
+            @endphp
+            @if(!is_null($lastAttach))
+                <a href="{{ url('certify/check/file_ib_client/'.$lastAttach->file.'/'.( !empty($lastAttach->file_client_name) ? $lastAttach->file_client_name : basename($lastAttach->file) )) }}" 
+                    title="{{ !empty($lastAttach->file_client_name) ? $lastAttach->file_client_name : basename($lastAttach->file) }}" target="_blank">
+                    {!! HP::FileExtension($lastAttach->file) ?? '' !!}
+                </a>
+            @endif
         </div>
     </div>
     @endif
