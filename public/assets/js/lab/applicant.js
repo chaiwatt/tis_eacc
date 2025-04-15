@@ -2589,11 +2589,11 @@ function renderTestScopeWithParameterTable() {
                             </div>
 
                         </td>
-                        <td style="vertical-align: top;padding:5px;">
-                            <div>${item.measurements[0].name}</div>
-                            <div>(${item.measurements[0].name_eng})</div>
-                            ${item.measurements[0].detail ? `<div style="padding-left: 10px;">${item.measurements[0].detail}</div>` : ''}
-                        </td>
+                           <td style="vertical-align: top;padding:5px;">
+                                <div>${item.measurements[0].name || ''}</div>
+                                ${item.measurements[0].name && item.measurements[0].name_eng ? `<div>(${item.measurements[0].name_eng})</div>` : ''}
+                                ${item.measurements[0].detail ? `<div style="padding-left: 10px;">${item.measurements[0].detail}</div>` : ''}
+                            </td>
                         <td style="vertical-align: top;padding:5px;">
                             <div>
                                 <span>${item.standard}</span>

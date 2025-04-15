@@ -30,7 +30,7 @@
      <div class="row">
         <div class="col-md-12">
            <div class="white-box">
-           <h3 class="box-title pull-left">ยื่นคำขอรับใบรับรองระบบงาน landing</h3>
+           <h3 class="box-title pull-left">ยื่นคำขอรับใบรับรองระบบงาน check</h3>
 
                 <a class="btn btn-danger text-white pull-right" href="{{app('url')->previous()}}">
                         <i class="icon-arrow-left-circle"></i> กลับ

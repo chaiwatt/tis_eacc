@@ -144,6 +144,7 @@ class ApplicantController extends Controller
      */
     public function index(Request $request)
     {
+        // dd('ok');
         $model = str_slug('view-applicant','-');
         $data_session     =    HP::CheckSession();
         if(!empty($data_session)){

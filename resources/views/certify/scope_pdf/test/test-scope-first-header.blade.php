@@ -23,7 +23,7 @@
     
         <div class="info">
             <div class="inline-block w-20 float-left" style="margin-top:7px">หมายเลขการรับรองที่<br> <span>(Accreditation No.)</span> </div>
-            <div class="inline-block w-78">สอบเทียบ {{$pdfData->acc_no}}<br> <span>(Calibration {{$pdfData->acc_no}})</span></div>
+            <div class="inline-block w-78">ทดสอบ {{$pdfData->acc_no}}<br> <span>(Calibration {{$pdfData->acc_no}})</span></div>
         </div>
     
         <div class="info">

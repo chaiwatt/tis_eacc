@@ -32,7 +32,7 @@
             @php
                 $textResult = TextHelper::callLonganTokenizePost($item->test_field);
                 // แทนที่ '!' ด้วย span ที่ซ่อนด้วย visibility: hidden
-                $textResult = str_replace('!', '<span style="visibility: hidden;">!</span>', $textResult);
+                $textResult = str_replace('!', '<span style="visibility: hidden;color: white">!</span>', $textResult);
                     // ตรวจสอบว่า $textResult และ $item->test_field_eng ซ้ำกับรอบก่อนหน้าหรือไม่
                 $isTextResultHidden = ($textResult === $previousTextResult);
                 $isTestFieldEngHidden = ($item->test_field_eng === $previousTestFieldEng);
@@ -45,25 +45,36 @@
                 <td>
                     <table width="100%" cellspacing="0" cellpadding="0" style="table-layout: fixed; border-collapse: collapse">
                         <tr>
-                            <td style="vertical-align: top;width: 250px;padding:5px;font-size:22px"><span @if ($key > 0) style="visibility: hidden;font-size:22px" @endif >สาขา{{ $item->category_th }}
+                            <td style="vertical-align: top;width: 250px;padding:5px;font-size:22px"><span @if ($key > 0) style="visibility: hidden;color: white;font-size:22px" @endif >สาขา{{ $item->category_th }}
                                 
                                 @if ($key == 0)
                                 <br>
                                 @endif
                                 <span style="font-size: 16px">({{ $item->category }} field)</span>
                             </span>
-                            <span style="visibility: hidden">*{{$key}}*</span></td>
-                            <td style="vertical-align: top;width: 250px;padding:5px;"><span style="visibility: hidden;font-size:22px">{{ $item->category_th }}</span></td>
-                            <td style="vertical-align: top;width: 250px;padding:5px;"><span style="visibility: hidden;font-size:22px">{{ $item->category_th }}</span></td>
+                            <span style="visibility: hidden;color: white">*{{$key}}*</span></td>
+                            <td style="vertical-align: top;width: 250px;padding:5px;"><span style="visibility: hidden;color: white;font-size:22px">{{ $item->category_th }}</span></td>
+                            <td style="vertical-align: top;width: 250px;padding:5px;"><span style="visibility: hidden;color: white;font-size:22px">{{ $item->category_th }}</span></td>
                         </tr>
                         <tr>
                             <td style="vertical-align: top;width: 250px;padding:5px;padding-left:10px">
-                                <div style="display:block;word-spacing: -0.2em;font-size:22px"><span style="@if ($isTextResultHidden) visibility: hidden; @endif">{!! $textResult !!}</span></div>
-                                <span style="display:block;float:left;font-size:16px"><span style="@if ($isTestFieldEngHidden) visibility: hidden; @endif">({!! $item->test_field_eng !!})</span></span>
+                                <div style="display:block;word-spacing: -0.2em;font-size:22px"><span style="@if ($isTextResultHidden) visibility: hidden;color: white; @endif">{!! $textResult !!}</span></div>
+                                <span style="display:block;float:left;font-size:16px"><span style="@if ($isTestFieldEngHidden) visibility: hidden;color: white; @endif">({!! $item->test_field_eng !!})</span></span>
                             </td>
                             <td style="vertical-align: top;width: 250px;padding:5px">
-                                <div style="display:block;word-spacing: -0.2em;font-size:22px">{{TextHelper::callLonganTokenizePost($item->measurements[0]->name)}}</div>
-                                <div style="display:block;float:left;font-size:16px">({!! $item->measurements[0]->name_eng !!})</div>
+                                @php
+                                    $measurementName = str_replace('!', '<span style="visibility: hidden;color: white">!</span>', TextHelper::callLonganTokenizePost($item->measurements[0]->name));
+                                @endphp
+                                {{-- <div style="display:block;word-spacing: -0.2em;font-size:22px">{!! $measurementName !!}</div>
+                                <div style="display:block;float:left;font-size:16px">({!! $item->measurements[0]->name_eng !!})</div> --}}
+
+                                <div style="display:block;word-spacing: -0.2em;font-size:22px">{!! $measurementName ?? '' !!}</div>
+                                
+                                @if($item->measurements[0]->name_eng)
+                                    <div style="display:block;float:left;font-size:16px">({!! $item->measurements[0]->name_eng !!})</div>
+                                @endif
+                                
+
                                 @if ($item->measurements[0]->detail !== "")
                                 <table style="margin-top: 10px">
                                     <tr>
