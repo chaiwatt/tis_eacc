@@ -151,7 +151,7 @@
                                     <!-- ขอใบรับรอง -->
                                     <span>ข้าพเจ้าประสงค์ขอรับใบรับรองระบบงาน : ตามมาตรฐานเลขที่</span>
                                     <span style="display: inline-block; width: 486px; border-bottom: 1px dotted #000; margin-left: 10px;">
-                                        <span style="opacity: 0.5;">ISO 17025</span>
+                                        <span style="opacity: 0.5;">มอก. 17025-2561</span>
                                     </span>
                                 </div>
                                 <div style="font-style: italic; font-size: 0.9em; margin-bottom: 10px;;margin-top:-10px;font-weight: 300">
